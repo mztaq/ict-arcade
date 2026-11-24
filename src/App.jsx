@@ -37,19 +37,19 @@ if (location.pathname === "/" && location.hash.startsWith("#/")) {
   if (!legacy.startsWith("//")) history.replaceState(null, "", legacy === "/home" ? "/" : legacy);
 }
 const getRoute = () => {
-  const parts = location.pathname.replace(/^\\/+|\\/+$/g, "").split("/");
+  const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
   const [page, first, second, third, fourth] = parts;
   let valid = false;
   if (!page || ["home","notes","practical","practice","flashcards"].includes(page)) valid = parts.length === 1;
   else if (page === "games") valid = parts.length === 1 || (parts.length === 2 && /^(?:[1-9]|10|11)$/.test(first));
   else if (page === "chapter") {
     const chapter = chapters.find(ch => String(ch.id) === first);
-    valid = !!chapter && (parts.length === 2 || (parts.length === 3 && /^\\d+$/.test(second) && Number(second) < chapter.lessons.length));
+    valid = !!chapter && (parts.length === 2 || (parts.length === 3 && /^\d+$/.test(second) && Number(second) < chapter.lessons.length));
   } else if (page === "past-papers") {
     if (parts.length === 1) valid = true;
     else if (first === "yearly") {
       const year = Number(second);
-      const validYear = /^\\d{4}$/.test(second || "") && year >= 2017 && year <= 2026;
+      const validYear = /^\d{4}$/.test(second || "") && year >= 2017 && year <= 2026;
       valid = parts.length === 2 || (validYear && (parts.length === 3 || (["m","s","w"].includes(third) && !(year === 2026 && third === "w") && (parts.length === 4 || (parts.length === 5 && ["qp","ms","er","sf"].includes(fourth))))));
     } else if (first === "solved") {
       valid = parts.length === 2 || (["1","2","3"].includes(second) && (parts.length === 3 || (solvedPastPapers[Number(second)]?.some(p=>p.id===third) && (parts.length === 4 || (parts.length === 5 && fourth === "workedSolution")))));
@@ -337,7 +337,7 @@ function App() {
       const anchor = event.target.closest?.("a[href]");
       if(!anchor || anchor.hasAttribute("download") || (anchor.target && anchor.target !== "_self"))return;
       const url = new URL(anchor.href, location.href);
-      if(url.origin !== location.origin || !anchor.getAttribute("href").startsWith("/") || url.search || url.hash || /\\.[a-z0-9]+$/i.test(url.pathname))return;
+      if(url.origin !== location.origin || !anchor.getAttribute("href").startsWith("/") || url.search || url.hash || /\.[a-z0-9]+$/i.test(url.pathname))return;
       event.preventDefault();
       goTo(url.pathname);
     };
