@@ -69,7 +69,7 @@ a{color:inherit;text-decoration:none}
 h1,h2,h3,p{margin-top:0}
 h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.skip-link{position:fixed;top:-150px;left:15px;z-index:100;border:2px solid var(--ink);background:var(--yellow);color:var(--hero-ink);padding:12px 17px;border-radius:8px}
+.skip-link{position:fixed;top:-150px;left:15px;z-index:100;border:2px solid var(--ink);background:var(--yellow);color:var(--yellow-ink);padding:12px 17px;border-radius:8px}
 .skip-link:focus{top:10px}
 .site-shell{min-height:100vh;display:flex;flex-direction:column}
 .site-header{
@@ -380,41 +380,68 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
 @media(max-width:1020px){
   .site-main{padding:26px 24px 54px}
   .reading-layout{grid-template-columns:205px minmax(0,1fr);gap:23px}
-  .course-preview{height:169px;padding:17px}
-  .home-games{margin-top:43px}
+  .course-preview{height:210px;padding:16px 18px 0}
+  .preview-browser,.sheet-mock{height:196px}
+  .theory-mock-content{grid-template-columns:95px minmax(0,1fr)}
+  .theory-mock-content aside{padding:10px 5px}
+  .mock-lesson{padding:12px}
+  .mock-term{font-size:8.5px}
+  .home-games{margin-top:44px}
+  .featured-game{grid-column:span 6}
+  .featured-game-large{grid-column:span 6}
 }
 @media(max-width:740px){
   .site-header{min-height:58px;padding:0 17px}
   .site-header.home-header{min-height:58px}
   .site-main{padding:24px 18px 52px}
-  .home-intro{padding-top:8px}
-  .home-intro h2{margin:26px 0 18px}
+  .home-intro{margin-top:14px;padding-top:30px}
+  .home-intro h2{margin:25px 0 17px}
   .course-choices{margin-top:31px;gap:12px}
-  .course-preview{height:157px;padding:15px}
-  .preview-sheet{padding:12px 14px;gap:7px;font-size:10px}
-  .preview-sheet .preview-heading{font-size:11px}
-  .preview-practical{gap:8px}
-  .preview-practical span{padding:8px 12px}
-  .course-choice-body{padding:15px 17px}
+  .course-preview{height:188px;padding:16px 12px 0}
+  .preview-browser,.sheet-mock{height:184px}
+  .theory-mock-content{grid-template-columns:75px minmax(0,1fr)}
+  .theory-mock-content aside span{font-size:7px;padding:4px}
+  .mock-lesson{padding:11px 8px}
+  .mock-lesson>strong{font-size:12px}
+  .mock-term{gap:4px;font-size:8px;line-height:1.4}
+  .mock-term b{min-width:36px}
+  .preview-toolbar{padding:8px;font-size:9px}
+  .sheet-grid{font-size:8.5px;grid-template-columns:24px 1.4fr repeat(3,.8fr)}
+  .sheet-cell{min-height:21px;padding:0 4px}
+  .course-choice-body{padding:16px}
   .reading-layout{display:block}
   .lesson-index{position:static;margin:0 0 25px}
   .lesson-index nav{display:flex;flex-wrap:wrap;gap:7px;border:0}
   .lesson-link{width:auto;flex:1 1 155px;border:1px solid var(--rule);padding:12px}
   .reading-article{max-width:none}
-  .featured-game{padding:14px 15px;min-height:84px;gap:10px}
 }
 @media(max-width:560px){
   .site-main{padding:22px 14px 43px}
-  .home-intro{padding-top:40px}
-  .home-logo-mark{width:43px;height:43px;flex-basis:43px;padding:8px;gap:3px;border-width:2px;border-radius:9px}
-  .home-signature{gap:10px}
-  .home-signature h1{font-size:clamp(31px,8.6vw,44px)}
-  .home-intro h2{font-size:27px;margin:25px 0 17px}
-  .course-choices{grid-template-columns:1fr;margin-top:26px}
-  .course-preview{height:147px}
-  .course-choice-body{min-height:92px}
+  .home-intro{margin-top:19px;padding:39px 8px 0}
+  .home-logo-mark{width:47px;height:47px;border-radius:11px}
+  .home-signature{gap:11px}
+  .home-signature h1{font-size:clamp(32px,8.4vw,45px)}
+  .home-intro h2{font-size:27px;margin:24px 0 17px}
+  .course-choices{grid-template-columns:1fr;margin-top:28px}
+  .course-preview{height:211px;padding:17px 20px 0}
+  .preview-browser,.sheet-mock{height:200px}
+  .theory-mock-content{grid-template-columns:100px minmax(0,1fr)}
+  .theory-mock-content aside span{font-size:9px}
+  .mock-lesson{padding:13px}
+  .mock-lesson>strong{font-size:14px}
+  .mock-term{font-size:9px;gap:9px}
+  .mock-term b{min-width:42px}
+  .sheet-grid{font-size:10px;grid-template-columns:28px 1.4fr repeat(3,.8fr)}
+  .sheet-cell{min-height:23px;padding:0 6px}
+  .course-choice-body{min-height:95px}
   .home-games{margin-top:36px}
-  .featured-games{grid-template-columns:1fr}
+  .featured-games{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .featured-game,.featured-game-large{grid-column:span 1}
+  .game-visual,.featured-game-large .game-visual{height:95px}
+  .featured-game-bottom,.featured-game-large .featured-game-bottom{padding:12px;min-height:93px}
+  .featured-game-copy strong,.featured-game-large .featured-game-copy strong{font-size:12.5px}
+  .featured-game-copy small{font-size:10px}
+  .featured-game-bottom>svg{width:15px}
   .home-section-heading h2{font-size:22px}
   .page-title{flex-wrap:wrap;align-items:start}
   .page-title h1{font-size:34px}
@@ -450,6 +477,11 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .revision-card strong{font-size:26px}
   .site-footer{padding:16px 17px}
   .arcade-frame{height:830px}
+}
+@media(max-width:380px){
+  .featured-games{grid-template-columns:1fr}
+  .featured-game,.featured-game-large{grid-column:span 1}
+  .game-visual,.featured-game-large .game-visual{height:118px}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
