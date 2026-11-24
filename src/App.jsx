@@ -420,20 +420,32 @@ function App() {
 
         {route.page === "past-papers" && <>
           {route.papersView === "home" && <>
-            <Title title="Past Papers"/>
-            <div className="paper-category-grid">
-              <a className="paper-category" href="#/past-papers/yearly">
-                <span className="paper-category-icon"><CalendarCheck2 size={26} strokeWidth={1.7}/></span>
-                <strong>Yearly Past Papers</strong>
-                <span>Question papers and mark schemes on PapaCambridge</span>
-                <ArrowUpRight className="paper-category-arrow" size={20}/>
-              </a>
-              <a className="paper-category" href="#/past-papers/solved">
-                <span className="paper-category-icon"><CheckCircle2 size={26} strokeWidth={1.7}/></span>
-                <strong>Solved Past Papers</strong>
-                <span>Paper 1, Paper 2 and Paper 3</span>
-                <ArrowUpRight className="paper-category-arrow" size={20}/>
-              </a>
+            <div className="papers-home">
+              <Title title="Past Papers"/>
+              <div className="paper-category-grid papers-home-grid">
+                <a className="paper-category papers-home-card" href="#/past-papers/yearly">
+                  <span className="papers-home-art" aria-hidden="true">
+                    <svg viewBox="0 0 240 142" fill="none">
+                      <g className="papers-art-back" transform="rotate(-12 96 70)"><rect x="51" y="14" width="90" height="113" rx="9"/><path d="M67 42h46M67 54h31M67 78h57M67 90h43"/></g>
+                      <g className="papers-art-front" transform="rotate(9 145 70)"><rect x="100" y="12" width="91" height="116" rx="9"/><rect x="114" y="28" width="26" height="20" rx="4"/><path d="M115 62h60M115 73h44M115 84h60M115 106h23"/></g>
+                      <g className="papers-art-badge"><rect x="159" y="88" width="45" height="42" rx="10"/><path d="M169 101h25M169 109h25M176 94v11m12-11v11M176 116h4m5 0h4"/></g>
+                    </svg>
+                  </span>
+                  <span className="papers-home-copy"><strong>Yearly Past Papers</strong><span>Question papers, mark schemes, examiner reports and source files.</span><small>2017–2026</small></span>
+                  <ArrowRight className="paper-category-arrow" size={22}/>
+                </a>
+                <a className="paper-category papers-home-card" href="#/past-papers/solved">
+                  <span className="papers-home-art papers-solved-art" aria-hidden="true">
+                    <svg viewBox="0 0 240 142" fill="none">
+                      <g className="papers-art-back" transform="rotate(-10 100 70)"><rect x="55" y="13" width="94" height="116" rx="9"/><path d="M72 40h48M72 54h34M72 77h51M72 90h40"/></g>
+                      <g className="papers-art-front" transform="rotate(8 142 70)"><rect x="101" y="12" width="89" height="116" rx="9"/><path d="M115 33h54M115 45h35M115 67l5 5 9-11M139 68h33M115 88l5 5 9-11M139 89h33M115 109l5 5 9-11M139 110h25"/></g>
+                      <g className="papers-art-badge"><circle cx="187" cy="106" r="24"/><path d="m176 106 8 8 14-17"/></g>
+                    </svg>
+                  </span>
+                  <span className="papers-home-copy"><strong>Solved Past Papers</strong><span>Worked practical papers and supporting files.</span><small>Paper 2 &amp; Paper 3</small></span>
+                  <ArrowRight className="paper-category-arrow" size={22}/>
+                </a>
+              </div>
             </div>
           </>}
           {route.papersView === "yearly" && <PapaPapers year={route.papersYear} series={route.papersId} folder={route.papersDocument}/>}
