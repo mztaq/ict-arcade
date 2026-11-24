@@ -763,13 +763,13 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(prefers-reduced-motion:reduce){.papa-browser .paper-year{transition:none}}
 
 /* Illustrated past paper choices, using the existing theme tokens. */
-.papers-home{width:100%;max-width:1100px;margin-inline:auto}
+.papers-home{width:100%;max-width:1240px;margin-inline:auto}
 .papers-home .page-title{margin-bottom:26px}
-.papers-home-grid{width:100%;gap:18px}
-.paper-category.papers-home-card{display:grid;grid-template-rows:142px auto;gap:19px;min-height:0;padding:18px;border-radius:15px;overflow:hidden;transition:border-color .18s,background .18s}
+.papers-home-grid{width:100%;max-width:none;gap:22px}
+.paper-category.papers-home-card{display:grid;grid-template-rows:220px auto;gap:24px;min-height:0;padding:22px;border-radius:15px;overflow:hidden;transition:border-color .18s,background .18s}
 .paper-category.papers-home-card:hover{transform:none;border-color:var(--blue)}
-.papers-home-card .papers-home-art{width:100%;max-width:none;height:142px;margin:0;display:grid;place-items:center;border-radius:10px;background:radial-gradient(ellipse at 50% 75%,var(--blue-soft),transparent 75%),var(--paper-secondary);color:var(--blue);overflow:hidden}
-.papers-home-art svg{height:134px;width:100%;max-width:300px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
+.papers-home-card .papers-home-art{width:100%;max-width:none;height:220px;margin:0;display:grid;place-items:center;border-radius:10px;background:radial-gradient(ellipse at 50% 75%,var(--blue-soft),transparent 75%),var(--paper-secondary);color:var(--blue);overflow:hidden}
+.papers-home-art svg{height:208px;width:100%;max-width:380px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s ease}
 .papers-home-card:hover .papers-home-art svg{transform:translateY(-4px)}
 .papers-art-back{opacity:.48;fill:var(--paper)}
 .papers-art-front rect,.papers-art-badge rect,.papers-art-badge circle{fill:var(--paper)}
@@ -777,11 +777,11 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .papers-art-badge{stroke-width:2.4}
 .papers-home-card .papers-solved-art{background:radial-gradient(ellipse at 50% 75%,var(--success-paper),transparent 75%),var(--paper-secondary);color:var(--success)}
 .paper-category.papers-home-card .papers-home-copy{display:flex;flex-direction:column;gap:6px;margin:0;padding:0 34px 3px 3px;max-width:none;min-width:0}
-.papers-home-copy strong{font-size:24px;font-weight:700;line-height:1.25;margin:0;color:var(--ink)}
-.papers-home-copy>span{font-size:15px;line-height:1.5;color:var(--ink-soft)}
-.papers-home-copy small{font-size:13px;font-weight:600;color:var(--blue);margin-top:4px}
+.papers-home-copy strong{font-size:28px;font-weight:700;line-height:1.25;margin:0;color:var(--ink)}
+.papers-home-copy>span{font-size:16px;line-height:1.5;color:var(--ink-soft)}
+.papers-home-copy small{font-size:14px;font-weight:600;color:var(--blue);margin-top:4px}
 .papers-home-card .paper-category-arrow{top:auto;bottom:25px;right:20px}
-@media(max-width:680px){.papers-home-grid{grid-template-columns:1fr}.paper-category.papers-home-card{grid-template-rows:112px auto;gap:15px;padding:14px}.papers-home-card .papers-home-art{height:112px}.papers-home-art svg{height:107px}.papers-home-copy strong{font-size:23px}}
+@media(max-width:680px){.papers-home-grid{grid-template-columns:1fr}.paper-category.papers-home-card{grid-template-rows:156px auto;gap:16px;padding:16px}.papers-home-card .papers-home-art{height:156px}.papers-home-art svg{height:148px}.papers-home-copy strong{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.papers-home-card,.papers-home-art svg{transition:none!important;transform:none!important}}
 
 /* Override the generic card span width cap for the full-width illustration. */
