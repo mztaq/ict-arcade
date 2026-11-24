@@ -836,3 +836,11 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
  .papa-browser .paper-year strong{font-size:21px}
  .solved-paper-options .paper-category{min-height:190px}
 }
+
+/* Align navigation content with the centered page content, not the viewport edge. */
+.site-header:not(.home-header){padding-inline:max(calc((100% - 1370px)/2 + clamp(20px,3.4vw,58px)),clamp(20px,3.4vw,58px))}
+.site-header:not(.home-header):has(~ .site-body .papers-home),
+.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:max(calc((100% - 1240px)/2),calc((100% - 1370px)/2 + clamp(20px,3.4vw,58px)),clamp(20px,3.4vw,58px))}
+@media(max-width:1020px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:24px}}
+@media(max-width:740px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:18px}}
+@media(max-width:560px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:14px}}
