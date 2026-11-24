@@ -4,14 +4,13 @@ import {ArrowLeft,ArrowRight,ArrowUpRight,FolderOpen,FileText,FileArchive} from 
 export const years = Array.from({length:10},(_,i)=>2026-i);
 const root="#/past-papers/yearly";
 const host="https://pastpapers.papacambridge.com";
-const archive=host+"/papers/caie/igcse-ict0417";
 const upload=host+"/directories/CAIE/CAIE-pastpapers/upload/";
 const labels={m:"February / March",s:"May / June",w:"October / November"};
 export const folders=[["qp","Question Papers"],["ms","Mark Schemes"],["er","Examiner Reports"],["sf","Source Files"]];
 export function seriesFor(year){
   if(!years.includes(year))return [];
   return (year===2026?["s","m"]:["w","s","m"]).map(id=>({
-    id,label:labels[id],url:archive+"-"+year+"-"+(year===2017?{m:"mar",s:"jun",w:"nov"}[id]:year===2022&&id==="m"?"feb-march":{m:"march",s:"may-june",w:"oct-nov"}[id])
+    id,label:labels[id]
   }));
 }
 // Public file names confirmed against PapaCambridge's catalogue. No document bytes are stored.
@@ -46,11 +45,11 @@ export function PapaPapers({year,series,folder}){
   const files=exam&&type?filesFor(year,series,folder):[];
   return <>
     <div className="page-title"><div><h1>{title}</h1><p>{type&&exam?year+" · "+exam.label:exam?"Choose a document folder":validYear?"Choose an examination series":"Choose a year · 2017–2026"}</p></div><div className="title-action"><a className="chapter-back-button" href={back}><ArrowLeft size={16}/> Back</a></div></div>
-    {!validYear?<div className="paper-year-grid">{years.map(item=><a className="paper-year" key={item} href={root+"/"+item}><strong>{item}</strong><ArrowRight size={18}/></a>)}</div>:
-      !exam?<div className="paper-year-grid">{seriesFor(year).map(item=><a className="paper-year" key={item.id} href={yearRoute+"/"+item.id}><strong>{item.label}</strong><ArrowRight size={18}/></a>)}</div>:
-      !type?<div className="paper-year-grid">{folders.map(([id,label])=><a className="paper-year" key={id} href={seriesRoute+"/"+id}><FolderOpen size={22}/><strong>{label}</strong><ArrowRight size={18}/></a>)}</div>:
-      <div className="paper-year-grid">{files.map(file=><a className="paper-year papa-file" key={file.name} href={file.url} target="_blank" rel="noopener noreferrer">{folder==="sf"?<FileArchive size={22}/>:<FileText size={22}/>}<span style={{minWidth:0,overflowWrap:"anywhere"}}><strong>{file.title}</strong><small style={{display:"block"}}>{file.name}</small></span><ArrowUpRight size={18}/></a>)}
+    {!validYear?<div className="paper-year-grid papa-list">{years.map(item=><a className="paper-year" key={item} href={root+"/"+item}><strong>{item}</strong><ArrowRight size={18}/></a>)}</div>:
+      !exam?<div className="paper-year-grid papa-list">{seriesFor(year).map(item=><a className="paper-year" key={item.id} href={yearRoute+"/"+item.id}><strong>{item.label}</strong><ArrowRight size={18}/></a>)}</div>:
+      !type?<div className="paper-year-grid papa-list">{folders.map(([id,label])=><a className="paper-year" key={id} href={seriesRoute+"/"+id}><FolderOpen size={22}/><strong>{label}</strong><ArrowRight size={18}/></a>)}</div>:
+      <div className="paper-year-grid papa-list">{files.map(file=><a className="paper-year papa-file" key={file.name} href={file.url} target="_blank" rel="noopener noreferrer">{folder==="sf"?<FileArchive size={22}/>:<FileText size={22}/>}<span style={{minWidth:0,overflowWrap:"anywhere"}}><strong>{file.title}</strong><small style={{display:"block"}}>{file.name}</small></span><ArrowUpRight size={18}/></a>)}
       {!files.length&&<div className="paper-empty"><p>No individual links indexed for this folder yet.</p></div>}
-      <a className="paper-year" href={exam.url} target="_blank" rel="noopener noreferrer"><strong>Browse series on PapaCambridge</strong><ArrowUpRight size={18}/></a></div>}
+      </div>}
   </>;
 }
