@@ -1,11 +1,21 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
-  Check, CheckCircle2, ClipboardList, Eye, EyeOff,
-  Gamepad2, Layers, Menu, Moon, RotateCcw, Search, Sun, X
+  Check, CheckCircle2, Eye, EyeOff,
+  Layers, FileText, Moon, RotateCcw, Search, Sun, X, Keyboard, Cpu, Monitor,
+  HardDrive, Network, HeartPulse, PanelsTopLeft, Workflow, ShieldCheck, UsersRound, MessagesSquare, FolderOpen,
+  MonitorSmartphone, Binary, RadioTower, Printer, Disc3, MemoryStick, Router, Cloud,
+  House, CarFront, SlidersHorizontal, BrainCircuit, CalendarCheck2, Stethoscope,
+  PencilRuler, ClipboardCheck, ShieldAlert, LockKeyhole, Copyright, Mail, Globe2, FileArchive
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
+import {examinerAdvice} from "./examinerAdvice.js";
+import {solvedPastPapers} from "./pastPapers.js";
+import {PapaPapers} from "./PapaPapers.jsx";
+import PaperViewer from "./PaperViewer.jsx";
+import {notFoundJokes} from "./notFoundJokes.js";
+import {lessonComparisons} from "./lessonComparisons.js";
 
 const load = (key, fallback) => {
   try {
@@ -22,18 +32,82 @@ function useStored(key, initial) {
   }, [key, value]);
   return [value, setValue];
 }
-const getRoute = () => {
-  const parts = (location.hash || "#/home").replace(/^#\/?/, "").split("/");
-  return {page: parts[0] || "home", id: Number(parts[1]) || 1, lesson: Number(parts[2]) || 0};
-};
-const navigate = (page, id, lesson) => {
-  const destination = "#/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson);
-  if (location.hash === destination) {
-    window.scrollTo({top: 0, behavior: "smooth"});
-  } else {
-    location.hash = destination;
+// Migrate old hash bookmarks on initial load and same-document navigation.
+function migrateLegacyRoute() {
+  if (location.pathname === "/" && location.hash.startsWith("#/")) {
+    const legacy = location.hash.slice(1);
+    if (!legacy.startsWith("//") && !legacy.includes("\\")) {
+      history.replaceState(null, "", legacy === "/home" ? "/" : legacy);
+    }
   }
+}
+migrateLegacyRoute();
+const getRoute = () => {
+  const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
+  const [page, first, second, third, fourth] = parts;
+  let valid = false;
+  if (!page || ["home","notes","practical","practice","flashcards"].includes(page)) valid = parts.length === 1;
+  else if (page === "games") valid = parts.length === 1 || (parts.length === 2 && /^(?:[1-9]|10|11)$/.test(first));
+  else if (page === "chapter") {
+    const chapter = chapters.find(ch => String(ch.id) === first);
+    valid = !!chapter && (parts.length === 2 || (parts.length === 3 && /^\d+$/.test(second) && Number(second) < chapter.lessons.length));
+  } else if (page === "past-papers") {
+    if (parts.length === 1) valid = true;
+    else if (first === "yearly") {
+      const year = Number(second);
+      const validYear = /^\d{4}$/.test(second || "") && year >= 2017 && year <= 2026;
+      valid = parts.length === 2 || (validYear && (parts.length === 3 || (["m","s","w"].includes(third) && !(year === 2026 && third === "w") && (parts.length === 4 || (parts.length === 5 && ["qp","ms","er","sf"].includes(fourth))))));
+    } else if (first === "solved") {
+      valid = parts.length === 2 || (["1","2","3"].includes(second) && (parts.length === 3 || (solvedPastPapers[Number(second)]?.some(p=>p.id===third) && (parts.length === 4 || (parts.length === 5 && fourth === "workedSolution")))));
+    }
+  }
+  return {
+    page: valid ? (page || "home") : "not-found",
+    id: Number(first) || 1,
+    lesson: Number(second) || 0,
+    game: page === "games" ? Number(first) || 0 : 0,
+    papersView: page === "past-papers" ? first || "home" : "home",
+    papersNumber: first === "solved" ? Number(second) || 0 : 0,
+    papersYear: first === "yearly" ? Number(second) || 0 : 0,
+    papersId: page === "past-papers" ? third || "" : "",
+    papersDocument: page === "past-papers" ? fourth || "" : ""
+  };
 };
+const goTo = destination => {
+  if (location.pathname !== destination || location.search || location.hash) {
+    history.pushState(null, "", destination);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  } else window.scrollTo({top:0});
+};
+const navigate = (page, id, lesson) => goTo(page === "home" ? "/" : "/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson));
+const errorLayouts = ["left","center","right","up","down","tilt","tilt-right","stagger","reverse"];
+function pickErrorVariant(items,key) {
+  let previous = "";
+  try {previous = sessionStorage.getItem(key)||"";} catch {}
+  const choices = items.filter(item=>String(item)!==previous);
+  const choice = choices[Math.floor(Math.random()*choices.length)];
+  try {sessionStorage.setItem(key,String(choice));} catch {}
+  return choice;
+}
+function NotFound() {
+  const [joke] = useState(()=>pickErrorVariant(notFoundJokes,"ict-arcade-404-joke"));
+  const [layout] = useState(()=>pickErrorVariant(errorLayouts,"ict-arcade-404-layout"));
+  const [font] = useState(()=>["system","mono","serif"][Math.floor(Math.random()*3)]);
+  const [rare] = useState(()=>Math.random()<.02?["tiny","stamp","inverted","large"][Math.floor(Math.random()*4)]:"");
+  const [bits] = useState(()=>Array.from({length:18},(_,i)=>({
+    text:["ICT","RAM","ROM","404","OCR","OMR","RFID","LAN","WAN","HTML","CSS","#REF!","VLOOKUP","PAPER 2","ZIP","MAIL MERGE","PRIMARY KEY","ADC"][i],
+    x:3+Math.random()*94,y:3+Math.random()*94,size:12+Math.random()*18,rotate:-25+Math.random()*50
+  })));
+  return <section className="not-found" data-layout={layout} data-font={font} data-rare={rare}>
+    <div className="error-scatter" aria-hidden="true">{bits.map((bit,i)=><span key={i} style={{left:bit.x+"%",top:bit.y+"%",fontSize:bit.size+"px",transform:"rotate("+bit.rotate+"deg)"}}>{bit.text}</span>)}</div>
+    <div className="error-main"><div className="error-content">
+      <div className="not-found-code" aria-label="Error 404">404</div>
+      <h1>{joke}</h1>
+      <p>Page not found.</p>
+      <a className="primary-action" href="/"><ArrowLeft size={18}/> Back to home</a>
+    </div></div>
+  </section>;
+}
 const formatNumber = value => String(value).padStart(2, "0");
 const keyFor = (chapterId, lessonIndex) => chapterId + "-" + lessonIndex;
 const chapterName = id => chapters.find(ch => ch.id === id)?.title || "ICT";
@@ -44,31 +118,223 @@ function Progress({value, label}) {
     <span style={{width: Math.max(0, Math.min(value, 100)) + "%"}} />
   </div>;
 }
+// One consistent Lucide outline family. Mappings follow the actual chapter/lesson topics.
+const chapterIcons = {
+  1: Cpu,
+  2: Keyboard,
+  3: HardDrive,
+  4: Network,
+  5: HeartPulse,
+  6: PanelsTopLeft,
+  7: Workflow,
+  8: ShieldCheck,
+  9: UsersRound,
+  10: MessagesSquare,
+  11: FolderOpen
+};
+const lessonIcons = {
+  1: [PanelsTopLeft, Cpu, Binary, MonitorSmartphone],
+  2: [Keyboard, RadioTower, Printer],
+  3: [HardDrive, Disc3, MemoryStick],
+  4: [Network, Router, Cloud, Monitor],
+  5: [House, CarFront, HeartPulse],
+  6: [MessagesSquare, SlidersHorizontal, BrainCircuit, CalendarCheck2, Stethoscope, UsersRound],
+  7: [Search, PencilRuler, ClipboardCheck, BookOpen],
+  8: [ShieldCheck, ShieldAlert, LockKeyhole],
+  9: [UsersRound, Copyright],
+  10: [Mail, Globe2, RadioTower],
+  11: [FolderOpen, FileArchive]
+};
 function ChapterRow({chapter, done, compact = false, onOpen}) {
+  const ChapterIcon = chapterIcons[chapter.id] || BookOpen;
   const progress = chapterProgress(chapter, done);
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
-    <span className="chapter-index">{formatNumber(chapter.id)}</span>
-    <span className="chapter-description">
-      <strong>{chapter.title}</strong>
-      {!compact && <span className="row-summary">{chapter.description}</span>}
-    </span>
-    <span className="chapter-status">
-      <span>{chapter.lessons.length} lessons · {progress === 100 ? "Complete" : progress === 0 ? "Not started" : progress + "%"}</span>
-      <span className="mini-progress"><span style={{width: progress + "%"}} /></span>
+    <span className="chapter-index"><ChapterIcon size={22} strokeWidth={1.8} aria-hidden="true"/></span>
+    <span className="chapter-description"><strong>{chapter.title}{chapter.unit === "Theory" && <> <span className="chapter-number">(Chapter {chapter.id})</span></>}</strong></span>
+    <span className="chapter-stats">
+      <span className="chapter-lessons"><strong>{chapter.lessons.length}</strong><span>lessons</span></span>
+      {progress > 0 && <span className="chapter-percent">{progress}%</span>}
     </span>
     <ArrowUpRight size={19} strokeWidth={1.7} aria-hidden="true" />
   </button>;
 }
 function Title({title, description, action}) {
   return <div className="page-title">
-    <div><h1>{title}</h1><p>{description}</p></div>
+    <div><h1>{title}</h1>{description && <p>{description}</p>}</div>
     {action && <div className="title-action">{action}</div>}
+  </div>;
+}
+
+const arcadeGames = [
+  {id: 1, name: "Pixel Dash", detail: "Run, jump and answer questions."},
+  {id: 2, name: "Rune Dungeon", detail: "Solve runes and unlock the next room."},
+  {id: 3, name: "Snake", detail: "Collect apples and answer ICT questions."},
+  {id: 4, name: "Taxi Rush", detail: "Pick up passengers and answer fare questions."},
+  {id: 5, name: "Wing Byte", detail: "Fly through gaps and answer questions."},
+  {id: 6, name: "Block Stack", detail: "Clear rows to earn a question."},
+  {id: 7, name: "Server Climb", detail: "Climb ladders and avoid rolling bugs."},
+  {id: 8, name: "Space Defenders", detail: "Defeat alien waves to earn questions."},
+  {id: 9, name: "Brick Breaker", detail: "Break bricks and find question blocks."},
+  {id: 10, name: "Dojo Duel", detail: "Fight opponents and earn question combos."},
+  {id: 11, name: "Mr. Toner's ICT Superstore", detail: "Pick the correct device for each customer."}
+];
+
+
+function ArcadeVisual({id}) {
+  const backgrounds = ["#122D3A","#252D3A","#132F2C","#23303B","#183A48","#242D3D","#203242","#162B3B","#283341","#2E303E","#263A3A"];
+  const block=(x,y,w,h,color,extra={})=><rect x={x} y={y} width={w} height={h} fill={color} {...extra}/>;
+  return <div className="game-visual" aria-hidden="true">
+    <svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <rect width="320" height="150" fill={backgrounds[id-1] || "#122D3A"}/>
+      {id===1&&<>
+        {block(0,121,320,29,"#2C5362")}{block(0,121,320,6,"#57BFC2")}
+        {block(56,91,70,9,"#2C5362")}{block(190,70,78,9,"#2C5362")}
+        {block(210,47,27,25,"#F8C56B")}{<text x="223" y="65" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#25333D">?</text>}
+        {block(77,103,19,18,"#FF7659")}{block(82,97,13,7,"#FFB693")}
+        {block(278,108,16,13,"#73E1D6")}
+        <path d="M148 120l12-17 12 17m7 0l12-17 12 17" stroke="#FF7659" strokeWidth="4" fill="none"/>
+      </>}
+      {id===2&&<>
+        {[0,1,2,3,4,5].map(x=><path key={x} d={"M"+(x*65)+" 0V150"} stroke="#394655" strokeWidth="1"/>)}
+        {[0,1,2,3].map(y=><path key={y} d={"M0 "+(y*48)+"H320"} stroke="#394655" strokeWidth="1"/>)}
+        <path d="M127 8h67v78h-67z" stroke="#77808B" strokeWidth="8" fill="#182333"/>
+        <path d="M143 33l17-17 17 17-17 17z" fill="#F1BF65"/>
+        <path d="M147 115l13-21 13 21-13 23z" fill="#5ED0C7"/>
+        <circle cx="66" cy="72" r="15" stroke="#E68C69" strokeWidth="4" fill="#362D37"/>
+        <circle cx="258" cy="78" r="15" stroke="#E68C69" strokeWidth="4" fill="#362D37"/>
+      </>}
+      {id===3&&<>
+        {[0,1,2,3,4,5,6,7].map(x=><path key={x} d={"M"+(x*46)+" 0V150"} stroke="#31554B" strokeWidth="1"/>)}
+        {[0,1,2,3,4].map(y=><path key={y} d={"M0 "+(y*35)+"H320"} stroke="#31554B" strokeWidth="1"/>)}
+        {[[3,1],[4,1],[4,2],[5,2],[5,3],[6,3]].map(([x,y],i)=><rect key={i} x={x*37+6} y={y*30+4} width="25" height="25" rx="5" fill={i===5?"#B4F0CF":"#5DD0AE"}/>)}
+        <circle cx="258" cy="106" r="3" fill="#182F2A"/><circle cx="52" cy="85" r="10" fill="#FC795D"/><rect x="52" y="72" width="3" height="7" rx="2" fill="#B9E39B"/>
+      </>}
+      {id===4&&<>
+        {block(42,0,235,150,"#3B4650")}
+        {[22,80,138].map((x,i)=>block(150,x,5,26,"#CBD6D7",{key:i,rx:2}))}
+        <path d="M42 0V150M277 0V150" stroke="#D6E2E1" strokeWidth="5"/>
+        <rect x="95" y="73" width="73" height="38" rx="11" fill="#F6BE57"/>
+        <rect x="109" y="80" width="40" height="22" rx="5" fill="#23445B"/>
+        {block(104,67,14,9,"#101B25",{rx:3})}{block(142,67,14,9,"#101B25",{rx:3})}
+        <circle cx="236" cy="32" r="12" fill="#FF8666"/><circle cx="236" cy="32" r="5" fill="#FFF0DA"/>
+      </>}
+      {id===5&&<>
+        {block(0,0,320,150,"#215268")}
+        <circle cx="57" cy="35" r="15" fill="#E0F4E8" opacity=".8"/>
+        {block(230,0,49,66,"#66B9A0")}{block(225,60,59,11,"#A4DEAE")}
+        {block(230,113,49,37,"#66B9A0")}{block(225,103,59,11,"#A4DEAE")}
+        <ellipse cx="111" cy="77" rx="23" ry="19" fill="#FC8765"/><path d="M90 81l-16 8 19 3z" fill="#E9B164"/><circle cx="120" cy="72" r="3.5" fill="#13232C"/><ellipse cx="105" cy="88" rx="12" ry="6" fill="#FFD0A1"/>
+      </>}
+      {id===6&&<>
+        {[0,1,2,3,4,5,6].map(x=><path key={x} d={"M"+(55+x*30)+" 12V150"} stroke="#3C4657" strokeWidth="1"/>)}
+        {[0,1,2,3,4].map(y=><path key={y} d={"M55 "+(12+y*30)+"H265"} stroke="#3C4657" strokeWidth="1"/>)}
+        {[[1,3],[2,3],[3,3],[3,2],[4,4],[4,3],[5,3],[5,2],[0,4],[1,4],[2,4],[3,4]].map(([x,y],i)=><rect key={i} x={57+x*30} y={14+y*27} width="25" height="23" rx="2" fill={i<4?"#FF8A62":i<8?"#5FCABF":"#F0C66C"}/>)}
+        {[[2,0],[3,0],[4,0],[3,1]].map(([x,y],i)=><rect key={i} x={57+x*30} y={14+y*27} width="25" height="23" rx="2" fill="#8BADC9"/>)}
+      </>}
+      {id===7&&<>
+        {[38,82,126].map((y,i)=><rect key={i} x="16" y={y} width="290" height="7" fill="#5F7B85"/>)}
+        {[100,229].map(x=><g key={x}><path d={"M"+x+" 13V145m19-132v132"} stroke="#E9BB76" strokeWidth="5"/>{[30,45,60,75,90,105,120,135].map(y=><path key={y} d={"M"+x+" "+y+"h19"} stroke="#E9BB76" strokeWidth="3"/>)}</g>)}
+        <rect x="60" y="106" width="18" height="19" rx="3" fill="#57CFC7"/><circle cx="69" cy="99" r="8" fill="#F4AA86"/>
+        <circle cx="273" cy="111" r="10" fill="#F38B68"/><circle cx="269" cy="108" r="2" fill="#1B2634"/>
+      </>}
+      {id===8&&<>
+        {[68,130,192,254].map((x,i)=><g key={x}><path d={"M"+(x-16)+" 32h32v19h-8v8h-6v-8h-5v8h-6v-8h-7z"} fill={i%2?"#F7BC75":"#69D6D0"}/><rect x={x-7} y="38" width="4" height="5" fill="#152634"/><rect x={x+5} y="38" width="4" height="5" fill="#152634"/></g>)}
+        <rect x="152" y="111" width="18" height="23" fill="#E5E8E0"/><path d="M143 126h36l-7-14h-22z" fill="#6FC6D0"/>
+        <rect x="160" y="76" width="3" height="24" fill="#F8B85D"/><circle cx="161.5" cy="72" r="3" fill="#F8B85D"/>
+      </>}
+      {id===9&&<>
+        {[0,1,2,3].map(row=>[0,1,2,3,4,5].map(col=><rect key={row+"-"+col} x={17+col*49} y={20+row*23} width="44" height="17" rx="3" fill={["#F6BD75","#77C5C7","#FC856B","#B7D9CF"][row]} />))}
+        <circle cx="203" cy="112" r="7" fill="#F7F4EC"/><path d="M169 126l-11-7" stroke="#F7F4EC" strokeWidth="2"/>
+        <rect x="110" y="137" width="103" height="8" rx="4" fill="#F7F4EC"/>
+      </>}
+      {id===10&&<>
+        <rect x="0" y="130" width="320" height="20" fill="#44505A"/>
+        <rect x="17" y="21" width="129" height="8" rx="3" fill="#77C9B8"/><rect x="174" y="21" width="129" height="8" rx="3" fill="#FC8C6E"/>
+        <circle cx="109" cy="78" r="14" fill="#E9B28F"/><path d="M98 92l25 0 17 29h-63z" fill="#6EC9C5"/><path d="M111 100l-30 7m42 0 33-12" stroke="#6EC9C5" strokeWidth="11" strokeLinecap="round"/>
+        <circle cx="226" cy="78" r="14" fill="#E9B28F"/><path d="M213 92h26l13 29h-55z" fill="#FC8969"/><path d="M214 101l-31-7m55 8 22 11" stroke="#FC8969" strokeWidth="10" strokeLinecap="round"/>
+      </>}
+      {id===11&&<>
+        <rect x="23" y="18" width="274" height="111" rx="7" fill="#324D50"/>
+        <rect x="32" y="29" width="94" height="77" rx="4" fill="#D8E8D9"/>
+        <rect x="43" y="43" width="73" height="9" fill="#5A847D"/><rect x="43" y="58" width="47" height="7" fill="#90B5A6"/>
+        <rect x="181" y="83" width="92" height="39" fill="#C9A874"/><rect x="190" y="92" width="31" height="23" fill="#F58D69"/><rect x="229" y="94" width="32" height="21" fill="#78D0C2"/>
+        <rect x="180" y="45" width="47" height="32" rx="3" fill="#1B2B37"/><rect x="186" y="51" width="35" height="17" fill="#8DC9BD"/><rect x="238" y="34" width="37" height="43" rx="3" fill="#F1C578"/>
+      </>}
+    </svg>
+  </div>;
+}
+
+function CircuitBackdrop() {
+  return <div className="home-circuit-backdrop" aria-hidden="true">
+    <svg viewBox="0 0 1200 610" preserveAspectRatio="xMidYMin slice" focusable="false">
+      <g className="circuit-lines" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M0 90H95L145 140H254L297 183H378"/>
+        <path d="M0 175H76L126 225H226L274 273H343"/>
+        <path d="M0 300H62L114 248H189"/>
+        <path d="M0 480H114L166 428H230L286 372H364"/>
+        <path d="M1200 75H1100L1054 121H976L920 177H836"/>
+        <path d="M1200 196H1132L1069 259H995L954 300H866"/>
+        <path d="M1200 370H1140L1080 310H1010"/>
+        <path d="M1200 514H1090L1040 463H978L927 412H857"/>
+        <path d="M0 557H84L138 503H206"/>
+        <path d="M1200 576H1125L1081 532H999"/>
+      </g>
+      <g className="circuit-nodes" fill="currentColor">
+        <circle cx="378" cy="183" r="4"/><circle cx="343" cy="273" r="4"/>
+        <circle cx="189" cy="248" r="4"/><circle cx="364" cy="372" r="4"/>
+        <circle cx="836" cy="177" r="4"/><circle cx="866" cy="300" r="4"/>
+        <circle cx="1010" cy="310" r="4"/><circle cx="857" cy="412" r="4"/>
+        <circle cx="206" cy="503" r="4"/><circle cx="999" cy="532" r="4"/>
+      </g>
+      <g className="circuit-signals" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M0 90H95L145 140H254L297 183H378"/>
+        <path d="M0 480H114L166 428H230L286 372H364"/>
+        <path d="M1200 196H1132L1069 259H995L954 300H866"/>
+        <path d="M1200 514H1090L1040 463H978L927 412H857"/>
+      </g>
+    </svg>
+  </div>;
+}
+
+function TheoryPreview() {
+  const section=chapters[3].lessons[1];
+  return <div className="course-preview theory-preview" aria-hidden="true">
+    <div className="preview-browser">
+      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>ICT / Theory</span><span>04 / 11</span></div>
+      <div className="theory-mock-content">
+        <aside><span>01 Systems</span><span>02 Devices</span><span className="selected">04 Networks</span><span>05 Effects of IT</span></aside>
+        <div className="mock-lesson">
+          <span className="mock-kicker">Lesson 02</span>
+          <strong>{section.title}</strong>
+          <div className="mock-rule"/>
+          {section.terms.slice(0,2).map(([term,definition])=><div className="mock-term" key={term}><b>{term}</b><span>{definition}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+function PracticalPreview() {
+  const cells=[
+    ["","A","B","C","D"],
+    ["1","Item","Qty","Price","Total"],
+    ["2","Notebook","2","7","14"],
+    ["3","Cable","3","12","36"],
+    ["4","Mouse","1","35","35"],
+    ["5","Total","","","85"]
+  ];
+  return <div className="course-preview practical-preview" aria-hidden="true">
+    <div className="sheet-mock">
+      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>Spreadsheet</span><span>Sheet 01</span></div>
+      <div className="formula-bar"><span>ƒx</span><code>=SUM(D2:D4)</code></div>
+      <div className="sheet-grid">{cells.flatMap((row,i)=>row.map((cell,j)=><span key={i+"-"+j} className={"sheet-cell "+(i===0?"sheet-col ":"")+(j===0?"sheet-row ":"")+(i===5&&j===4?"sheet-total":"")}>{cell}</span>))}</div>
+    </div>
   </div>;
 }
 
 function App() {
   const [route, setRoute] = useState(getRoute);
-  const [menuOpen, setMenuOpen] = useState(false);
+
+  const selectedSolvedPaper = solvedPastPapers[route.papersNumber]?.find(item=>item.id===route.papersId);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
   const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
@@ -89,9 +355,20 @@ function App() {
   const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
-    const onHash = () => { setRoute(getRoute()); setMenuOpen(false); window.scrollTo({top: 0, behavior: "smooth"}); };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    const onRoute = () => { migrateLegacyRoute(); setRoute(getRoute()); window.scrollTo({top:0,behavior:"instant"}); };
+    const onLink = event => {
+      if(event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)return;
+      const anchor = event.target.closest?.("a[href]");
+      if(!anchor || anchor.hasAttribute("download") || (anchor.target && anchor.target !== "_self"))return;
+      const url = new URL(anchor.href, location.href);
+      if(url.origin !== location.origin || !anchor.getAttribute("href").startsWith("/") || url.search || url.hash || /\.[a-z0-9]+$/i.test(url.pathname))return;
+      event.preventDefault();
+      goTo(url.pathname);
+    };
+    window.addEventListener("popstate", onRoute);
+    window.addEventListener("hashchange", onRoute);
+    document.addEventListener("click", onLink);
+    return () => {window.removeEventListener("popstate", onRoute);window.removeEventListener("hashchange", onRoute);document.removeEventListener("click", onLink);};
   }, []);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => {
@@ -105,6 +382,7 @@ function App() {
   const lessonIndex = Math.max(0, Math.min(route.lesson, chapter.lessons.length - 1));
   const lesson = chapter.lessons[lessonIndex];
   const lessonKey = keyFor(chapter.id, lessonIndex);
+  const advice = examinerAdvice[lessonKey];
   const theoryChapters = chapters.filter(ch => ch.unit === "Theory");
   const theoryLessons = allLessons.filter(l => l.chapterId <= 11);
   const theoryQuestions = questions.filter(q => q.chapterId <= 11);
@@ -156,84 +434,159 @@ function App() {
   const advanceFlash = () => {setFlipped(false); setFlashIndex(i => i + 1);};
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
-  const nav = [
-    {page: "home", label: "Home", icon: BookOpen},
-    {page: "notes", label: "Theory", icon: Layers},
-    {page: "practical", label: "Practical", icon: ClipboardList},
-    {page: "practice", label: "Questions", icon: CheckCircle2},
-    {page: "flashcards", label: "Flashcards", icon: RotateCcw},
-    {page: "games", label: "Games", icon: Gamepad2}
-  ];
-  const activePage = route.page === "chapter" ? (chapter.unit === "Theory" ? "notes" : "practical") : route.page;
-
   return <div className="site-shell">
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
-    {menuOpen && <button className="mobile-backdrop" onClick={() => setMenuOpen(false)} aria-label="Close navigation" />}
-    <aside className={"site-sidebar " + (menuOpen ? "open" : "")} aria-label="Site navigation">
-      <button className="brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
-        <span className="brand-grid" aria-hidden="true"><i /><i /><i /><i /></span>
-        <span>ICT<span className="brand-second">ARCADE</span></span>
+    {route.page !== "not-found" && <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
+      {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
+        <img className="brand-image" src="/ict-arcade-mark.svg" alt="" />
+        <span className="header-brand-name">ICT Arcade</span>
+      </button>}
+      <button className="header-theme" type="button" onClick={toggleTheme}
+        title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+        {darkMode ? <Sun size={19} strokeWidth={1.85}/> : <Moon size={19} strokeWidth={1.85}/>}
       </button>
-      <nav className="nav-list" aria-label="Study sections">
-        {nav.map(({page, label, icon: Icon}) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => {setMenuOpen(false); navigate(page);}}>
-          <Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span>
-        </button>)}
-      </nav>
-      <div className="sidebar-bottom">
-        <div className="sidebar-completion">
-          <div className="completion-value"><strong>{validDone.length}<span> / {theoryLessons.length} lessons</span></strong><span>{overallPercent}%</span></div>
-          <Progress value={overallPercent} label="Theory revision progress"/>
-        </div>
-      </div>
-    </aside>
-
+    </header>}
     <div className="site-body">
-      <header className="site-header">
-        <div className="header-left"><button className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={21}/></button><span className="mobile-title">ICT Arcade</span></div>
-        <button className="header-theme" type="button" onClick={toggleTheme} title={darkMode ? "Switch to light mode" : "Switch to dark mode"} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
-          {darkMode ? <Sun size={20} strokeWidth={1.8}/> : <Moon size={20} strokeWidth={1.8}/>}
-        </button>
-      </header>
-      <main id="main-content" tabIndex={-1} className="site-main">
+      <main id="main-content" tabIndex={-1} className={"site-main"+(route.page==="not-found"?" error-page-main":"")}>
 
-        {route.page === "home" && <>
-          <section className="choose-course">
-            <h1>What are you revising?</h1>
-            <p>Choose a part of the ICT course.</p>
-            <div className="course-choices">
-              <button className="course-choice" onClick={() => navigate("notes")}>
-                <span className="choice-icon"><BookOpen size={24} strokeWidth={1.8}/></span>
-                <h2>Theory</h2>
-                <p>Computer systems, networks, ICT applications, safety and more.</p>
-                <span className="choice-footer"><span>11 chapters · {theoryLessons.length} lessons</span><ArrowRight size={19}/></span>
-              </button>
-              <button className="course-choice" onClick={() => navigate("practical")}>
-                <span className="choice-icon"><Layers size={24} strokeWidth={1.8}/></span>
-                <h2>Practical</h2>
-                <p>Document production, databases, spreadsheets and website authoring.</p>
-                <span className="choice-footer"><span>Coming soon</span><ArrowRight size={19}/></span>
-              </button>
+        {route.page === "not-found" && <NotFound key={location.pathname}/>}
+        {route.page === "home" && <div className="home-screen">
+          <CircuitBackdrop/>
+          <section className="home-intro">
+            <div className="home-signature">
+              <img className="home-logo-mark" src="/ict-arcade-mark.svg" alt="" />
+              <h1>ICT Arcade</h1>
             </div>
-            {validDone.length > 0 && <button className="continue-lesson" onClick={() => {
-              const next = theoryLessons.find(l => !done.includes(keyFor(l.chapterId, l.index))) || theoryLessons[0];
-              navigate("chapter", next.chapterId, next.index);
-            }}>Continue theory revision <ArrowRight size={17}/></button>}
+            <h2>Learn ICT step by step</h2>
+            <a className="past-papers-link" href="/past-papers">
+              <FileText size={18}/> Try past papers <ArrowRight size={17}/>
+            </a>
           </section>
+
+          <section className="course-choices" aria-label="Revision sections">
+            <a className="course-choice theory-card" href="/notes">
+              <TheoryPreview/>
+              <span className="course-choice-body">
+                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong></span>
+                <span className="course-stats"><span><strong>{theoryChapters.length}</strong><small>chapters</small></span><span><strong>{theoryLessons.length}</strong><small>lessons</small></span></span>
+              </span>
+            </a>
+            <a className="course-choice practical-card" href="/practical">
+              <PracticalPreview/>
+              <span className="course-choice-body">
+                <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
+              </span>
+            </a>
+          </section>
+
+          <a className="games-hub-card" href="/games" aria-label="Browse all 11 ICT Arcade games">
+            <span className="games-hub-info"><strong>Games</strong><span>11 games</span></span>
+            <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
+          </a>
+        </div>}
+
+        {route.page === "past-papers" && <>
+          {route.papersView === "home" && <>
+            <div className="papers-home">
+              <Title title="Past Papers" action={<a className="chapter-back-button" href="/"><ArrowLeft size={18}/> Back</a>}/>
+              <div className="paper-category-grid papers-home-grid">
+                <a className="paper-category papers-home-card" href="/past-papers/yearly">
+                  <span className="papers-home-art" aria-hidden="true">
+                    <svg viewBox="0 0 240 142" fill="none">
+                      <g className="papers-art-back" transform="rotate(-12 96 70)"><rect x="51" y="14" width="90" height="113" rx="9"/><path d="M67 42h46M67 54h31M67 78h57M67 90h43"/></g>
+                      <g className="papers-art-front" transform="rotate(9 145 70)"><rect x="100" y="12" width="91" height="116" rx="9"/><rect x="114" y="28" width="26" height="20" rx="4"/><path d="M115 62h60M115 73h44M115 84h60M115 106h23"/></g>
+                      <g className="papers-art-badge"><rect x="159" y="88" width="45" height="42" rx="10"/><path d="M169 101h25M169 109h25M176 94v11m12-11v11M176 116h4m5 0h4"/></g>
+                    </svg>
+                  </span>
+                  <span className="papers-home-copy"><strong>Yearly Past Papers</strong><span>Question papers, mark schemes, examiner reports and source files.</span><small>2017–2026</small></span>
+                  <ArrowRight className="paper-category-arrow" size={22}/>
+                </a>
+                <a className="paper-category papers-home-card" href="/past-papers/solved">
+                  <span className="papers-home-art papers-solved-art" aria-hidden="true">
+                    <svg viewBox="0 0 240 142" fill="none">
+                      <g className="papers-art-back" transform="rotate(-10 100 70)"><rect x="55" y="13" width="94" height="116" rx="9"/><path d="M72 40h48M72 54h34M72 77h51M72 90h40"/></g>
+                      <g className="papers-art-front" transform="rotate(8 142 70)"><rect x="101" y="12" width="89" height="116" rx="9"/><path d="M115 33h54M115 45h35M115 67l5 5 9-11M139 68h33M115 88l5 5 9-11M139 89h33M115 109l5 5 9-11M139 110h25"/></g>
+                      <g className="papers-art-badge"><circle cx="187" cy="106" r="24"/><path d="m176 106 8 8 14-17"/></g>
+                    </svg>
+                  </span>
+                  <span className="papers-home-copy"><strong>Solved Past Papers</strong><span>Worked practical papers and supporting files.</span><small>Paper 2 &amp; Paper 3</small></span>
+                  <ArrowRight className="paper-category-arrow" size={22}/>
+                </a>
+              </div>
+            </div>
+          </>}
+          {route.papersView === "yearly" && <PapaPapers year={route.papersYear} series={route.papersId} folder={route.papersDocument}/>}
+          {route.papersView === "solved" && <>
+            <Title title={selectedSolvedPaper ? selectedSolvedPaper.title :
+                [1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
+              action={<button type="button" className="chapter-back-button"
+                onClick={()=>route.papersId ?
+                  navigate("past-papers","solved",route.papersNumber) :
+                  navigate("past-papers",route.papersNumber ? "solved" : undefined)}>
+                <ArrowLeft size={16}/> {route.papersId ? "Paper "+route.papersNumber :
+                  route.papersNumber ? "Solved Past Papers" : "Past Papers"}
+              </button>}/>
+            {route.papersNumber === 0 ? <>
+              <div className="paper-category-grid solved-paper-options">
+                <a className="paper-category" href="/past-papers/solved/1">
+                  <span className="paper-category-icon"><BookOpen size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 1</strong><span>Theory</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
+                <a className="paper-category" href="/past-papers/solved/2">
+                  <span className="paper-category-icon"><FileText size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 2</strong><span>Document Production, Databases and Presentations</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
+                <a className="paper-category" href="/past-papers/solved/3">
+                  <span className="paper-category-icon"><Layers size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 3</strong><span>Spreadsheets and Website Authoring</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
+              </div>
+            </> : route.papersNumber === 1 ? (
+              <div className="paper-1-message" role="status">
+                <HeartPulse size={39} strokeWidth={1.6} aria-hidden="true"/>
+                <h2>Mustaqim hates Theory, so no solved Paper 1 papers.</h2>
+              </div>
+            ) : [2,3].includes(route.papersNumber) ? (
+              route.papersId ?
+                selectedSolvedPaper ?
+                  <PaperViewer title={selectedSolvedPaper.title}
+                    selectedKind={route.papersDocument}
+                    routePrefix={"/past-papers/solved/"+route.papersNumber+"/"+selectedSolvedPaper.id}
+                    documents={[{key:"workedSolution",label:"Worked Solution",url:selectedSolvedPaper.url}]}
+                    sourceFiles={selectedSolvedPaper.sourceFiles||[]}/> :
+                  <div className="paper-empty"><p>This solution isn't available.</p></div> :
+              solvedPastPapers[route.papersNumber].length ?
+                <div className="paper-year-grid">
+                  {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.id}
+                      href={"/past-papers/solved/"+route.papersNumber+"/"+item.id}>
+                    <FileText size={20} strokeWidth={1.7} aria-hidden="true"/>
+                    <strong>{item.title}</strong><ArrowRight size={18} aria-hidden="true"/>
+                  </a>)}
+                </div> :
+                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/>
+                  <p>No solved papers uploaded yet.</p></div>
+            ) : <div className="paper-empty"><p>Choose Paper 1, Paper 2 or Paper 3.</p></div>}
+          </>}
+          {!["home","yearly","solved"].includes(route.papersView) && <div className="paper-empty"><p>That collection isn't available.</p>
+            <button className="secondary-action" onClick={()=>navigate("past-papers")}>Past Papers</button></div>}
         </>}
 
         {route.page === "notes" && <>
-          <Title title="Theory" description="11 chapters of explanations, examples and key definitions." />
-          <div className="theory-shortcuts">
-            <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
-            <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
-          </div>
+          <Title title="Theory" action={<div className="theory-title-actions">
+            <span className="theory-total"><strong>{theoryLessons.length}</strong><span>lessons</span></span>
+            <a className="chapter-back-button" href="/"><ArrowLeft size={18}/> Back</a>
+          </div>}/>
           <div className="library-toolbar">
             <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
             <div className="filter-list" role="group" aria-label="Filter chapters">
               {["All", "Saved"].map(value => <button key={value} onClick={() => setFilter(value)} className={filter === value ? "selected" : ""} aria-pressed={filter === value}>{value}{value === "Saved" && bookmarkCount > 0 ? " (" + bookmarkCount + ")" : ""}</button>)}
             </div>
           </div>
-          <div className="result-summary"><span>{results.length} chapters</span><span>{results.reduce((total, ch) => total + ch.lessons.length, 0)} lessons</span></div>
+          {(search.trim() || filter !== "All") && <div className="result-summary">{results.length} matching chapters</div>}
           {results.length ? <div className="chapter-list">{results.map(ch => <ChapterRow key={ch.id} chapter={ch} done={done} onOpen={() => {
             const savedIndex = ch.lessons.findIndex((_, index) => !done.includes(keyFor(ch.id, index)));
             navigate("chapter", ch.id, savedIndex === -1 ? 0 : savedIndex);
@@ -241,32 +594,52 @@ function App() {
         </>}
 
         {(route.page === "practical" || (route.page === "chapter" && chapter.unit !== "Theory")) && <section className="practical-soon">
-          <div className="choice-icon"><Layers size={26} strokeWidth={1.8}/></div>
           <h1>Practical</h1>
-          <p>Practical revision is coming soon. Theory lessons, questions and games are ready to use.</p>
-          <button className="primary-action" onClick={() => navigate("notes")}>Go to Theory <ArrowRight size={17}/></button>
+          <p>Coming soon</p>
         </section>}
 
         {route.page === "chapter" && chapter.unit === "Theory" && <>
-          <button className="back-link" onClick={() => navigate("notes")}><ArrowLeft size={16}/> Back to Theory</button>
-          <div className="chapter-heading"><h1>{chapter.title}</h1><p>{chapter.description}</p></div>
+          <div className="chapter-heading">
+            <h1>{chapter.title}</h1>
+            <button type="button" className="chapter-back-button" onClick={() => navigate("notes")}>
+              <ArrowLeft size={16} aria-hidden="true"/> Back to Theory
+            </button>
+          </div>
           <div className="reading-layout">
             <aside className="lesson-index" aria-label="Lessons in chapter">
-              <div className="lesson-index-heading"><span>Lessons</span><span>{chapterProgress(chapter, done)}% done</span></div>
-              <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
-              <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
-                <span>{done.includes(keyFor(chapter.id, i)) ? <Check size={15}/> : formatNumber(i + 1)}</span><span>{entry.title}</span>
-              </button>)}</nav>
+              <div className="lesson-index-heading"><span>Contents</span><strong>{chapter.lessons.length} lessons</strong></div>
+              <div className="lesson-index-progress">
+                <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
+                {chapterProgress(chapter, done) > 0 && <span>{chapterProgress(chapter, done)}% complete</span>}
+              </div>
+              <nav>{chapter.lessons.map((entry, i) => {
+                const LessonIcon = lessonIcons[chapter.id]?.[i] || BookOpen;
+                const completed = done.includes(keyFor(chapter.id, i));
+                return <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")}
+                  onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
+                  <span className={"lesson-icon " + (completed ? "is-complete" : "")}>
+                    <LessonIcon size={21} strokeWidth={1.8} aria-hidden="true"/>
+                    {completed && <Check size={11} strokeWidth={2.7} className="lesson-check" aria-hidden="true"/>}
+                  </span>
+                  <span>{entry.title}</span>
+                  {completed && <span className="sr-only">Completed</span>}
+                </button>;
+              })}</nav>
             </aside>
             <article className="reading-article">
               <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
               <h2>{lesson.title}</h2>
-              <div className="article-rule"/>
-              <h3>Key ideas</h3>
-              <ol className="concepts">{lesson.points.map((point, i) => <li key={i}><span className="concept-count">{formatNumber(i + 1)}</span><span>{point}</span></li>)}</ol>
+              <h3>Key points</h3>
+              <ul className="concepts">{lesson.points.map((point, i) => <li key={i}>{point}</li>)}</ul>
+              {lessonComparisons[lesson.title] && <section className="definitions lesson-comparisons"><h3>Advantages and disadvantages</h3><table className="definitions-table comparison-table"><thead><tr><th scope="col">Topic</th><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr></thead><tbody>{lessonComparisons[lesson.title].map(([topic,advantages,disadvantages])=><tr key={topic}><th scope="row">{topic}</th><td>{advantages}</td><td>{disadvantages}</td></tr>)}</tbody></table></section>}
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
+              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><table className="definitions-table"><thead><tr><th scope="col">Term</th><th scope="col">Definition</th></tr></thead><tbody>{lesson.terms.map(([term, definition]) => <tr key={term}><th scope="row">{term}</th><td>{definition}</td></tr>)}</tbody></table></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
-              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions to learn</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
+              <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
+                {advice ? <>
+                  <ul className="concepts">{advice.points.map((tip,i)=><li key={i}>{tip}</li>)}</ul>
+                </> : <p>Coming soon</p>}
+              </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
                 <div className="article-next">{lessonIndex > 0 && <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex - 1)}><ArrowLeft size={16}/> Previous</button>}{lessonIndex + 1 < chapter.lessons.length ? <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex + 1)}>Next lesson <ArrowRight size={16}/></button> : <button className="secondary-action" onClick={() => {startQuiz(chapter.id); navigate("practice");}}>Test this chapter <ArrowRight size={16}/></button>}</div>
               </div>
@@ -275,49 +648,61 @@ function App() {
         </>}
 
         {route.page === "practice" && <>
-          <Title title="Practice questions" description="Check what you know and see the reasoning behind each answer. For longer questions, write your response before viewing the guidance." />
+          <Title title="Questions" />
           <div className="mode-tabs" role="group" aria-label="Practice type">
             <button aria-pressed={practiceType === "choice"} className={practiceType === "choice" ? "active" : ""} onClick={() => setPracticeType("choice")}>Quick questions</button>
             <button aria-pressed={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
           </div>
           {practiceType === "choice" ? <>
-            <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose question chapter" value={quizChapter} onChange={e => startQuiz(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{quizScore} correct · {quizIndex + (picked !== null ? 1 : 0)} answered</span></div>
+            <div className="practice-toolbar"><label>Chapter<select aria-label="Choose question chapter" value={quizChapter} onChange={e => startQuiz(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{quizScore} correct · {quizIndex + (picked !== null ? 1 : 0)} answered</span></div>
             {finished ? <div className="quiz-finish"><h2>{quizScore} <span>/ {quizItems.length}</span></h2><p>{quizScore === quizItems.length ? "All correct. Try a different topic or move to written answers." : "Review the notes for any answers you missed, then try another round."}</p><div><button className="primary-action" onClick={() => startQuiz(quizChapter)}><RotateCcw size={16}/> Try again</button><button className="secondary-action" onClick={() => navigate("notes")}>Open notes <ArrowRight size={16}/></button></div></div> :
-            <div className="question-paper"><div className="question-progress"><span>QUESTION {formatNumber(quizIndex + 1)} OF {formatNumber(quizItems.length)}</span><span>{chapterName(quizQuestion.chapterId)}</span></div><Progress value={(quizIndex + 1) / quizItems.length * 100} label="Question progress"/><h2>{quizQuestion.question}</h2>
+            <div className="question-paper"><div className="question-progress"><span>Question {quizIndex + 1} of {quizItems.length}</span><span>{chapterName(quizQuestion.chapterId)}</span></div><Progress value={(quizIndex + 1) / quizItems.length * 100} label="Question progress"/><h2>{quizQuestion.question}</h2>
               <div className="option-list">{options.map(({text, value}, i) => <button key={text} disabled={picked !== null} aria-pressed={picked === value} onClick={() => pickAnswer(value)} className={"answer-button " + (picked !== null && value === 0 ? "correct" : "") + (picked === value && value !== 0 ? " incorrect" : "")}><span className="answer-letter">{String.fromCharCode(65 + i)}</span><span>{text}</span>{picked !== null && value === 0 && <CheckCircle2 size={18}/>}</button>)}</div>
               {picked !== null && <div className="answer-explanation" role="status"><strong>{picked === 0 ? "Correct" : "Review this answer"}</strong><p>{quizQuestion.why}</p><button className="primary-action" onClick={nextQuestion}>{quizIndex + 1 === quizItems.length ? "See results" : "Next question"} <ArrowRight size={16}/></button></div>}
             </div>}
           </> : <>
-            <div className="practice-toolbar"><label>QUESTION<select value={writtenIndex} aria-label="Choose written question" onChange={e => {setWrittenIndex(Number(e.target.value)); setShowMarking(false);}}>{writtenQuestions.map((q, i) => q.chapterId <= 11 ? <option key={i} value={i}>Q{formatNumber(i + 1)} / Chapter {q.chapterId}</option> : null)}</select></label><span>{writtenQuestion.marks} marks available</span></div>
+            <div className="practice-toolbar"><label>Question<select value={writtenIndex} aria-label="Choose written question" onChange={e => {setWrittenIndex(Number(e.target.value)); setShowMarking(false);}}>{writtenQuestions.map((q, i) => q.chapterId <= 11 ? <option key={i} value={i}>Q{formatNumber(i + 1)} / Chapter {q.chapterId}</option> : null)}</select></label><span>{writtenQuestion.marks} marks available</span></div>
             <div className="question-paper written-paper"><div className="question-progress"><span>Question {writtenIndex + 1}</span><span>CHAPTER {formatNumber(writtenQuestion.chapterId)}</span></div><h2>{writtenQuestion.prompt}</h2>
-              <label htmlFor="written-response" className="text-area-label">YOUR RESPONSE</label>
+              <label htmlFor="written-response" className="text-area-label">Your answer</label>
               <textarea id="written-response" rows={7} placeholder="Write your answer here before revealing the suggested marking points." value={drafts[writtenIndex] || ""} onChange={e => setDrafts(old => ({...old, [writtenIndex]: e.target.value}))}/>
               <div className="draft-controls"><span>{words} words · Saved on this device</span><button className="plain-action" onClick={() => setDrafts(old => ({...old, [writtenIndex]: ""}))} disabled={!drafts[writtenIndex]}>Clear answer</button></div>
               <button className="secondary-action" onClick={() => setShowMarking(v => !v)}>{showMarking ? <EyeOff size={16}/> : <Eye size={16}/>} {showMarking ? "Hide answer guidance" : "View answer guidance"}</button>
-              {showMarking && <div className="marking-guidance"><strong>Indicative points</strong><p>Original revision guidance, not an official mark scheme. Compare these points with your own response.</p><ol>{writtenQuestion.points.map((point, i) => <li key={i}>{point}</li>)}</ol></div>}
+              {showMarking && <div className="marking-guidance"><strong>Suggested points</strong><p>Not an official mark scheme.</p><ol>{writtenQuestion.points.map((point, i) => <li key={i}>{point}</li>)}</ol></div>}
             </div>
           </>}
         </>}
 
         {route.page === "flashcards" && <>
-          <Title title="Flashcards" description="Try to define the term yourself. Turn the card to check, then keep moving through the set."/>
-          <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.filter(ch => theoryFlashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
+          <Title title="Flashcards" />
+          <div className="practice-toolbar"><label>Chapter<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.filter(ch => theoryFlashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
           {currentFlash && <>
-            <div className="flash-progress"><span>CARD {formatNumber(flashIndex % flashPool.length + 1)} / {formatNumber(flashPool.length)}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
+            <div className="flash-progress"><span>Card {flashIndex % flashPool.length + 1} of {flashPool.length}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
             <button className={"revision-card " + (flipped ? "is-flipped" : "")} onClick={() => setFlipped(v => !v)} aria-label={flipped ? "Show term" : "Reveal definition"}><strong>{flipped ? currentFlash.definition : currentFlash.term}</strong><span className="flash-turn"><RotateCcw size={17}/> {flipped ? "Show term" : "Reveal answer"}</span></button>
             <div className="flash-controls"><button className="secondary-action" onClick={advanceFlash}>Review later <ArrowRight size={16}/></button><button className="primary-action" onClick={() => {setKnown(prev => prev.includes(currentFlash.term) ? prev : [...prev, currentFlash.term]); advanceFlash();}}><Check size={17}/> I knew this</button></div>
-            <p className="flash-caption">Cards marked as known stay recorded in this browser. Keep reviewing them for long-term recall.</p>
+            
           </>}
         </>}
 
         {route.page === "games" && <>
-          <Title title="Games" description="Eleven original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
-          
-          <iframe title="ICT Arcade original games" src="/arcade-legacy.html" className="arcade-frame" allow="fullscreen" loading="eager"/>
+          <Title title={route.game > 0 ? arcadeGames.find(game=>game.id === route.game)?.name || "Games" : "Games"}
+            
+            action={route.game > 0 ? <button className="secondary-action" onClick={()=>navigate("games")}>All games <ArrowLeft size={17}/></button> : <a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Classic arcade <ArrowUpRight size={17}/></a>}/>
+          {route.game > 0 ?
+            <iframe key={route.game} title={arcadeGames.find(game=>game.id === route.game)?.name || "ICT Arcade game"}
+              src={"/arcade-legacy.html?game="+route.game} className="arcade-frame" allow="fullscreen" loading="eager"/> :
+            <div className="featured-games games-page-grid">
+              {arcadeGames.map(game=><a key={game.id} href={"/games/"+game.id} className="featured-game" aria-label={"Play "+game.name}>
+                <ArcadeVisual id={game.id}/>
+                <span className="featured-game-bottom">
+                  <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
+                  <ArrowUpRight size={19} aria-hidden="true"/>
+                </span>
+              </a>)}
+            </div>}
         </>}
 
       </main>
-      <footer className="site-footer">© {new Date().getFullYear()} ICT Arcade</footer>
+      {route.page === "home" && <footer className="site-footer">© 2026 ICT Arcade. All Rights Reserved</footer>}
     </div>
   </div>;
 }

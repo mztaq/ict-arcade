@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="ICT Arcade">
+  <rect x="0" y="0" width="64" height="64" rx="15" fill="#1C3453"/>
+  <rect x="14.5" y="14.5" width="15" height="15" rx="3.2" stroke="#F4F8FF" stroke-width="3"/>
+  <rect x="34.5" y="14.5" width="15" height="15" rx="3.2" stroke="#F4F8FF" stroke-width="3"/>
+  <rect x="14.5" y="34.5" width="15" height="15" rx="3.2" stroke="#F4F8FF" stroke-width="3"/>
+  <rect x="34.5" y="34.5" width="15" height="15" rx="3.2" fill="#A7CAFF" stroke="#A7CAFF" stroke-width="3"/>
+</svg>
