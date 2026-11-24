@@ -23,11 +23,12 @@ const load = (key, fallback) => {
     return fallback;
   }
 };
-function useStored(key, initial) {
+function useStored(key, initial, readOnly = false) {
   const [value, setValue] = useState(() => load(key, initial));
   useEffect(() => {
+    if(readOnly)return;
     try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Storage is optional. */ }
-  }, [key, value]);
+  }, [key, value, readOnly]);
   return [value, setValue];
 }
 const getRoute = () => {
@@ -240,49 +241,37 @@ function CircuitBackdrop() {
   </div>;
 }
 
-function TheoryPreview() {
-  const section=chapters[3].lessons[1];
-  return <div className="course-preview theory-preview" aria-hidden="true">
-    <div className="preview-browser">
-      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>ICT / Theory</span><span>04 / 11</span></div>
-      <div className="theory-mock-content">
-        <aside><span>01 Systems</span><span>02 Devices</span><span className="selected">04 Networks</span><span>05 Effects of IT</span></aside>
-        <div className="mock-lesson">
-          <span className="mock-kicker">Lesson 02</span>
-          <strong>{section.title}</strong>
-          <div className="mock-rule"/>
-          {section.terms.slice(0,2).map(([term,definition])=><div className="mock-term" key={term}><b>{term}</b><span>{definition}</span></div>)}
-        </div>
-      </div>
+// Render the actual route inside a non-interactive miniature viewport.
+function RoutePreview({page,theme}) {
+  const viewport=React.useRef(null);
+  const [scale,setScale]=useState(0);
+  useEffect(()=>{
+    const element=viewport.current;
+    if(!element)return;
+    const resize=()=>setScale(element.clientWidth/1000);
+    resize();
+    const observer=new ResizeObserver(resize);
+    observer.observe(element);
+    return ()=>observer.disconnect();
+  },[]);
+  return <div ref={viewport} className={"course-preview live-route-preview "+(page==="notes"?"theory-preview":"practical-preview")} aria-hidden="true" inert>
+    <div className="live-route-canvas" style={{transform:"scale("+scale+")",visibility:scale?"visible":"hidden"}}>
+      <App previewPage={page} previewTheme={theme}/>
     </div>
   </div>;
 }
-function PracticalPreview() {
-  const cells=[
-    ["","A","B","C","D"],
-    ["1","Item","Qty","Price","Total"],
-    ["2","Notebook","2","7","14"],
-    ["3","Cable","3","12","36"],
-    ["4","Mouse","1","35","35"],
-    ["5","Total","","","85"]
-  ];
-  return <div className="course-preview practical-preview" aria-hidden="true">
-    <div className="sheet-mock">
-      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>Spreadsheet</span><span>Sheet 01</span></div>
-      <div className="formula-bar"><span>ƒx</span><code>=SUM(D2:D4)</code></div>
-      <div className="sheet-grid">{cells.flatMap((row,i)=>row.map((cell,j)=><span key={i+"-"+j} className={"sheet-cell "+(i===0?"sheet-col ":"")+(j===0?"sheet-row ":"")+(i===5&&j===4?"sheet-total":"")}>{cell}</span>))}</div>
-    </div>
-  </div>;
-}
+function TheoryPreview({theme}) {return <RoutePreview page="notes" theme={theme}/>;}
+function PracticalPreview({theme}) {return <RoutePreview page="practical" theme={theme}/>;}
 
-function App() {
-  const [route, setRoute] = useState(getRoute);
+function App({previewPage,previewTheme} = {}) {
+  const [route, setRoute] = useState(()=>previewPage?{...getRoute(),page:previewPage}:getRoute());
 
   const selectedSolvedPaper = solvedPastPapers[route.papersNumber]?.find(item=>item.id===route.papersId);
-  const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
-  const [done, setDone] = useStored("ict-arcade-lessons-done", []);
-  const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
-  const [known, setKnown] = useStored("ict-arcade-mastered", []);
+  const [storedTheme, setTheme] = useStored("ict-arcade-theme", "auto", Boolean(previewPage));
+  const theme = previewTheme || storedTheme;
+  const [done, setDone] = useStored("ict-arcade-lessons-done", [], Boolean(previewPage));
+  const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", [], Boolean(previewPage));
+  const [known, setKnown] = useStored("ict-arcade-mastered", [], Boolean(previewPage));
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [quizChapter, setQuizChapter] = useState(0);
@@ -292,18 +281,19 @@ function App() {
   const [practiceType, setPracticeType] = useState("choice");
   const [writtenIndex, setWrittenIndex] = useState(0);
   const [showMarking, setShowMarking] = useState(false);
-  const [drafts, setDrafts] = useStored("ict-arcade-written-drafts", {});
+  const [drafts, setDrafts] = useStored("ict-arcade-written-drafts", {}, Boolean(previewPage));
   const [flashChapter, setFlashChapter] = useState(0);
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
+    if(previewPage)return;
     const onHash = () => { setRoute(getRoute()); window.scrollTo({top: 0, behavior: "smooth"}); };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
-  }, []);
-  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
+  }, [previewPage]);
+  useEffect(() => { if(!previewPage)document.documentElement.dataset.theme = theme; }, [theme,previewPage]);
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = event => setSystemDark(event.matches);
@@ -397,19 +387,19 @@ function App() {
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
-            <a className="course-choice theory-card" href="#/notes">
-              <TheoryPreview/>
-              <span className="course-choice-body">
+            <div className="course-choice theory-card live-course-card">
+              <TheoryPreview theme={theme}/>
+              <a className="course-choice-body live-course-link" href="#/notes">
                 <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
                 <span className="course-stats"><span><strong>{theoryChapters.length}</strong><small>chapters</small></span><span><strong>{theoryLessons.length}</strong><small>lessons</small></span></span>
-              </span>
-            </a>
-            <a className="course-choice practical-card" href="#/practical">
-              <PracticalPreview/>
-              <span className="course-choice-body">
+              </a>
+            </div>
+            <div className="course-choice practical-card live-course-card">
+              <PracticalPreview theme={theme}/>
+              <a className="course-choice-body live-course-link" href="#/practical">
                 <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
-              </span>
-            </a>
+              </a>
+            </div>
           </section>
 
           <a className="games-hub-card" href="#/games" aria-label="Browse all 11 ICT Arcade games">
