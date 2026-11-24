@@ -89,7 +89,7 @@ function NotFound() {
   const [font] = useState(()=>["system","mono","serif"][Math.floor(Math.random()*3)]);
   const [rare] = useState(()=>Math.random()<.02?["tiny","stamp","inverted","large"][Math.floor(Math.random()*4)]:"");
   const [bits] = useState(()=>Array.from({length:18},(_,i)=>({
-    text:["ICT","RAM","ROM","404","CTRL+S","PDF","CPU","LAN","WAN","HTML","CSS","#REF!","NULL","PAPER 2","ZIP","INPUT","OUTPUT","001101"][i],
+    text:["ICT","RAM","ROM","404","OCR","OMR","RFID","LAN","WAN","HTML","CSS","#REF!","VLOOKUP","PAPER 2","ZIP","MAIL MERGE","PRIMARY KEY","ADC"][i],
     x:3+Math.random()*94,y:3+Math.random()*94,size:12+Math.random()*18,rotate:-25+Math.random()*50
   })));
   return <section className="not-found" data-layout={layout} data-font={font} data-rare={rare}>
