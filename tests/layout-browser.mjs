@@ -4,7 +4,7 @@ import {chromium} from "playwright";
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
-const routes=["home","notes","chapter/1/0","practice","flashcards","practical","games"];
+const routes=["home","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 const minimumReadableSize={
   home:[[".home-intro h2",30],[".course-title-line strong",22],[".course-stats small",15]],
   notes:[[".chapter-description strong",16],[".chapter-lessons span",14]],
