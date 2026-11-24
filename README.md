@@ -85,3 +85,7 @@ For an original worked Paper 2 or 3 solution, use the appropriate `solvedPastPap
 ```
 
 The automated test suite verifies that every listed file exists and rejects external file URLs, missing PDFs, invalid extensions and duplicate IDs. All files must be hosted on ICT Arcade's domain. Cloudflare still processes requests and IP addresses as the hosting provider. This does not guarantee anonymity.
+
+### Clean URLs
+
+ICT Arcade uses browser history for paths such as `/notes` and `/past-papers`. Cloudflare Pages uses its default SPA fallback (keep the root free of a static `404.html`) so direct links and refreshes load the React router. Unknown application paths render the themed ICT 404 screen. Legacy `/#/` bookmarks are migrated automatically.
