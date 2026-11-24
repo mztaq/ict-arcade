@@ -94,7 +94,7 @@ function ChapterRow({chapter, done, compact = false, onOpen}) {
   const progress = chapterProgress(chapter, done);
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
     <span className="chapter-index"><ChapterIcon size={22} strokeWidth={1.8} aria-hidden="true"/></span>
-    <span className="chapter-description"><strong>{chapter.title}</strong></span>
+    <span className="chapter-description"><strong>{chapter.title}{chapter.unit === "Theory" && <> <span className="chapter-number">(Chapter {chapter.id})</span></>}</strong></span>
     <span className="chapter-stats">
       <span className="chapter-lessons"><strong>{chapter.lessons.length}</strong><span>lessons</span></span>
       {progress > 0 && <span className="chapter-percent">{progress}%</span>}
