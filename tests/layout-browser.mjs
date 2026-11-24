@@ -1,11 +1,29 @@
 import assert from "node:assert/strict";
 import {chromium} from "playwright";
-import {yearlyPastPapers} from "../src/pastPapers.js";
+import {yearlyPastPapers,solvedPastPapers} from "../src/pastPapers.js";
 
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
 const routes=["home","past-papers","past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
+const previews=[];
+for(const group of yearlyPastPapers){
+  for(const paper of group.papers){
+    const resource=["questionPaper","markScheme","examinerReport"].find(type=>Boolean(paper[type]));
+    if(resource){
+      const route="past-papers/yearly/"+group.year+"/"+paper.id+"/"+resource;
+      routes.push(route);
+      previews.push({route,url:paper[resource],sourceCount:(paper.sourceFiles||[]).length});
+    }
+  }
+}
+for(const [number,papers] of Object.entries(solvedPastPapers)){
+  for(const paper of papers){
+    const route="past-papers/solved/"+number+"/"+paper.id+"/workedSolution";
+    routes.push(route);
+    previews.push({route,url:paper.url,sourceCount:(paper.sourceFiles||[]).length});
+  }
+}
 const minimumReadableSize={
   home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
   "past-papers":[[".paper-category strong",23]],
@@ -117,6 +135,15 @@ try{
       }
       if(route==="past-papers/solved/2"||route==="past-papers/solved/3"){
         assert.match(await page.locator(".paper-empty").innerText(),/No solved papers uploaded yet/);
+      }
+      const preview=previews.find(item=>item.route===route);
+      if(preview){
+        assert.equal(await page.locator(".paper-pdf-frame").count(),1);
+        assert.equal(await page.locator(".paper-pdf-frame").getAttribute("src"),preview.url);
+        assert.equal(await page.locator('.paper-preview-actions a[download]').count(),1);
+        assert.equal(await page.locator('.paper-preview-actions a[download]').getAttribute("href"),preview.url);
+        assert.equal(await page.locator('.paper-source-file[download]').count(),preview.sourceCount);
+        assert.equal(await page.locator('iframe[src^="http"]').count(),0);
       }
       console.log("PASS "+width+"px / "+route);
     }
