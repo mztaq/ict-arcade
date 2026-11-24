@@ -138,6 +138,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
   gap:var(--space-3);max-width:1100px
 }
+.solved-paper-options{grid-template-columns:repeat(3,minmax(0,1fr))}
 .paper-category{
   position:relative;display:flex;flex-direction:column;align-items:flex-start;
   min-width:0;min-height:235px;padding:var(--space-4);
@@ -175,11 +176,17 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
   padding:10px 15px;color:var(--ink);font-size:15px;font-weight:750
 }
 .paper-source-actions a:hover{border-color:var(--blue);color:var(--blue)}
-.paper-theory-note{
-  max-width:720px;margin:var(--space-4) 0 0;
-  padding:16px 19px;border:1px solid var(--rule);border-radius:10px;
-  background:var(--paper-secondary);color:var(--ink-soft);
-  font-size:16px;line-height:1.65
+.paper-1-message{
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:var(--space-4);
+  width:100%;min-height:340px;max-width:1100px;
+  margin:0;padding:48px var(--space-4);border:1px solid var(--rule);
+  border-radius:14px;background:var(--paper);text-align:center
+}
+.paper-1-message svg{color:var(--blue)}
+.paper-1-message h2{
+  max-width:730px;margin:0;font-size:clamp(32px,4vw,48px);
+  font-weight:750;line-height:1.3;letter-spacing:0
 }
 .paper-empty{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -189,7 +196,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 }
 .paper-empty p{margin:0;font-size:16px}
 @media(max-width:740px){
-  .paper-category-grid{grid-template-columns:1fr}
+  .paper-category-grid,.solved-paper-options{grid-template-columns:1fr}
   .paper-category{min-height:190px}
   .paper-year-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
