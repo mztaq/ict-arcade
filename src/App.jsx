@@ -195,24 +195,35 @@ function ArcadeVisual({id}) {
   </div>;
 }
 
-function HeroMotion() {
-  return <div className="hero-motion" aria-label="How a computer works: input, processing and output" role="img">
-    <div className="signal-chain" aria-hidden="true">
-      <div className="signal-device">
-        <Keyboard size={24} strokeWidth={1.7}/>
-        <span>Input</span>
-      </div>
-      <div className="signal-link"><span className="signal-packet"/><span className="signal-packet delay"/></div>
-      <div className="signal-device signal-cpu">
-        <Cpu size={27} strokeWidth={1.7}/>
-        <span>Process</span>
-      </div>
-      <div className="signal-link"><span className="signal-packet"/><span className="signal-packet delay"/></div>
-      <div className="signal-device">
-        <Monitor size={24} strokeWidth={1.7}/>
-        <span>Output</span>
-      </div>
-    </div>
+function CircuitBackdrop() {
+  return <div className="home-circuit-backdrop" aria-hidden="true">
+    <svg viewBox="0 0 1200 610" preserveAspectRatio="xMidYMin slice" focusable="false">
+      <g className="circuit-lines" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M0 90H95L145 140H254L297 183H378"/>
+        <path d="M0 175H76L126 225H226L274 273H343"/>
+        <path d="M0 300H62L114 248H189"/>
+        <path d="M0 480H114L166 428H230L286 372H364"/>
+        <path d="M1200 75H1100L1054 121H976L920 177H836"/>
+        <path d="M1200 196H1132L1069 259H995L954 300H866"/>
+        <path d="M1200 370H1140L1080 310H1010"/>
+        <path d="M1200 514H1090L1040 463H978L927 412H857"/>
+        <path d="M0 557H84L138 503H206"/>
+        <path d="M1200 576H1125L1081 532H999"/>
+      </g>
+      <g className="circuit-nodes" fill="currentColor">
+        <circle cx="378" cy="183" r="4"/><circle cx="343" cy="273" r="4"/>
+        <circle cx="189" cy="248" r="4"/><circle cx="364" cy="372" r="4"/>
+        <circle cx="836" cy="177" r="4"/><circle cx="866" cy="300" r="4"/>
+        <circle cx="1010" cy="310" r="4"/><circle cx="857" cy="412" r="4"/>
+        <circle cx="206" cy="503" r="4"/><circle cx="999" cy="532" r="4"/>
+      </g>
+      <g className="circuit-signals" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M0 90H95L145 140H254L297 183H378"/>
+        <path d="M0 480H114L166 428H230L286 372H364"/>
+        <path d="M1200 196H1132L1069 259H995L954 300H866"/>
+        <path d="M1200 514H1090L1040 463H978L927 412H857"/>
+      </g>
+    </svg>
   </div>;
 }
 
@@ -357,7 +368,8 @@ function App() {
     <div className="site-body">
       <main id="main-content" tabIndex={-1} className="site-main">
 
-        {route.page === "home" && <>
+        {route.page === "home" && <div className="home-screen">
+          <CircuitBackdrop/>
           <section className="home-intro">
             <div className="home-signature">
               <img className="home-logo-mark" src="/ict-arcade-mark.svg" alt="" />
@@ -367,7 +379,6 @@ function App() {
             <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
               <FileText size={17}/> Try past papers <ArrowUpRight size={16}/>
             </a>
-            <HeroMotion/>
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
@@ -390,7 +401,7 @@ function App() {
             <span className="games-hub-info"><strong>Games</strong><span>11 games</span><ArrowUpRight size={21}/></span>
             <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
           </a>
-        </>}
+        </div>}
 
         {route.page === "notes" && <>
           <Title title="Theory" action={<div className="theory-title-actions">
