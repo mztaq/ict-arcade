@@ -8,7 +8,7 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 - **Theory:** Eleven chapters and 35 lessons with prominent counts, matching topic icons for every chapter and lesson, searchable notes, definitions, examples and exam advice. Questions and Flashcards remain accessible.
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
-- **Past Papers:** Yearly and Solved collections use same-origin routes and local files only. Years 2020–2026 appear, but no PDFs are provided until rights-cleared files exist. Paper 1 displays the Theory joke, while solved files for Papers 2 and 3 are author-supplied.
+- **Past Papers:** Yearly paper pages group Question Papers, Mark Schemes, Examiner Reports and Source Files. PDFs open in an embedded viewer with Download and Open PDF actions. Source Files download directly. Solved Paper 2/3 PDFs use the same preview, and Paper 1 keeps its joke. No documents are listed until authorised files are uploaded.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
 - **Appearance:** Clean white/navy styles with a modern system sans-serif font, 17px reading text, comfortable heading tracking, a lighter homepage headline, and larger lesson navigation and answer controls. Mobile styles retain readable sizes without overflow. Light/dark themes, the top-right toggle and inner-page home link remain.
 
@@ -30,7 +30,8 @@ npm run build
 - `src/content.js`: Original lesson summaries covering the coursebook structure.
 - `src/questions.js`: Original multiple-choice and written-answer practice.
 - `src/examinerAdvice.js`: Original theory exam advice, with background references retained in source data but no external links displayed. Practical advice remains reserved for the author.
-- `src/pastPapers.js`: Local-only yearly/solved file manifests with no external archive URLs.
+- `src/pastPapers.js`: Local-only grouped paper and solved-file manifests with no external archive URLs.
+- `src/PaperViewer.jsx`: Same-origin PDF preview and downloads, with download-only source attachments.
 - `src/App.jsx`: Beginner-first homepage, accessible ICT animation, Games gallery, Theory lessons and practice tools.
 - `src/styles.css`: Shared design styles and responsive layout.
 - `public/arcade-legacy.html`: Original arcade games with refreshed menu colours.
@@ -59,14 +60,28 @@ The site's Past Papers hub never links to third-party archives. No Cambridge pas
 
 Cambridge does not permit publication of its examination papers on public websites. Only place independently authored papers or files for which the rights holder has explicitly granted website publication rights in `public/yearly-papers/YYYY/` or `public/solved-papers/`. Private repository visibility does not make deployed `public/` files private.
 
-After adding a permitted PDF, register it in `src/pastPapers.js`:
+After adding files with publication permission, group the related documents under the relevant year in `src/pastPapers.js`:
 
 ```js
-// Under the correct year in yearlyPastPapers:
-papers: [{title: "Original practice paper", url: "/yearly-papers/2025/original-practice.pdf"}]
-
-// Or for author-owned worked solutions:
-solvedPastPapers[2] = [{title: "Worked practical example", url: "/solved-papers/our-solution.pdf"}];
+{
+  id: "2025-mj-21",
+  title: "Original practice paper · May/June 2025",
+  questionPaper: "/yearly-papers/2025/practice-question.pdf",
+  markScheme: "/yearly-papers/2025/practice-answers.pdf",
+  examinerReport: "/yearly-papers/2025/practice-feedback.pdf",
+  sourceFiles: [
+    {title: "Practice source files", url: "/yearly-papers/2025/practice-files.zip"}
+  ]
+}
 ```
 
-The automated test suite checks that listed files exist locally and rejects external URLs. Visitors download these resources from ICT Arcade's own domain. Cloudflare still processes requests and IP addresses as the hosting provider. This does not guarantee anonymity.
+The fields `questionPaper`, `markScheme`, and `examinerReport` each open a local PDF preview with Open PDF and Download. Omit any PDF fields you haven't uploaded. `sourceFiles` show download links only, with no preview.
+
+For an original worked Paper 2 or 3 solution, use the appropriate `solvedPastPapers` list:
+
+```js
+{id: "worked-2025-21", title: "Worked practical example",
+ url: "/solved-papers/worked-2025-21.pdf", sourceFiles: []}
+```
+
+The automated test suite verifies that every listed file exists and rejects external file URLs, missing PDFs, invalid extensions and duplicate IDs. All files must be hosted on ICT Arcade's domain. Cloudflare still processes requests and IP addresses as the hosting provider. This does not guarantee anonymity.
