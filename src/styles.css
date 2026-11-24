@@ -104,7 +104,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .header-theme:hover{background:var(--paper-secondary);border-color:var(--rule)}
 .site-body{display:flex;flex-direction:column;flex:1;min-width:0}
 .site-main{width:100%;max-width:1370px;margin:0 auto;padding:40px clamp(20px,3.4vw,58px) 80px;flex:1;min-width:0}
-.site-footer{border-top:1px solid var(--rule);color:var(--ink-soft);font-size:14px;padding:19px clamp(19px,3.4vw,54px);min-height:58px}
+.site-footer{text-align:center;border-top:1px solid var(--rule);color:var(--ink-soft);font-size:14px;padding:19px clamp(19px,3.4vw,54px);min-height:58px}
 .home-intro{
   max-width:1100px;margin:15px auto 0;
   padding:30px 16px 0;display:flex;flex-direction:column;align-items:center;
