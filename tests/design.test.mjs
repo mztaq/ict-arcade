@@ -30,7 +30,8 @@ test("study interface includes real navigation, results, and persisted drafts", 
   assert.match(app, /aria-label="Filter chapters"/);
 });
 test("legacy arcade game entry stays reachable without decorative emoji icons", () => {
-  assert.match(app, /src="\/arcade-legacy\.html"/);
+  assert.match(app, /arcade-legacy\.html/);
+  assert.match(app, /src=\{route\.game > 0/);
   assert.match(arcade, /class="game-index"/);
   assert.doesNotMatch(arcade, /<span>\$\{g\[0\]\}<\/span>/);
   assert.doesNotMatch(arcade, /<h1>\$\{g\[0\]\}/);
