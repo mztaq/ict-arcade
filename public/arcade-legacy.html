@@ -88,6 +88,16 @@ main{max-width:860px}
 <header><b id="logo">ICT Arcade</b><button id="who" class="chip"></button><span id="sc">POINTS <span id="pts">0</span></span></header>
 <main id="app"></main>
 <script>
+(function syncRevisionTheme(){
+  function apply(){
+    try {
+      const preference = JSON.parse(localStorage.getItem("ict-arcade-theme") || '"auto"');
+      document.documentElement.setAttribute("data-theme", preference === "dark" || preference === "light" ? preference : "auto");
+    } catch { document.documentElement.setAttribute("data-theme", "auto"); }
+  }
+  apply();
+  window.addEventListener("storage", event => { if(event.key === "ict-arcade-theme") apply(); });
+})();
 const T={1:"Computer systems",2:"Input and output",3:"Storage",4:"Networks"};
 // Quiz: [topic, question, [correct, wrong, wrong, wrong]]
 const Q=[
@@ -719,7 +729,7 @@ function tf(){
  const q=Array.from({length:150},mkTF);let i=0,s=0,t=45;
  view(`<div class="meta">Score <span id="s">0</span> · <span id="t">45</span>s left</div><div class="bar"><i id="b" style="width:100%"></i></div><h2 id="q"></h2><div class="row"><button class="btn" id="y">True</button><button class="btn alt" id="n">False</button></div><p id="fb"></p>`);
  const show=()=>$("#q").textContent=q[i%q.length][1];show();
- const ans=v=>{const c=q[i%q.length][2]==v;if(c){s++;add(2)}$("#fb").textContent=c?"✅ Correct":"❌ Not quite";$("#fb").style.color=c?"var(--ok)":"var(--bad)";i++;$("#s").textContent=s;show()};
+ const ans=v=>{const c=q[i%q.length][2]==v;if(c){s++;add(2)}$("#fb").textContent=c?"Correct":"Not quite";$("#fb").style.color=c?"var(--ok)":"var(--bad)";i++;$("#s").textContent=s;show()};
  $("#y").onclick=()=>ans(1);$("#n").onclick=()=>ans(0);
  timer=setInterval(()=>{t--;$("#t").textContent=t;$("#b").style.width=t/45*100+"%";if(t<=0)done("Time’s up",s,s>=12?"Lightning fast.":"Play again and beat your score.",tf)},1000);
 }
@@ -741,7 +751,7 @@ function sort(){
   view(`<div class="meta">${set.title} · ${i+1} of ${it.length}</div><div class="item">${it[i][0]}</div><div class="row">${set.b.map((n,k)=>`<button class="btn" data-k="${k}">${n}</button>`).join("")}</div><p id="fb"></p>`);
   app.querySelectorAll(".btn").forEach(b=>b.onclick=()=>{
    const c=+b.dataset.k==it[i][1];app.querySelectorAll(".btn").forEach(x=>x.disabled=true);
-   if(c){s++;add(3)}$("#fb").textContent=c?"✅ Correct":"❌ It belongs in: "+set.b[it[i][1]];$("#fb").style.color=c?"var(--ok)":"var(--bad)";
+   if(c){s++;add(3)}$("#fb").textContent=c?"Correct":"Incorrect: It belongs in: "+set.b[it[i][1]];$("#fb").style.color=c?"var(--ok)":"var(--bad)";
    i++;setTimeout(draw,c?600:1400);
   });
  };draw();
