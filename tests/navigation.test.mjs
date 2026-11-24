@@ -33,11 +33,15 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/className="header-theme"/);
   assert.match(app,/className="home-intro"/);
   assert.match(app,/className="home-logo-mark"/);
+  assert.match(app,/ict-arcade-mark\.svg/);
+  assert.match(app,/function TheoryPreview\(\)/);
+  assert.match(app,/function PracticalPreview\(\)/);
+  assert.match(app,/function ArcadeVisual\(\{id\}\)/);
   assert.doesNotMatch(app,/className="top-nav"/);
   assert.match(app,/className="past-papers-link"/);
   assert.match(app,/cambridgeinternational\.org\/programmes-and-qualifications/);
   assert.match(app,/className="featured-games"/);
-  assert.match(app,/navigate\("games", game\.id\)/);
+  assert.match(app,/href=\{"#\/games\/"\+game\.id\}/);
   assert.match(app,/const arcadeGames = \[/);
   assert.equal((app.match(/\{id: \d+, name:/g)||[]).length,11);
   assert.doesNotMatch(app,/site-sidebar|mobile-backdrop|menu-trigger/);
@@ -61,4 +65,13 @@ test("individual game links lead to the matching original game",()=>{
   assert.match(arcade,/Number\.isInteger\(requested\)/);
   assert.match(arcade,/intro\(requested-1\)/);
   assert.match(arcade,/load\(n\);openRequestedGame\(\)/);
+});
+
+test("home previews are grounded in course material and games have unique artwork",()=>{
+  assert.match(app,/const section=chapters\[3\]\.lessons\[1\]/);
+  assert.match(app,/section\.terms\.slice\(0,2\)/);
+  assert.match(app,/=SUM\(D2:D4\)/);
+  assert.match(app,/const backgrounds = \[/);
+  for(let i=1;i<=11;i++)assert.match(app,new RegExp("id==="+i+"&&"));
+  assert.match(app,/className="featured-game-large"/.replace("featured-game-large","featured-game-large") instanceof RegExp ? /featured-game-large/ : /featured-game-large/);
 });
