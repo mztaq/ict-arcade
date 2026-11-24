@@ -844,3 +844,5 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(max-width:1020px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:24px}}
 @media(max-width:740px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:18px}}
 @media(max-width:560px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:14px}}
+
+.chapter-description .chapter-number{font-size:.8em;font-weight:600;color:var(--ink-soft);white-space:nowrap}
