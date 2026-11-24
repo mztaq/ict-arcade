@@ -15,8 +15,8 @@ test("editorial interface avoids gradient blobs and default typeface", () => {
   assert.doesNotMatch(css, /\.top-nav/);
   assert.match(css, /\.past-papers-link/);
   assert.match(css, /\.featured-games/);
-  assert.match(css, /--accent:#f56b4e/);
-  assert.match(css, /--canvas:#f2f7f9/);
+  assert.match(css, /--accent:#315db3/);
+  assert.match(css, /--canvas:#f7f9fc/);
   assert.doesNotMatch(css,/--hero-bg:|\.preview-sheet/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /prefers-color-scheme/);
@@ -41,4 +41,12 @@ test("legacy arcade game entry stays reachable without decorative emoji icons", 
   for (const game of ["plat", "dun", "snake", "taxi", "flap", "stack", "climb", "invade", "brick", "duel", "shop"]) {
     assert.match(arcade, new RegExp("function " + game + "\\("));
   }
+});
+
+test("brand symbol has no letter shapes or embedded text",()=>{
+  const svg=readFileSync(new URL("../public/ict-arcade-mark.svg", import.meta.url),"utf8");
+  assert.doesNotMatch(svg,/<text[\s>]/i);
+  assert.match(svg,/<path\s/);
+  assert.match(svg,/circle\s/);
+  assert.doesNotMatch(app, /ICT Arcade<span>\.<\/span>/);
 });
