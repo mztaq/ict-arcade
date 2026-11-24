@@ -12,7 +12,9 @@ test("editorial interface avoids gradient blobs and default typeface", () => {
   assert.doesNotMatch(css, /\bInter\b/);
   assert.match(css, /Trebuchet MS/);
   assert.doesNotMatch(css, /\.site-sidebar/);
-  assert.match(css, /\.top-nav/);
+  assert.doesNotMatch(css, /\.top-nav/);
+  assert.match(css, /\.past-papers-link/);
+  assert.match(css, /\.featured-games/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /prefers-color-scheme/);
   assert.match(css, /:focus-visible/);
