@@ -116,7 +116,7 @@ test("lesson counts have clear visual hierarchy",()=>{
   assert.match(app,/className="chapter-stats"/);
   assert.match(app,/className="chapter-lessons"/);
   assert.match(app,/className="theory-total"/);
-  assert.match(css,/\.course-stats strong\{font-size:22px/);
+  assert.match(css,/\.course-stats strong\{font-size:18px/);
   assert.match(css,/\.chapter-lessons strong\{font-size:29px/);
   assert.doesNotMatch(css,/\.chapter-status\{|\.mini-progress\{/);
   assert.match(css,/\.practice-toolbar\{[^}]*flex-wrap:wrap/);
@@ -157,8 +157,8 @@ test("every Theory lesson has a distinct topic-specific outline icon",()=>{
 });
 
 test("homepage typography keeps titles above statistics and animation behind content",()=>{
-  assert.match(css,/\.course-title-line strong\{font-size:27px/);
-  assert.match(css,/\.course-stats strong\{font-size:22px/);
+  assert.match(css,/\.course-title-line strong\{font-size:32px/);
+  assert.match(css,/\.course-stats strong\{font-size:18px/);
   assert.match(css,/\.home-intro h2\{[^}]*font-weight:600/);
   assert.match(css,/\.home-screen\{[^}]*overflow:clip/);
   assert.match(css,/\.home-circuit-backdrop\{/);
