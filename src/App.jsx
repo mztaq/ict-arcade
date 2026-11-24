@@ -11,7 +11,7 @@ import {
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
 import {examinerAdvice} from "./examinerAdvice.js";
-import {archivePastPapersUrl, officialPastPapersUrl, yearlyPastPapers, solvedPastPapers} from "./pastPapers.js";
+import {yearlyPastPapers, solvedPastPapers} from "./pastPapers.js";
 
 const load = (key, fallback) => {
   try {
@@ -36,7 +36,8 @@ const getRoute = () => {
     lesson: Number(parts[2]) || 0,
     game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0,
     papersView: parts[0] === "past-papers" ? (parts[1] || "home") : "home",
-    papersNumber: parts[0] === "past-papers" ? Number(parts[2]) || 0 : 0
+    papersNumber: parts[0] === "past-papers" && parts[1] === "solved" ? Number(parts[2]) || 0 : 0,
+    papersYear: parts[0] === "past-papers" && parts[1] === "yearly" ? Number(parts[2]) || 0 : 0
   };
 };
 const navigate = (page, id, lesson) => {
@@ -430,20 +431,27 @@ function App() {
             </div>
           </>}
           {route.papersView === "yearly" && <>
-            <Title title="Yearly Past Papers" action={<button type="button" className="chapter-back-button" onClick={()=>navigate("past-papers")}>
-              <ArrowLeft size={16}/> Past Papers
-            </button>}/>
-            <div className="paper-year-grid">
-              {yearlyPastPapers.map(item=><a className="paper-year" key={item.year} href={item.url} target="_blank" rel="noopener noreferrer">
-                <strong>{item.year}</strong>
-                {item.session && <small>{item.session} only</small>}
-                <ArrowUpRight size={18} aria-hidden="true"/>
-              </a>)}
-            </div>
-            <div className="paper-source-actions">
-              <a href={archivePastPapersUrl} target="_blank" rel="noopener noreferrer">All years and sessions <ArrowUpRight size={17}/></a>
-              <a href={officialPastPapersUrl} target="_blank" rel="noopener noreferrer">Cambridge official papers <ArrowUpRight size={17}/></a>
-            </div>
+            <Title title={route.papersYear ? "Past Papers " + route.papersYear : "Yearly Past Papers"}
+              action={<button type="button" className="chapter-back-button" onClick={()=>navigate("past-papers",route.papersYear ? "yearly" : undefined)}>
+                <ArrowLeft size={16}/> {route.papersYear ? "All years" : "Past Papers"}
+              </button>}/>
+            {route.papersYear === 0 ?
+              <div className="paper-year-grid">
+                {yearlyPastPapers.map(item=><a className="paper-year" key={item.year} href={"#/past-papers/yearly/"+item.year}>
+                  <strong>{item.year}</strong>
+                  <small>{item.papers.length ? item.papers.length + " files" : "No files yet"}</small>
+                  <ArrowRight size={18} aria-hidden="true"/>
+                </a>)}
+              </div> :
+              yearlyPastPapers.find(item=>item.year === route.papersYear) ?
+                yearlyPastPapers.find(item=>item.year === route.papersYear).papers.length ?
+                  <div className="paper-year-grid">
+                    {yearlyPastPapers.find(item=>item.year === route.papersYear).papers.map(item=><a className="paper-year" key={item.url} href={item.url} download>
+                      <FileText size={18} aria-hidden="true"/><strong>{item.title}</strong>
+                    </a>)}
+                  </div> :
+                  <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/><p>No locally hosted papers for {route.papersYear} yet.</p></div> :
+                <div className="paper-empty"><p>That year isn't available.</p></div>}
           </>}
           {route.papersView === "solved" && <>
             <Title title={[1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
