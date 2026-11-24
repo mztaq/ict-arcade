@@ -6,11 +6,17 @@ const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const app = readFileSync(new URL("../src/App.jsx", import.meta.url), "utf8");
 const arcade = readFileSync(new URL("../public/arcade-legacy.html", import.meta.url), "utf8");
 
-test("editorial interface avoids gradient blobs and default typeface", () => {
+test("readable study typography avoids decoration and external font dependencies", () => {
   assert.doesNotMatch(css, /(?:linear|radial|conic)-gradient\s*\(/i);
   assert.doesNotMatch(css, /backdrop-filter\s*:/i);
   assert.doesNotMatch(css, /\bInter\b/);
-  assert.match(css, /Trebuchet MS/);
+  assert.match(css, /font-family:system-ui/);
+  assert.match(css, /"Segoe UI"/);
+  assert.doesNotMatch(css, /Trebuchet MS/);
+  assert.match(css, /body\{[^}]*font-size:17px/);
+  assert.match(css, /\.concepts li\{[^}]*font-size:17px/);
+  assert.match(css, /\.lesson-link\{[^}]*font-size:16px/);
+  assert.match(css, /\.answer-button\{[^}]*font-size:17px/);
   assert.doesNotMatch(css, /\.site-sidebar/);
   assert.doesNotMatch(css, /\.top-nav/);
   assert.match(css, /\.past-papers-link/);
