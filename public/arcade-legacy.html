@@ -55,10 +55,37 @@ header{flex-wrap:wrap}#who{padding:4px 12px;font-size:.9rem}
 .inp{width:100%;max-width:520px;font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);margin:0 0 12px}
 .lb{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden}.lb td,.lb th{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left}
 @media(max-width:520px){.two{gap:8px}.m{padding:10px;font-size:.9rem}}
+
+/* Editorial ICT Arcade menu. Game engines and controls below are unchanged. */
+:root{--bg:#f6f6f2;--card:#fff;--ink:#222b36;--mut:#5d6874;--acc:#244fb0;--ok:#156b4e;--bad:#a83d39;--yel:#f3c956;--line:#d9dedc}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171b1e;--card:#20262b;--ink:#f0eee8;--mut:#b7bec0;--acc:#b1c7ff;--ok:#89dcb8;--bad:#ffb5ab;--line:#40484d}}
+:root[data-theme="dark"]{--bg:#171b1e;--card:#20262b;--ink:#f0eee8;--mut:#b7bec0;--acc:#b1c7ff;--ok:#89dcb8;--bad:#ffb5ab;--line:#40484d}
+body{font-family:"Trebuchet MS",Verdana,sans-serif}
+header{background:var(--card);color:var(--ink);border-bottom:1px solid var(--line);padding:13px 18px}
+header b{font-size:1.07rem;letter-spacing:-.035em}
+main{max-width:860px}
+#sc{border-radius:0;font-size:.85rem;letter-spacing:.04em}
+.chip{border:1px solid var(--line);border-radius:3px;font-size:.88rem;padding:7px 13px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
+.card{display:grid;grid-template-columns:37px minmax(0,1fr);grid-template-rows:auto 1fr;gap:3px 11px;min-height:101px;border:0;border-radius:0;border-bottom:1px solid var(--line);padding:15px 12px;background:transparent}
+.card:nth-child(odd){border-right:1px solid var(--line)}
+.card:hover{background:var(--card)}
+.card .game-index{display:block;grid-row:span 2;font:700 15px Consolas,monospace;color:var(--acc);padding-top:4px}
+.card b{font-size:1.02rem}
+.card small{grid-column:2;font-size:.78rem;line-height:1.45}
+.btn,.btn.alt,.opt,.m,.how,.inp,.lb,.item{border-radius:4px}
+.btn{font-size:.92rem;border-radius:3px;padding:11px 17px}
+.how h2{color:var(--acc)}
+.opt,.m{border-width:1px}
+.opt:hover,.m:hover{background:var(--card)}
+.item{border:1px dashed var(--acc)}
+#cv{border-radius:3px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.card:nth-child(odd){border-right:0}.card{min-height:91px}}
 </style>
 </head>
 <body>
-<header><b id="logo">ICT Revision Arcade</b><button id="who" class="chip"></button><span id="sc">⭐ <span id="pts">0</span></span></header>
+<header><b id="logo">ICT Arcade</b><button id="who" class="chip"></button><span id="sc">POINTS <span id="pts">0</span></span></header>
 <main id="app"></main>
 <script>
 const T={1:"Computer systems",2:"Input and output",3:"Storage",4:"Networks"};
@@ -252,7 +279,7 @@ const FORM_URL=""; // Google Form link goes here
 const LEAGUE=[]; // published league data: [["Sam K",1200],...]
 const hs=s=>{let h=7;for(const c of s+"|ict0417")h=(h*31+c.charCodeAt(0))>>>0;return h.toString(36)};
 const mkCode=()=>`${me}~${pts}~${hs(me+"|"+pts)}`;
-function load(n){me=n;sv("ictrv_me",n);pts=n?+ld("ictrv:"+n)||0:0;$("#pts").textContent=pts;$("#who").textContent=n?"\ud83d\udc64 "+n:"Set name"}
+function load(n){me=n;sv("ictrv_me",n);pts=n?+ld("ictrv:"+n)||0:0;$("#pts").textContent=pts;$("#who").textContent=n?n:"Set name"}
 function add(n){if(!me)return;pts+=n;sv("ictrv:"+me,pts);$("#pts").textContent=pts}
 function nameScreen(){
  view(`<h1>Who is playing?</h1><p>Use your first name and the first letter of your surname, for example <b>Sam K</b>. This name appears on the league table, so do not use your full name or anything private.</p><input id="nm" class="inp" maxlength="20" autocomplete="off" placeholder="Sam K"><br><button class="btn" id="ok">Save and play</button>${me?`<button class="btn alt" id="cx">Cancel</button>`:""}`);
@@ -291,7 +318,7 @@ const HOW={
 "Taxi Rush":["Pick up passengers and earn fares by answering their questions, without crashing.",["Change lane: left and right arrows or A / D","Tablet or phone: use the \u25c0 and \u25b6 buttons"],["Drive into a passenger to pick them up. You then answer a question","A correct answer earns a fare","Crashing into traffic or answering wrongly costs a heart","You have 3 hearts. Traffic speeds up with every fare"]],
 "Wing Byte":["Flap through the gaps between the pipes for as long as you can.",["Flap: space, up arrow or the A button","Tablet or phone: tap the game screen"],["Every pipe you pass scores a point","Every 5th pipe asks a question","Hitting a pipe, the floor or the ceiling costs a heart","A wrong answer costs a heart too. You have 3 hearts"]]};
 function intro(i){const g=G[i],h=HOW[g[1]];
- view(`<h1>${g[0]} ${g[1]}</h1><div class="how"><h2>Goal</h2><p>${h[0]}</p><h2>Controls</h2><ul>${h[1].map(x=>`<li>${x}</li>`).join("")}</ul><h2>Rules</h2><ul>${h[2].map(x=>`<li>${x}</li>`).join("")}</ul></div><p class="meta">Questions from: ${topic?topic+". "+T[topic]:"all topics"}</p><button class="btn" id="go">Start game</button><button class="btn alt" id="bk">Back to games</button>`);
+ view(`<h1>${g[1]}</h1><div class="how"><h2>Goal</h2><p>${h[0]}</p><h2>Controls</h2><ul>${h[1].map(x=>`<li>${x}</li>`).join("")}</ul><h2>Rules</h2><ul>${h[2].map(x=>`<li>${x}</li>`).join("")}</ul></div><p class="meta">Questions from: ${topic?topic+". "+T[topic]:"all topics"}</p><button class="btn" id="go">Start game</button><button class="btn alt" id="bk">Back to games</button>`);
  $("#go").onclick=()=>g[3]();$("#bk").onclick=home;$("#go").focus()}
 G.push(['\ud83e\uddf1','Block Stack','Stack falling blocks. Every cleared row asks a question.',stack],['\ud83e\uddd7','Server Climb','Climb ladders, jump the rolling bugs, reach the top.',climb],['\ud83d\udc7e','Space Defenders','Shoot the alien waves. Clear a wave to answer a question.',invade],['\ud83d\udca5','Brick Breaker','Smash the bricks. Yellow ? bricks ask questions.',brick],['\ud83e\udd4b','Dojo Duel','Fight opponents. Every 3 hits unlocks a combo question.',duel]);
 Object.assign(HOW,{
@@ -666,7 +693,7 @@ function flap(){
   requestAnimationFrame(loop)};loop()}
 
 function home(){
- view(`<h1>Pick a topic, then pick a game</h1><div class="chips">${[0,1,2,3,4].map(k=>`<button class="chip ${k==topic?"on":""}" data-t="${k}">${k?k+". "+T[k]:"All topics"}</button>`).join("")}</div><div class="grid">${G.map((g,i)=>`<button class="card" data-g="${i}"><span>${g[0]}</span><b>${g[1]}</b><small>${g[2]}</small></button>`).join("")}</div>`);
+ view(`<h1>Pick a topic, then pick a game</h1><div class="chips">${[0,1,2,3,4].map(k=>`<button class="chip ${k==topic?"on":""}" data-t="${k}">${k?k+". "+T[k]:"All topics"}</button>`).join("")}</div><div class="grid">${G.map((g,i)=>`<button class="card" data-g="${i}"><span class="game-index">${String(i+1).padStart(2,"0")}</span><b>${g[1]}</b><small>${g[2]}</small></button>`).join("")}</div>`);
  app.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{topic=+b.dataset.t;home()});
  app.querySelectorAll(".card").forEach(b=>b.onclick=()=>intro(+b.dataset.g));
 }
