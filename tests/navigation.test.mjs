@@ -125,7 +125,7 @@ test("lesson back button sits beside the chapter heading and contents items use 
   assert.match(css,/\.chapter-back-button\{/);
   assert.match(css,/\.chapter-heading\{display:flex;align-items:center;justify-content:space-between/);
   assert.match(css,/\.lesson-index nav\{display:flex;flex-direction:column;gap:4px;border:0\}/);
-  assert.match(css,/\.lesson-link\{[^}]*border:0;[^}]*border-radius:8px/);
+  assert.match(css,/\.lesson-link\{[^}]*border:0;[^}]*border-radius:9px/);
   assert.doesNotMatch(app,/className="back-link"/);
 });
 
