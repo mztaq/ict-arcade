@@ -421,7 +421,7 @@ function App() {
         {route.page === "past-papers" && <>
           {route.papersView === "home" && <>
             <div className="papers-home">
-              <Title title="Past Papers"/>
+              <Title title="Past Papers" action={<a className="chapter-back-button" href="#/home"><ArrowLeft size={18}/> Back</a>}/>
               <div className="paper-category-grid papers-home-grid">
                 <a className="paper-category papers-home-card" href="#/past-papers/yearly">
                   <span className="papers-home-art" aria-hidden="true">
