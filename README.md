@@ -4,12 +4,12 @@ A student-built Cambridge IGCSE ICT revision website.
 
 ## Current website
 
-- **Home:** Large ICT Arcade logo, Theory or Practical choice, and a direct link to Games.
+- **Home:** Centered ICT Arcade logo, Theory and Practical preview cards, an official Cambridge Past Papers link, and selectable games at the bottom.
 - **Theory:** Eleven available chapters with searchable notes, original examples, key definitions, questions and flashcards.
 - **Practical:** Coming soon. The ten practical chapters are preserved in the content source for a later release but are not shown as finished revision material.
-- **Games:** All eleven original arcade games remain available, with their original gameplay and local scores.
+- **Games:** Four homepage shortcuts open specific games in the original eleven-game arcade. Original gameplay and local scores are preserved.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
-- **Appearance:** Warm cream and yellow styling, a horizontal navigation bar without a sidebar, and a single light/dark icon at the top right.
+- **Appearance:** Warm cream and yellow styling with no navbar or sidebar. A light/dark icon stays at the top right. Inner pages have a logo link back home.
 
 The content files contain additional practical lesson summaries and questions for future development. They are not published in the current Practical section.
 
