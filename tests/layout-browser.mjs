@@ -6,6 +6,7 @@ import {yearlyPastPapers,solvedPastPapers} from "../src/pastPapers.js";
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
 const routes=["home","past-papers","past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
+routes.push("past-papers/yearly/2026/s","past-papers/yearly/2026/s/qp","past-papers/yearly/2026/s/sf");
 const previews=[];
 for(const group of yearlyPastPapers){
   for(const paper of group.papers){
@@ -109,20 +110,20 @@ try{
         assert.equal(await page.locator('a[href="#/past-papers/solved"]').count(),1);
       }
       if(route==="past-papers/yearly"){
-        assert.equal(await page.locator(".paper-year").count(),7,"Yearly past paper links");
+        assert.equal(await page.locator(".paper-year").count(),10,"Yearly past paper links");
         assert.equal(await page.locator('#main-content a[href^="http"]').count(),0,"No external paper archives");
-        assert.equal(await page.locator('#main-content a[href^="#/past-papers/yearly/"]').count(),7);
+        assert.equal(await page.locator('#main-content a[href^="#/past-papers/yearly/"]').count(),10);
       }
       if(route==="past-papers/yearly/2026"||route==="past-papers/yearly/2020"){
         const year=Number(route.split("/")[2]);
-        const papers=yearlyPastPapers.find(item=>item.year===year).papers;
         assert.match(await page.locator(".page-title h1").innerText(),/Past Papers 20/);
-        if(papers.length){
-          assert.equal(await page.locator(".paper-year").count(),papers.length);
-        } else {
-          assert.match(await page.locator(".paper-empty").innerText(),/No locally hosted papers/);
-        }
+        assert.equal(await page.locator(".paper-year").count(),year===2026?2:3);
         assert.equal(await page.locator('#main-content a[href^="http"]').count(),0);
+      }
+      if(route==="past-papers/yearly/2026/s")assert.equal(await page.locator(".paper-year").count(),4);
+      if(route==="past-papers/yearly/2026/s/qp"||route==="past-papers/yearly/2026/s/sf"){
+        assert.equal(await page.locator(".papa-file").count(),route.endsWith("/qp")?7:4);
+        assert.equal(await page.locator("iframe").count(),0);
       }
       if(route==="past-papers/solved"){
         assert.equal(await page.locator(".paper-category").count(),3,"Papers 1, 2 and 3");
