@@ -7,6 +7,7 @@ const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
 const routes=["home","past-papers","past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 routes.push("past-papers/yearly/2026/s","past-papers/yearly/2026/s/qp","past-papers/yearly/2026/s/sf");
+routes.push("does-not-exist","notes/invalid","games/99","past-papers/yearly/2026/s/invalid");
 const previews=[];
 for(const group of yearlyPastPapers){
   for(const paper of group.papers){
@@ -49,7 +50,7 @@ try{
   for(const width of sizes){
     const page=await browser.newPage({viewport:{width,height:900},reducedMotion:"reduce"});
     for(const route of routes){
-      const url=origin+"/#/"+route;
+      const url=origin+"/"+route;
       await page.goto(url,{waitUntil:"networkidle",timeout:30000});
       await page.locator("#main-content").waitFor({state:"visible"});
       const findings=await page.evaluate(({pairs,checks})=>{
@@ -78,6 +79,10 @@ try{
         width+"px / "+route+": horizontal overflow "+(findings.full-findings.vw)+"px");
       assert.deepEqual(findings.overlaps,[],width+"px / "+route+": overlapping interface");
       assert.deepEqual(findings.tooSmall,[],width+"px / "+route+": text too small");
+      if(["does-not-exist","notes/invalid","games/99","past-papers/yearly/2026/s/invalid"].includes(route)){
+        assert.equal(await page.locator(".not-found h1").innerText(),"Page not found");
+        assert.equal(await page.locator('.not-found a[href="/"]').count(),1);
+      }
       if(route==="home"){
         const hierarchy=await page.evaluate(()=>{
           const title=document.querySelector(".course-choice .course-title-line strong");
@@ -106,14 +111,14 @@ try{
       }
       if(route==="past-papers"){
         assert.equal(await page.locator(".paper-category").count(),2,"Past paper choice count");
-        assert.equal(await page.locator('a[href="#/past-papers/yearly"]').count(),1);
-        assert.equal(await page.locator('a[href="#/past-papers/solved"]').count(),1);
+        assert.equal(await page.locator('a[href="/past-papers/yearly"]').count(),1);
+        assert.equal(await page.locator('a[href="/past-papers/solved"]').count(),1);
       }
       if(["past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020"].includes(route)){
         assert.equal(await page.locator(".papa-year-group").count(),10);
         assert.equal(await page.locator(".papa-series-link").count(),29);
         assert.equal(await page.locator('#main-content a[href^="http"]').count(),0);
-        assert.equal(await page.locator('.papa-series-link[href="#/past-papers/yearly/2026/s"]').count(),1);
+        assert.equal(await page.locator('.papa-series-link[href="/past-papers/yearly/2026/s"]').count(),1);
       }
       if(route==="past-papers/yearly/2026/s")assert.equal(await page.locator(".paper-year").count(),4);
       if(route==="past-papers/yearly/2026/s/qp"||route==="past-papers/yearly/2026/s/sf"){
@@ -122,7 +127,7 @@ try{
       }
       if(route==="past-papers/solved"){
         assert.equal(await page.locator(".paper-category").count(),3,"Papers 1, 2 and 3");
-        assert.equal(await page.locator('a[href="#/past-papers/solved/1"]').count(),1);
+        assert.equal(await page.locator('a[href="/past-papers/solved/1"]').count(),1);
         assert.equal(await page.locator(".paper-theory-note").count(),0);
       }
       if(route==="past-papers/solved/1"){
@@ -143,6 +148,13 @@ try{
       }
       console.log("PASS "+width+"px / "+route);
     }
+    await page.goto(origin+"/");
+    await page.locator('a[href="/notes"]').click();
+    await page.waitForURL(origin+"/notes");
+    await page.goBack();
+    await page.waitForURL(origin+"/");
+    await page.goto(origin+"/#/notes");
+    await page.waitForURL(origin+"/notes");
     await page.close();
   }
 }finally{
