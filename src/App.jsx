@@ -357,8 +357,9 @@ function App({previewPage,previewTheme} = {}) {
   const advanceFlash = () => {setFlipped(false); setFlashIndex(i => i + 1);};
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
+  const MainRegion = previewPage ? "div" : "main";
   return <div className="site-shell">
-    <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
+    {!previewPage && <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>}
     <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
       {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
         <img className="brand-image" src="/ict-arcade-mark.svg" alt="" />
@@ -371,7 +372,7 @@ function App({previewPage,previewTheme} = {}) {
       </button>
     </header>
     <div className="site-body">
-      <main id="main-content" tabIndex={-1} className="site-main">
+      <MainRegion id={previewPage?undefined:"main-content"} tabIndex={-1} className="site-main">
 
         {route.page === "home" && <div className="home-screen">
           <CircuitBackdrop/>
@@ -623,7 +624,7 @@ function App({previewPage,previewTheme} = {}) {
             </div>}
         </>}
 
-      </main>
+      </MainRegion>
       {route.page === "home" && <footer className="site-footer">© 2026 ICT Arcade. All Rights Reserved</footer>}
     </div>
   </div>;
