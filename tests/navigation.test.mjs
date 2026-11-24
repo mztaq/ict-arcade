@@ -7,12 +7,18 @@ const app=readFileSync(new URL("../src/App.jsx",import.meta.url),"utf8");
 const css=readFileSync(new URL("../src/styles.css",import.meta.url),"utf8");
 
 test("homepage presents separate theory and practical routes",()=>{
-  assert.match(app,/Choose what to revise/);
-  assert.match(app,/ICT Arcade<span>/);
+  assert.match(app,/Learn ICT step by step/);
+  assert.match(app,/Start with the basics, practise as you go/);
+  assert.match(app,/<h1>ICT Arcade<\/h1>/);
+  assert.match(app,/<span className="header-brand-name">ICT Arcade<\/span>/);
   assert.match(app,/className="course-choices"/);
   assert.match(app,/href="#\/notes"/);
   assert.match(app,/href="#\/practical"/);
   assert.match(app,/Coming soon/);
+  assert.match(app,/Learn the theory/);
+  assert.match(app,/Build practical skills/);
+  assert.match(app,/Learn with games/);
+  assert.match(app,/Try past papers/);
   assert.equal(chapters.filter(ch=>ch.unit==="Theory").length,11);
   assert.equal(chapters.filter(ch=>ch.unit==="Practical").length,10);
 });
@@ -23,6 +29,8 @@ test("unreleased practical lessons do not appear in theory navigation",()=>{
   assert.match(app,/theoryChapters\.map/);
   assert.match(app,/theoryQuestions/);
   assert.match(app,/theoryFlashcards/);
+  assert.match(app,/New to ICT\? Start here/);
+  assert.match(app,/Start Chapter 1/);
 });
 test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.doesNotMatch(app,/header-divider/);
