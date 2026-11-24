@@ -7,7 +7,8 @@ const app=readFileSync(new URL("../src/App.jsx",import.meta.url),"utf8");
 const css=readFileSync(new URL("../src/styles.css",import.meta.url),"utf8");
 
 test("homepage presents separate theory and practical routes",()=>{
-  assert.match(app,/What are you revising\?/);
+  assert.match(app,/Choose what to revise/);
+  assert.match(app,/ICT Arcade<span>/);
   assert.match(app,/className="course-choices"/);
   assert.match(app,/navigate\("notes"\)/);
   assert.match(app,/navigate\("practical"\)/);
