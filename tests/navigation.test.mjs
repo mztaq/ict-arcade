@@ -176,7 +176,8 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/href="#\/past-papers\/solved"/);
   assert.match(app,/href="#\/past-papers\/solved\/2"/);
   assert.match(app,/href="#\/past-papers\/solved\/3"/);
-  assert.match(app,/Mustaqim and Theory\?/);
-  assert.match(app,/he didn't solve any Paper 1 papers/);
-  assert.doesNotMatch(app,/href="#\/past-papers\/solved\/1"/);
+  assert.match(app,/href="#\/past-papers\/solved\/1"/);
+  assert.match(app,/className="paper-1-message"/);
+  assert.match(app,/Mustaqim hates Theory, so no solved Paper 1 papers/);
+  assert.doesNotMatch(app,/className="paper-theory-note"/);
 });
