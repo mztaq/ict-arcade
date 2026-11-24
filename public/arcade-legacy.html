@@ -293,7 +293,7 @@ function load(n){me=n;sv("ictrv_me",n);pts=n?+ld("ictrv:"+n)||0:0;$("#pts").text
 function add(n){if(!me)return;pts+=n;sv("ictrv:"+me,pts);$("#pts").textContent=pts}
 function nameScreen(){
  view(`<h1>Who is playing?</h1><p>Use your first name and the first letter of your surname, for example <b>Sam K</b>. This name appears on the league table, so do not use your full name or anything private.</p><input id="nm" class="inp" maxlength="20" autocomplete="off" placeholder="Sam K"><br><button class="btn" id="ok">Save and play</button>${me?`<button class="btn alt" id="cx">Cancel</button>`:""}`);
- $("#ok").onclick=()=>{const n=$("#nm").value.replace(/[^A-Za-z0-9 '-]/g,"").trim().replace(/ +/g," ");if(n.length<2){$("#nm").focus();return}load(n);home()};
+ $("#ok").onclick=()=>{const n=$("#nm").value.replace(/[^A-Za-z0-9 '-]/g,"").trim().replace(/ +/g," ");if(n.length<2){$("#nm").focus();return}load(n);openRequestedGame()};
  $("#nm").onkeydown=e=>{if(e.key=="Enter")$("#ok").click()};
  if(me)$("#cx").onclick=home;$("#nm").focus()}
 $("#who").onclick=nameScreen;
@@ -756,7 +756,12 @@ function sort(){
   });
  };draw();
 }
-load(ld("ictrv_me")||"");me?home():nameScreen();
+function openRequestedGame(){
+ const requested=Number(new URLSearchParams(location.search).get("game"));
+ if(Number.isInteger(requested)&&requested>=1&&requested<=G.length)intro(requested-1);
+ else home();
+}
+load(ld("ictrv_me")||"");me?openRequestedGame():nameScreen();
 </script>
 </body>
 </html>
