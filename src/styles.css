@@ -848,3 +848,12 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(max-width:560px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:14px}}
 
 .chapter-description .chapter-number{font-size:.8em;font-weight:600;color:var(--ink-soft);white-space:nowrap}
+
+/* Theme-aware missing page, with an original ICT document illustration. */
+.not-found{min-height:min(680px,calc(100svh - 160px));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:32px 16px}
+.not-found-art{width:118px;height:118px;display:grid;place-items:center;position:relative;border-radius:24px;background:var(--blue-soft);color:var(--blue);margin-bottom:8px}
+.not-found-art span{position:absolute;bottom:4px;right:4px;width:39px;height:39px;display:grid;place-items:center;background:var(--paper);border:2px solid var(--blue);border-radius:50%;font-size:24px;font-weight:750}
+.not-found-code{font-size:clamp(76px,12vw,128px);font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--blue)}
+.not-found h1{font-size:clamp(26px,4vw,42px);margin:0}
+.not-found p{max-width:550px;font-size:18px;color:var(--ink-soft);margin:0 0 12px}
+.not-found .primary-action{min-height:52px;font-size:17px}
