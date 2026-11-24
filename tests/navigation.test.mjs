@@ -4,6 +4,7 @@ import {readFileSync} from "node:fs";
 import {chapters} from "../src/content.js";
 
 const app=readFileSync(new URL("../src/App.jsx",import.meta.url),"utf8");
+const papa=readFileSync(new URL("../src/PapaPapers.jsx",import.meta.url),"utf8");
 const css=readFileSync(new URL("../src/styles.css",import.meta.url),"utf8");
 
 test("homepage presents separate theory and practical routes",()=>{
@@ -174,9 +175,7 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/Solved Past Papers/);
   assert.match(app,/href="#\/past-papers\/yearly"/);
   assert.match(app,/href=\{"#\/past-papers\/yearly\/"\+item\.year\}/);
-  assert.match(app,/No locally hosted papers for/);
   assert.doesNotMatch(app,/archivePastPapersUrl|officialPastPapersUrl/);
-  assert.match(app,/<PaperViewer title=\{selectedYearlyPaper.title\}/);
   assert.match(app,/<PaperViewer title=\{selectedSolvedPaper.title\}/);
   assert.match(app,/href="#\/past-papers\/solved"/);
   assert.match(app,/href="#\/past-papers\/solved\/2"/);
@@ -187,7 +186,7 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.doesNotMatch(app,/className="paper-theory-note"/);
 });
 
-test("PDF viewer previews question papers, mark schemes and reports but only downloads source files",()=>{
+test("PDF viewer previews solved papers and only downloads source files",()=>{
   const viewer=readFileSync(new URL("../src/PaperViewer.jsx",import.meta.url),"utf8");
   assert.match(app,/key:"questionPaper",label:"Question Paper"/);
   assert.match(app,/key:"markScheme",label:"Mark Scheme"/);
@@ -195,7 +194,6 @@ test("PDF viewer previews question papers, mark schemes and reports but only dow
   assert.match(app,/key:"workedSolution",label:"Worked Solution"/);
   assert.match(app,/papersId: parts\[0\]/);
   assert.match(app,/papersDocument: parts\[0\]/);
-  assert.match(app,/selectedYearlyPaper/);
   assert.match(app,/selectedSolvedPaper/);
   assert.match(viewer,/iframe className="paper-pdf-frame" src=\{active.url\}/);
   assert.match(viewer,/href=\{active.url\} download/);
@@ -206,4 +204,12 @@ test("PDF viewer previews question papers, mark schemes and reports but only dow
   assert.doesNotMatch(viewer,/iframe[^\n]*file.url/);
   assert.match(css,/\.paper-pdf-frame\{/);
   assert.match(css,/\.paper-source-file\{/);
+});
+
+test("yearly library routes to PapaCambridge files only on click",()=>{
+  assert.match(app,/<PapaPapers year=/);
+  assert.match(papa,/Choose an examination series/);
+  for(const label of ["Question Papers","Mark Schemes","Examiner Reports","Source Files"])assert.ok(papa.includes(label));
+  assert.match(papa,/href=\{file.url\} target="_blank" rel="noopener noreferrer"/);
+  assert.doesNotMatch(papa,/iframe|fetch\(/);
 });
