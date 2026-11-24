@@ -379,6 +379,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
 }
 @media(max-width:560px){
   .site-main{padding:22px 14px 43px}
+  .home-intro{padding-top:40px}
   .home-logo-mark{width:43px;height:43px;flex-basis:43px;padding:8px;gap:3px;border-width:2px;border-radius:9px}
   .home-signature{gap:10px}
   .home-signature h1{font-size:clamp(31px,8.6vw,44px)}
