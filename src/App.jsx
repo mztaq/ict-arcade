@@ -424,7 +424,7 @@ function App() {
               <a className="paper-category" href="#/past-papers/solved">
                 <span className="paper-category-icon"><CheckCircle2 size={26} strokeWidth={1.7}/></span>
                 <strong>Solved Past Papers</strong>
-                <span>Paper 2 and Paper 3</span>
+                <span>Paper 1, Paper 2 and Paper 3</span>
                 <ArrowUpRight className="paper-category-arrow" size={20}/>
               </a>
             </div>
@@ -446,12 +446,18 @@ function App() {
             </div>
           </>}
           {route.papersView === "solved" && <>
-            <Title title={route.papersNumber === 2 || route.papersNumber === 3 ? "Paper " + route.papersNumber : "Solved Past Papers"}
+            <Title title={[1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
               action={<button type="button" className="chapter-back-button" onClick={()=>
                 navigate("past-papers",route.papersNumber ? "solved" : undefined)
               }><ArrowLeft size={16}/> {route.papersNumber ? "Solved Past Papers" : "Past Papers"}</button>}/>
             {route.papersNumber === 0 ? <>
-              <div className="paper-category-grid">
+              <div className="paper-category-grid solved-paper-options">
+                <a className="paper-category" href="#/past-papers/solved/1">
+                  <span className="paper-category-icon"><BookOpen size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 1</strong>
+                  <span>Theory</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
                 <a className="paper-category" href="#/past-papers/solved/2">
                   <span className="paper-category-icon"><FileText size={26} strokeWidth={1.7}/></span>
                   <strong>Paper 2</strong>
@@ -465,8 +471,12 @@ function App() {
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
               </div>
-              <p className="paper-theory-note">Mustaqim and Theory? It's complicated. 💔 He hates Theory, so he didn't solve any Paper 1 papers.</p>
-            </> : [2,3].includes(route.papersNumber) ? (
+            </> : route.papersNumber === 1 ? (
+              <div className="paper-1-message" role="status">
+                <HeartPulse size={39} strokeWidth={1.6} aria-hidden="true"/>
+                <h2>Mustaqim hates Theory, so no solved Paper 1 papers.</h2>
+              </div>
+            ) : [2,3].includes(route.papersNumber) ? (
               solvedPastPapers[route.papersNumber].length ?
                 <div className="paper-year-grid">
                   {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.url} href={item.url} target="_blank" rel="noopener noreferrer">
@@ -474,7 +484,7 @@ function App() {
                   </a>)}
                 </div> :
                 <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/><p>No solved papers uploaded yet.</p></div>
-            ) : <div className="paper-empty"><p>Choose Paper 2 or Paper 3.</p></div>}
+            ) : <div className="paper-empty"><p>Choose Paper 1, Paper 2 or Paper 3.</p></div>}
           </>}
           {!["home","yearly","solved"].includes(route.papersView) && <div className="paper-empty"><p>That collection isn't available.</p>
             <button className="secondary-action" onClick={()=>navigate("past-papers")}>Past Papers</button></div>}
