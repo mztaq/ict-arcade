@@ -5,10 +5,15 @@
 // {title:"Original practice paper · Paper 2", url:"/yearly-papers/2025/example.pdf"}
 // The file must actually exist under public/yearly-papers/YYYY/.
 // No external website URLs are used in this catalogue.
-export const yearlyPastPapers = [2026,2025,2024,2023,2022,2021,2020].map(year=>({
-  year,
-  papers:[]
-}));
+export const yearlyPastPapers = [
+  {year:2026,papers:[]},
+  {year:2025,papers:[]},
+  {year:2024,papers:[]},
+  {year:2023,papers:[]},
+  {year:2022,papers:[]},
+  {year:2021,papers:[]},
+  {year:2020,papers:[]}
+];
 
 // Author-created or authorised worked files only. A solved paper listing is
 // {title:"Original worked practical paper",url:"/solved-papers/example.pdf"}.
