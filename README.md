@@ -28,7 +28,7 @@ npm run build
 
 - `src/content.js`: Original lesson summaries covering the coursebook structure.
 - `src/questions.js`: Original multiple-choice and written-answer practice.
-- `src/examinerAdvice.js`: Original theory exam advice informed by Save My Exams, with specific topic links. Practical advice remains reserved for the author.
+- `src/examinerAdvice.js`: Original theory exam advice, with background references retained in source data but no external links displayed. Practical advice remains reserved for the author.
 - `src/App.jsx`: Beginner-first homepage, accessible ICT animation, Games gallery, Theory lessons and practice tools.
 - `src/styles.css`: Shared design styles and responsive layout.
 - `public/arcade-legacy.html`: Original arcade games with refreshed menu colours.
@@ -42,7 +42,7 @@ The homepage uses a simple animated input-processing-output diagram made with CS
 
 ## Exam advice
 
-All 35 Theory lessons have short, original exam-technique guidance informed by Save My Exams Cambridge IGCSE ICT revision notes and linked to the corresponding topic. The wording is not copied and is not presented as an official examiner report. Existing lesson exam tips are separate. Practical advice will only be added when the author provides it.
+All 35 Theory lessons have short, original exam-technique guidance informed by relevant Cambridge IGCSE ICT study material. The advice appears directly in each lesson without an external link. The wording is not copied and is not presented as an official examiner report. Existing lesson exam tips are separate. Practical advice will only be added when the author provides it.
 
 ## Layout
 
