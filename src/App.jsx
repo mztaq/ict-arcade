@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
   Check, CheckCircle2, ClipboardList, Eye, EyeOff,
-  Gamepad2, Layers, Moon, RotateCcw, Search, Sun, X
+  Gamepad2, Layers, FileText, Moon, RotateCcw, Search, Sun, X
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -24,7 +24,7 @@ function useStored(key, initial) {
 }
 const getRoute = () => {
   const parts = (location.hash || "#/home").replace(/^#\/?/, "").split("/");
-  return {page: parts[0] || "home", id: Number(parts[1]) || 1, lesson: Number(parts[2]) || 0};
+  return {page: parts[0] || "home", id: Number(parts[1]) || 1, lesson: Number(parts[2]) || 0, game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0};
 };
 const navigate = (page, id, lesson) => {
   const destination = "#/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson);
@@ -65,6 +65,13 @@ function Title({title, description, action}) {
     {action && <div className="title-action">{action}</div>}
   </div>;
 }
+
+const featuredGames = [
+  {id: 1, name: "Pixel Dash", detail: "Run, jump and answer questions."},
+  {id: 2, name: "Rune Dungeon", detail: "Solve ICT riddles to open doors."},
+  {id: 3, name: "Snake", detail: "Collect apples and answer ICT questions."},
+  {id: 4, name: "Taxi Rush", detail: "Pick up passengers and answer fares."}
+];
 
 function App() {
   const [route, setRoute] = useState(getRoute);
@@ -155,26 +162,13 @@ function App() {
   const advanceFlash = () => {setFlipped(false); setFlashIndex(i => i + 1);};
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
-  const nav = [
-    {page: "notes", label: "Theory"},
-    {page: "practical", label: "Practical"},
-    {page: "practice", label: "Questions"},
-    {page: "flashcards", label: "Flashcards"},
-    {page: "games", label: "Games"}
-  ];
-  const activePage = route.page === "chapter" ? (chapter.unit === "Theory" ? "notes" : "practical") : route.page;
-
   return <div className="site-shell">
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
-    <header className="site-header">
-      <button className="brand header-brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
+    <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
+      {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
         <span className="brand-grid" aria-hidden="true"><i/><i/><i/><i/></span>
-        <span className="header-brand-name">ICT Arcade<span className="brand-period">.</span></span>
-      </button>
-      <nav className="top-nav" aria-label="Main navigation">
-        {nav.map(({page, label}) => <button key={page} className={"top-nav-link " + (activePage === page ? "active" : "")}
-          aria-current={activePage === page ? "page" : undefined} onClick={() => navigate(page)}>{label}</button>)}
-      </nav>
+        <span className="header-brand-name">ICT Arcade<span>.</span></span>
+      </button>}
       <button className="header-theme" type="button" onClick={toggleTheme}
         title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
         aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
@@ -190,31 +184,52 @@ function App() {
               <span className="home-logo-mark" aria-hidden="true"><i/><i/><i/><i/></span>
               <h1>ICT Arcade<span>.</span></h1>
             </div>
-            <p>Cambridge IGCSE ICT revision. Notes, questions and games in one place.</p>
-            <button className="home-games-link" onClick={() => navigate("games")}>
-              <Gamepad2 size={20} strokeWidth={1.85}/> Play games <ArrowRight size={17}/>
+            <h2>Choose what to revise</h2>
+            <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
+              <FileText size={18} strokeWidth={1.8}/> Past papers <ArrowUpRight size={17}/>
+            </a>
+          </section>
+
+          <section className="course-choices" aria-label="Revision sections">
+            <button className="course-choice" onClick={() => navigate("notes")}>
+              <span className="course-preview theory-preview" aria-hidden="true">
+                <span className="preview-sheet">
+                  <span className="preview-heading">Computer systems</span>
+                  <span><b>CPU</b> Processes instructions</span>
+                  <span><b>RAM</b> Stores working data</span>
+                  <span><b>ROM</b> Retains start-up instructions</span>
+                </span>
+              </span>
+              <span className="course-choice-body">
+                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={17}/></span>
+                <span className="course-description">Notes and examples across 11 chapters and {theoryLessons.length} lessons.</span>
+              </span>
+            </button>
+            <button className="course-choice" onClick={() => navigate("practical")}>
+              <span className="course-preview practical-preview" aria-hidden="true">
+                <span className="preview-practical">
+                  <span>Documents</span><span>Spreadsheets</span><span>Web pages</span>
+                </span>
+              </span>
+              <span className="course-choice-body">
+                <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
+                <span className="course-description">Document production, databases, spreadsheets and websites.</span>
+              </span>
             </button>
           </section>
-          <section className="choose-course">
-            <h2>Choose what to revise</h2>
-            <div className="course-choices">
-              <button className="course-choice" onClick={() => navigate("notes")}>
-                <span className="choice-icon"><BookOpen size={24} strokeWidth={1.8}/></span>
-                <h3>Theory</h3>
-                <p>Computer systems, networks, ICT applications, safety and more.</p>
-                <span className="choice-footer"><span>11 chapters · {theoryLessons.length} lessons</span><ArrowRight size={19}/></span>
-              </button>
-              <button className="course-choice" onClick={() => navigate("practical")}>
-                <span className="choice-icon"><Layers size={24} strokeWidth={1.8}/></span>
-                <h3>Practical</h3>
-                <p>Document production, databases, spreadsheets and website authoring.</p>
-                <span className="choice-footer"><span>Coming soon</span><ArrowRight size={19}/></span>
-              </button>
+
+          <section className="home-games">
+            <div className="home-section-heading">
+              <h2>Games</h2>
+              <button className="all-games-link" onClick={() => navigate("games")}>All 11 games <ArrowRight size={16}/></button>
             </div>
-            {validDone.length > 0 && <button className="continue-lesson" onClick={() => {
-              const next = theoryLessons.find(l => !done.includes(keyFor(l.chapterId, l.index))) || theoryLessons[0];
-              navigate("chapter", next.chapterId, next.index);
-            }}>Continue revision <ArrowRight size={17}/></button>}
+            <div className="featured-games">
+              {featuredGames.map(game => <button key={game.id} className="featured-game" onClick={() => navigate("games", game.id)}>
+                <span className="featured-game-number">{formatNumber(game.id)}</span>
+                <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
+                <ArrowUpRight size={19}/>
+              </button>)}
+            </div>
           </section>
         </>}
 
@@ -310,7 +325,7 @@ function App() {
         {route.page === "games" && <>
           <Title title="Games" description="Eleven original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
           
-          <iframe title="ICT Arcade original games" src="/arcade-legacy.html" className="arcade-frame" allow="fullscreen" loading="eager"/>
+          <iframe key={route.game || "all"} title="ICT Arcade original games" src={route.game > 0 ? "/arcade-legacy.html?game=" + route.game : "/arcade-legacy.html"} className="arcade-frame" allow="fullscreen" loading="eager"/>
         </>}
 
       </main>
