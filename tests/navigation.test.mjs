@@ -54,7 +54,7 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/function ArcadeVisual\(\{id\}\)/);
   assert.doesNotMatch(app,/className="top-nav"/);
   assert.match(app,/className="past-papers-link"/);
-  assert.match(app,/cambridgeinternational\.org\/programmes-and-qualifications/);
+  assert.match(app,/href="#\/past-papers"/);
   assert.match(app,/className="games-hub-card"/);
   assert.match(app,/href="#\/games"/);
   assert.match(app,/className="featured-games games-page-grid"/);
@@ -164,4 +164,19 @@ test("homepage typography keeps titles above statistics and animation behind con
   assert.match(css,/@keyframes circuit-packet/);
   assert.match(css,/\.circuit-signals path,.circuit-nodes circle\{animation:none!important\}/);
   assert.doesNotMatch(css,/\.hero-motion\{/);
+});
+
+test("past papers homepage has yearly and solved collections only",()=>{
+  assert.match(app,/route\.page === "past-papers"/);
+  assert.match(app,/route\.papersView === "yearly"/);
+  assert.match(app,/route\.papersView === "solved"/);
+  assert.match(app,/Yearly Past Papers/);
+  assert.match(app,/Solved Past Papers/);
+  assert.match(app,/href="#\/past-papers\/yearly"/);
+  assert.match(app,/href="#\/past-papers\/solved"/);
+  assert.match(app,/href="#\/past-papers\/solved\/2"/);
+  assert.match(app,/href="#\/past-papers\/solved\/3"/);
+  assert.match(app,/Mustaqim and Theory\?/);
+  assert.match(app,/he didn't solve any Paper 1 papers/);
+  assert.doesNotMatch(app,/href="#\/past-papers\/solved\/1"/);
 });
