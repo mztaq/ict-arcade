@@ -400,7 +400,7 @@ function App() {
             <a className="course-choice theory-card" href="#/notes">
               <TheoryPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
+                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong></span>
                 <span className="course-stats"><span><strong>{theoryChapters.length}</strong><small>chapters</small></span><span><strong>{theoryLessons.length}</strong><small>lessons</small></span></span>
               </span>
             </a>
@@ -413,7 +413,7 @@ function App() {
           </section>
 
           <a className="games-hub-card" href="#/games" aria-label="Browse all 11 ICT Arcade games">
-            <span className="games-hub-info"><strong>Games</strong><span>11 games</span><ArrowUpRight size={21}/></span>
+            <span className="games-hub-info"><strong>Games</strong><span>11 games</span></span>
             <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
           </a>
         </div>}
