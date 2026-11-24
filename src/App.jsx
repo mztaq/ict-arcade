@@ -293,7 +293,7 @@ function App() {
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
     <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
       {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
-        <span className="brand-grid" aria-hidden="true"><i/><i/><i/><i/></span>
+        <img className="brand-image" src="/ict-arcade-mark.svg" alt="" />
         <span className="header-brand-name">ICT Arcade<span>.</span></span>
       </button>}
       <button className="header-theme" type="button" onClick={toggleTheme}
@@ -308,50 +308,42 @@ function App() {
         {route.page === "home" && <>
           <section className="home-intro">
             <div className="home-signature">
-              <span className="home-logo-mark" aria-hidden="true"><i/><i/><i/><i/></span>
+              <img className="home-logo-mark" src="/ict-arcade-mark.svg" alt="" />
               <h1>ICT Arcade<span>.</span></h1>
             </div>
             <h2>Choose what to revise</h2>
             <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
-              <FileText size={18} strokeWidth={1.8}/> Past papers <ArrowUpRight size={17}/>
+              <FileText size={17}/> Past papers <ArrowUpRight size={16}/>
             </a>
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
-            <button className="course-choice" onClick={() => navigate("notes")}>
-              <span className="course-preview theory-preview" aria-hidden="true">
-                <span className="preview-sheet">
-                  <span className="preview-heading">Computer systems</span>
-                  <span><b>CPU</b> Processes instructions</span>
-                  <span><b>RAM</b> Stores working data</span>
-                  <span><b>ROM</b> Retains start-up instructions</span>
-                </span>
-              </span>
+            <button className="course-choice theory-card" onClick={() => navigate("notes")}>
+              <TheoryPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={17}/></span>
-                <span className="course-description">Notes and examples across 11 chapters and {theoryLessons.length} lessons.</span>
+                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
+                <span className="course-description">11 chapters · {theoryLessons.length} lessons · Notes, explanations and exam practice.</span>
               </span>
             </button>
-            <button className="course-choice" onClick={() => navigate("practical")}>
-              <span className="course-preview practical-preview" aria-hidden="true">
-                <span className="preview-practical">
-                  <span>Documents</span><span>Spreadsheets</span><span>Web pages</span>
-                </span>
-              </span>
+            <button className="course-choice practical-card" onClick={() => navigate("practical")}>
+              <PracticalPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
-                <span className="course-description">Document production, databases, spreadsheets and websites.</span>
+                <span className="course-description">Spreadsheets, databases, documents and web authoring.</span>
               </span>
             </button>
           </section>
 
           <section className="home-games">
-            <div className="home-section-heading"><h2>Games</h2></div>
+            <div className="home-section-heading"><h2>Games</h2><span>11 games</span></div>
             <div className="featured-games">
-              {arcadeGames.map(game => <button key={game.id} className="featured-game" onClick={() => navigate("games", game.id)}>
-                <span className="featured-game-number">{formatNumber(game.id)}</span>
-                <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
-                <ArrowUpRight size={19}/>
+              {arcadeGames.map((game,i) => <button key={game.id} className={"featured-game "+(i<2?"featured-game-large":"")}
+                onClick={() => navigate("games",game.id)} aria-label={"Play "+game.name}>
+                <ArcadeVisual id={game.id}/>
+                <span className="featured-game-bottom">
+                  <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
+                  <ArrowUpRight size={19} aria-hidden="true"/>
+                </span>
               </button>)}
             </div>
           </section>
