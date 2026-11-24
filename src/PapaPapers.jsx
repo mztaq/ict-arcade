@@ -45,7 +45,7 @@ export function PapaPapers({year,series,folder}){
   return <section className="papa-browser">
     <div className="page-title papa-heading"><div><h1>{title}</h1><p>{type&&exam?year+" · "+exam.label:exam?"Choose a document folder":"Choose an examination series · 2017–2026"}</p></div><div className="title-action"><a className="chapter-back-button" href={back}><ArrowLeft size={16}/> Back</a></div></div>
     {!exam?<div className="papa-year-groups">{years.map(item=><section className="papa-year-group" key={item} aria-labelledby={"year-"+item}>
-      <div className="papa-year-group-heading"><span className="papa-icon"><CalendarDays size={22}/></span><h2 id={"year-"+item}>{item}</h2><small>{seriesFor(item).length} examination series</small></div>
+      <div className="papa-year-group-heading"><span className="papa-icon"><CalendarDays size={22}/></span><h2 id={"year-"+item}>{item}</h2></div>
       <div className="papa-series-grid" style={{"--series-count":seriesFor(item).length}}>{seriesFor(item).slice().reverse().map(entry=><a className="papa-series-link" key={entry.id} href={root+"/"+item+"/"+entry.id}><CalendarCheck2 size={19} aria-hidden="true"/><span>{entry.label}</span><ArrowRight size={17} aria-hidden="true"/></a>)}</div>
     </section>)}</div>:
       !type?<div className="paper-year-grid papa-list">{folders.map(([id,label])=><a className="paper-year" key={id} href={seriesRoute+"/"+id}><span className="papa-icon">{id==="qp"?<FileText size={22}/>:id==="ms"?<ClipboardCheck size={22}/>:id==="er"?<BookOpen size={22}/>:<FileArchive size={22}/>}</span><strong>{label}</strong><ArrowRight size={18}/></a>)}</div>:
