@@ -4,7 +4,7 @@ import {chromium} from "playwright";
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
-const routes=["home","past-papers","past-papers/yearly","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
+const routes=["home","past-papers","past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 const minimumReadableSize={
   home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
   "past-papers":[[".paper-category strong",23]],
@@ -91,6 +91,13 @@ try{
       }
       if(route==="past-papers/yearly"){
         assert.equal(await page.locator(".paper-year").count(),7,"Yearly past paper links");
+        assert.equal(await page.locator('#main-content a[href^="http"]').count(),0,"No external paper archives");
+        assert.equal(await page.locator('#main-content a[href^="#/past-papers/yearly/"]').count(),7);
+      }
+      if(route==="past-papers/yearly/2026"||route==="past-papers/yearly/2020"){
+        assert.match(await page.locator(".page-title h1").innerText(),/Past Papers 20/);
+        assert.match(await page.locator(".paper-empty").innerText(),/No locally hosted papers/);
+        assert.equal(await page.locator('#main-content a[href^="http"]').count(),0);
       }
       if(route==="past-papers/solved"){
         assert.equal(await page.locator(".paper-category").count(),3,"Papers 1, 2 and 3");
