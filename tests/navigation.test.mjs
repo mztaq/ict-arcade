@@ -173,6 +173,9 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/Yearly Past Papers/);
   assert.match(app,/Solved Past Papers/);
   assert.match(app,/href="#\/past-papers\/yearly"/);
+  assert.match(app,/href=\{"#\/past-papers\/yearly\/"\+item\.year\}/);
+  assert.match(app,/No locally hosted papers for/);
+  assert.doesNotMatch(app,/archivePastPapersUrl|officialPastPapersUrl|href=\{item\.url\} target="_blank"/);
   assert.match(app,/href="#\/past-papers\/solved"/);
   assert.match(app,/href="#\/past-papers\/solved\/2"/);
   assert.match(app,/href="#\/past-papers\/solved\/3"/);
