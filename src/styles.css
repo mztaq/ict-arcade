@@ -906,7 +906,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .definitions-table tbody th{font-weight:700;color:var(--ink)}
 .definitions-table tbody td{color:var(--ink-soft)}
 .definitions-table tbody tr:nth-child(even){background:var(--paper-secondary)}
-@media(max-width:680px){.definitions-table th,.definitions-table td{padding:10px;font-size:15px}.definitions-table thead th:first-child{width:35%}}
+@media(max-width:680px){.definitions-table th,.definitions-table td{padding:10px;font-size:16px}.definitions-table thead th:first-child{width:35%}}
 
 .comparison-table thead th:first-child{width:24%}
 .comparison-table thead th:nth-child(2),.comparison-table thead th:nth-child(3){width:38%}
