@@ -361,11 +361,10 @@ function App() {
         </>}
 
         {route.page === "notes" && <>
-          <Title title="Theory" />
-          <div className="theory-shortcuts">
-            <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
-            <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
-          </div>
+          <Title title="Theory" action={<div className="theory-shortcuts">
+            <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions</button>
+            <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards</button>
+          </div>}/>
           <div className="library-toolbar">
             <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
             <div className="filter-list" role="group" aria-label="Filter chapters">
@@ -452,7 +451,7 @@ function App() {
 
         {route.page === "games" && <>
           <Title title={route.game > 0 ? arcadeGames.find(game=>game.id === route.game)?.name || "Games" : "Games"}
-            description={undefined}
+            
             action={route.game > 0 ? <button className="secondary-action" onClick={()=>navigate("games")}>All games <ArrowLeft size={17}/></button> : <a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Classic arcade <ArrowUpRight size={17}/></a>}/>
           {route.game > 0 ?
             <iframe key={route.game} title={arcadeGames.find(game=>game.id === route.game)?.name || "ICT Arcade game"}
