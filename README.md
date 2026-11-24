@@ -4,12 +4,12 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 
 ## Current website
 
-- **Home:** A minimal four-tile ICT Arcade logo without lettering, animated Input → Process → Output diagram, Theory, Practical, and Games cards, and a Cambridge Past Papers link.
+- **Home:** A minimal four-tile ICT Arcade logo without lettering, subtle animated circuit traces in the background, Theory, Practical, and Games cards, and a Cambridge Past Papers link.
 - **Theory:** Eleven chapters and 35 lessons with prominent counts, matching topic icons for every chapter and lesson, searchable notes, definitions, examples and exam advice. Questions and Flashcards remain accessible.
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
-- **Appearance:** Clean white/navy styles with a modern system sans-serif font, 17px reading text, larger headings, lesson navigation and answer controls. Mobile styles retain readable sizes without overflow. Light/dark themes, the top-right toggle and inner-page home link remain.
+- **Appearance:** Clean white/navy styles with a modern system sans-serif font, 17px reading text, comfortable heading tracking, a lighter homepage headline, and larger lesson navigation and answer controls. Mobile styles retain readable sizes without overflow. Light/dark themes, the top-right toggle and inner-page home link remain.
 
 The content files contain additional practical lesson summaries and questions for future development. They are not published in the current Practical section.
 
@@ -38,7 +38,7 @@ This website is an independent study aid, not an official Cambridge product. It 
 
 ## Motion and accessibility
 
-The homepage uses a simple animated input-processing-output diagram made with CSS. It requires no third-party animation library, pauses for people who prefer reduced motion, and provides an accessible text description.
+The homepage displays subtle circuit-board traces behind the main content. Their small moving highlights use CSS animation, require no animation library, and stop for reduced-motion preferences. The visual is decorative and hidden from screen readers.
 
 ## Exam advice
 
