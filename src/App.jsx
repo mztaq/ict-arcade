@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
-  Check, CheckCircle2, ClipboardList, Eye, EyeOff,
-  Gamepad2, Layers, FileText, Moon, RotateCcw, Search, Sun, X
+  Check, CheckCircle2, Eye, EyeOff,
+  Layers, FileText, Moon, RotateCcw, Search, Sun, X
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -66,11 +66,18 @@ function Title({title, description, action}) {
   </div>;
 }
 
-const featuredGames = [
+const arcadeGames = [
   {id: 1, name: "Pixel Dash", detail: "Run, jump and answer questions."},
-  {id: 2, name: "Rune Dungeon", detail: "Solve ICT riddles to open doors."},
+  {id: 2, name: "Rune Dungeon", detail: "Solve runes and unlock the next room."},
   {id: 3, name: "Snake", detail: "Collect apples and answer ICT questions."},
-  {id: 4, name: "Taxi Rush", detail: "Pick up passengers and answer fares."}
+  {id: 4, name: "Taxi Rush", detail: "Pick up passengers and answer fare questions."},
+  {id: 5, name: "Wing Byte", detail: "Fly through gaps and answer questions."},
+  {id: 6, name: "Block Stack", detail: "Clear rows to earn a question."},
+  {id: 7, name: "Server Climb", detail: "Climb ladders and avoid rolling bugs."},
+  {id: 8, name: "Space Defenders", detail: "Defeat alien waves to earn questions."},
+  {id: 9, name: "Brick Breaker", detail: "Break bricks and find question blocks."},
+  {id: 10, name: "Dojo Duel", detail: "Fight opponents and earn question combos."},
+  {id: 11, name: "Mr. Toner's ICT Superstore", detail: "Pick the correct device for each customer."}
 ];
 
 function App() {
@@ -219,12 +226,9 @@ function App() {
           </section>
 
           <section className="home-games">
-            <div className="home-section-heading">
-              <h2>Games</h2>
-              <button className="all-games-link" onClick={() => navigate("games")}>All 11 games <ArrowRight size={16}/></button>
-            </div>
+            <div className="home-section-heading"><h2>Games</h2></div>
             <div className="featured-games">
-              {featuredGames.map(game => <button key={game.id} className="featured-game" onClick={() => navigate("games", game.id)}>
+              {arcadeGames.map(game => <button key={game.id} className="featured-game" onClick={() => navigate("games", game.id)}>
                 <span className="featured-game-number">{formatNumber(game.id)}</span>
                 <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
                 <ArrowUpRight size={19}/>
