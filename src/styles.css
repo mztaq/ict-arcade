@@ -355,7 +355,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 .chapter-row{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) auto 20px;align-items:center;gap:var(--space-3);padding:22px var(--space-4);min-height:100px;border:0;border-bottom:1px solid var(--rule);text-align:left;background:transparent;color:var(--ink)}
 .chapter-row:last-child{border-bottom:0}
 .chapter-row:hover{background:var(--blue-soft)}
-.chapter-index{font:750 18px Consolas,"Courier New",monospace;min-width:34px;color:var(--blue)}
+.chapter-index{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;color:var(--blue);background:var(--blue-soft);border-radius:9px}
 .chapter-description{min-width:0;flex:1;display:flex;flex-direction:column;gap:6px}
 .chapter-description strong{font-size:20px;line-height:1.45;font-weight:800;letter-spacing:-.025em}
 .chapter-stats{display:flex;align-items:center;justify-content:flex-end;gap:var(--space-3);min-width:0}
@@ -384,7 +384,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 .lesson-index .progress-line{margin:0;height:3px}
 .lesson-index nav{display:flex;flex-direction:column;gap:4px;border:0}
 .lesson-link{width:100%;min-height:60px;display:flex;gap:13px;align-items:center;text-align:left;border:0;background:transparent;color:var(--ink-soft);font-size:16px;line-height:1.5;padding:13px 14px;border-radius:8px;transition:background-color .15s,color .15s}
-.lesson-link>span:first-child{width:27px;flex-shrink:0;text-align:center;color:var(--blue);font:750 13px Consolas,"Courier New",monospace}
+.lesson-icon{width:27px;flex:0 0 27px;display:grid;place-items:center;color:var(--blue)}
 .lesson-link.active{background:var(--blue-soft);color:var(--blue);font-weight:800}
 .lesson-link:hover:not(.active){background:var(--paper-secondary);color:var(--ink)}
 .reading-article{min-width:0;background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:40px clamp(24px,3.6vw,52px);max-width:940px}
@@ -415,8 +415,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 }
 .examiner-advice h3{font-size:21px;margin:0 0 9px;letter-spacing:-.02em}
 .examiner-advice p{margin:0 0 var(--space-2);font-size:17px;line-height:1.75;color:var(--ink)}
-.advice-source{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:800;color:var(--blue);text-decoration:underline;text-underline-offset:3px}
-.advice-source:hover{color:var(--ink)}
 .examiner-advice ul{margin:0;padding:0 0 0 18px}
 .examiner-advice li{padding:4px 0;font-size:14px;line-height:1.65}
 .definitions{margin-top:26px}
@@ -542,14 +540,15 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .search-field{max-width:none}
   .filter-list{width:100%;min-width:0}
   .filter-list button{flex:1}
-  .chapter-row{grid-template-columns:26px minmax(0,1fr) auto;gap:10px;padding:var(--space-3) var(--space-2);min-height:88px}
+  .chapter-row{grid-template-columns:32px minmax(0,1fr) auto;gap:10px;padding:var(--space-3) var(--space-2);min-height:88px}
   .chapter-stats{flex-direction:column;align-items:flex-end;gap:4px}
   .chapter-lessons strong{font-size:25px}
   .chapter-lessons span{font-size:14px}
   .chapter-percent{font-size:14px}
   .theory-title-actions{width:100%;justify-content:space-between;gap:var(--space-2)}
   .theory-total strong{font-size:30px}
-  .chapter-index{font-size:16px;min-width:25px}
+  .chapter-index{width:32px;height:32px}
+  .chapter-index svg{width:20px;height:20px}
   .chapter-description strong{font-size:17px}
   .chapter-row>svg{display:none}
   .reading-article{padding:27px 19px}
