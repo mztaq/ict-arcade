@@ -10,8 +10,8 @@ test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/Choose what to revise/);
   assert.match(app,/ICT Arcade<span>/);
   assert.match(app,/className="course-choices"/);
-  assert.match(app,/navigate\("notes"\)/);
-  assert.match(app,/navigate\("practical"\)/);
+  assert.match(app,/href="#\/notes"/);
+  assert.match(app,/href="#\/practical"/);
   assert.match(app,/Coming soon/);
   assert.equal(chapters.filter(ch=>ch.unit==="Theory").length,11);
   assert.equal(chapters.filter(ch=>ch.unit==="Practical").length,10);
