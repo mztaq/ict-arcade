@@ -4,8 +4,8 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 
 ## Current website
 
-- **Home:** A minimal ICT Arcade symbol, a centered beginner-friendly title, an animated Input → Process → Output diagram, Theory and Practical previews, a Cambridge Past Papers link, and a single Games card.
-- **Theory:** Start from Chapter 1 and learn across eleven theory chapters using clear explanations, original examples, key definitions, questions and flashcards.
+- **Home:** A minimal ICT Arcade symbol, animated Input → Process → Output diagram, Theory, Practical, and Games cards, and a Cambridge Past Papers link.
+- **Theory:** The Theory index lists eleven chapters without repetitive introductions. Each lesson has a contents list, concise notes, examples, definitions, and exam tips. Questions and Flashcards sit beside the Theory heading.
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
@@ -28,6 +28,7 @@ npm run build
 
 - `src/content.js`: Original lesson summaries covering the coursebook structure.
 - `src/questions.js`: Original multiple-choice and written-answer practice.
+- `src/examinerAdvice.js`: Empty per-lesson advice source, reserved for the author's advice when provided.
 - `src/App.jsx`: Beginner-first homepage, accessible ICT animation, Games gallery, Theory lessons and practice tools.
 - `src/styles.css`: Shared design styles and responsive layout.
 - `public/arcade-legacy.html`: Original arcade games with refreshed menu colours.
@@ -38,3 +39,7 @@ This website is an independent study aid, not an official Cambridge product. It 
 ## Motion and accessibility
 
 The homepage uses a simple animated input-processing-output diagram made with CSS. It requires no third-party animation library, pauses for people who prefer reduced motion, and provides an accessible text description.
+
+## Examiner advice
+
+Lesson pages include a short **Examiner advice** section marked **Coming soon**. No examiner advice has been written or attributed to anyone yet. When advice is provided by the author, add it to `src/examinerAdvice.js` under keys such as `"1-0"` for Chapter 1, first lesson. Each value is an array of individual advice points. The existing **Exam tip** is a separate original study note and is not represented as examiner-authored material.
