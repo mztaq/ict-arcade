@@ -206,7 +206,7 @@ function App() {
         {route.page === "home" && <>
           <section className="home-lead">
             <div className="home-lead-main">
-              <span className="overline">A BETTER WAY TO REVISE ICT</span>
+              <span className="overline">CAMBRIDGE IGCSE ICT / STUDY SPACE</span>
               <h1>Understand the topic.<br/><span>Then prove it.</span></h1>
               <p>Work through Cambridge IGCSE ICT topics with clear notes and examples, then check your understanding with questions, flashcards and the original arcade games.</p>
               <button className="primary-action" onClick={() => navigate("notes")}>Explore the course <ArrowRight size={18}/></button>
@@ -225,7 +225,7 @@ function App() {
             <div><b>21</b><span>CHAPTERS</span></div>
             <div><b>{allLessons.length}</b><span>LESSONS</span></div>
             <div><b>{questions.length}</b><span>QUICK QUESTIONS</span></div>
-            <div><b>10</b><span>ARCADE GAMES</span></div>
+            <div><b>11</b><span>ARCADE GAMES</span></div>
           </div>
 
           <div className="home-content">
@@ -237,7 +237,7 @@ function App() {
               <SectionHeader tag="STUDY TOOLS" title="Choose how to revise"/>
               <button className="study-tool" onClick={() => navigate("practice")}><span className="tool-number">01</span><span><strong>Answer questions</strong><small>{questions.length} checks with explanations and written practice</small></span><ArrowUpRight size={20}/></button>
               <button className="study-tool" onClick={() => navigate("flashcards")}><span className="tool-number">02</span><span><strong>Test definitions</strong><small>{flashcards.length} key terms to recall</small></span><ArrowUpRight size={20}/></button>
-              <button className="study-tool" onClick={() => navigate("games")}><span className="tool-number">03</span><span><strong>Play the arcade</strong><small>Ten original games with topic questions</small></span><ArrowUpRight size={20}/></button>
+              <button className="study-tool" onClick={() => navigate("games")}><span className="tool-number">03</span><span><strong>Play the arcade</strong><small>Eleven original games with topic questions</small></span><ArrowUpRight size={20}/></button>
               <div className="study-note"><span className="meta-label">ONE USEFUL HABIT</span><p>Read a lesson, explain it in your own words, then answer questions without checking your notes.</p></div>
             </aside>
           </div>
@@ -328,7 +328,7 @@ function App() {
         </>}
 
         {route.page === "games" && <>
-          <Title eyebrow="THE ORIGINAL ICT ARCADE" title="Games" description="Ten original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
+          <Title eyebrow="THE ORIGINAL ICT ARCADE" title="Games" description="Eleven original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
           <div className="game-note"><Gamepad2 size={20}/><span>Choose a topic inside the arcade. Your saved game score stays in this browser.</span></div>
           <iframe title="ICT Arcade original games" src="/arcade-legacy.html" className="arcade-frame" allow="fullscreen" loading="eager"/>
         </>}
