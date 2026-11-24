@@ -108,7 +108,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
 .overline{display:block;color:var(--blue);margin-bottom:16px}
 .primary-action,.secondary-action,.done-action{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:11px;border:1px solid var(--ink);padding:10px 16px;font-size:12px;font-weight:800;text-align:center;text-decoration:none}
 .primary-action{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.primary-action:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.primary-action:hover{background:var(--blue);border-color:var(--blue);color:var(--canvas)}
 .secondary-action{background:var(--paper);color:var(--ink);border-color:var(--rule)}
 .secondary-action:hover{border-color:var(--blue);color:var(--blue)}
 .done-action{background:var(--success-paper);color:var(--success);border-color:var(--success)}
