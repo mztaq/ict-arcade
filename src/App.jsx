@@ -294,7 +294,7 @@ function App() {
     <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
       {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
         <img className="brand-image" src="/ict-arcade-mark.svg" alt="" />
-        <span className="header-brand-name">ICT Arcade<span>.</span></span>
+        <span className="header-brand-name">ICT Arcade</span>
       </button>}
       <button className="header-theme" type="button" onClick={toggleTheme}
         title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -309,11 +309,12 @@ function App() {
           <section className="home-intro">
             <div className="home-signature">
               <img className="home-logo-mark" src="/ict-arcade-mark.svg" alt="" />
-              <h1>ICT Arcade<span>.</span></h1>
+              <h1>ICT Arcade</h1>
             </div>
-            <h2>Choose what to revise</h2>
+            <h2>Learn ICT step by step</h2>
+            <p className="home-intro-detail">Start with the basics, practise as you go, and build confidence in ICT.</p>
             <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
-              <FileText size={17}/> Past papers <ArrowUpRight size={16}/>
+              <FileText size={17}/> Try past papers <ArrowUpRight size={16}/>
             </a>
           </section>
 
@@ -321,21 +322,21 @@ function App() {
             <a className="course-choice theory-card" href="#/notes">
               <TheoryPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
-                <span className="course-description">11 chapters · {theoryLessons.length} lessons · Notes, explanations and exam practice.</span>
+                <span className="course-title-line"><BookOpen size={20}/><strong>Learn the theory</strong><ArrowUpRight size={19}/></span>
+                <span className="course-description">Understand ICT topics with clear explanations, everyday examples and simple definitions. Start from the basics.</span>
               </span>
             </a>
             <a className="course-choice practical-card" href="#/practical">
               <PracticalPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
-                <span className="course-description">Spreadsheets, databases, documents and web authoring.</span>
+                <span className="course-title-line"><Layers size={20}/><strong>Build practical skills</strong><span className="coming-soon">Coming soon</span></span>
+                <span className="course-description">Learn how to create documents, spreadsheets, databases and websites, one skill at a time.</span>
               </span>
             </a>
           </section>
 
           <section className="home-games">
-            <div className="home-section-heading"><h2>Games</h2><span>11 games</span></div>
+            <div className="home-section-heading"><div><h2>Learn with games</h2><p>Play quick games to practise the topics you have learned.</p></div><span>11 games</span></div>
             <div className="featured-games">
               {arcadeGames.map((game,i) => <a key={game.id} href={"#/games/"+game.id} className={"featured-game "+(i<2?"featured-game-large":"")}
                 aria-label={"Play "+game.name}>
@@ -350,7 +351,8 @@ function App() {
         </>}
 
         {route.page === "notes" && <>
-          <Title title="Theory" description="11 chapters of explanations, examples and key definitions." />
+          <Title title="Learn the theory" description="New to ICT? Start with Chapter 1. Each lesson explains an idea, shows an example and teaches useful terms." />
+          <section className="start-learning"><div><strong>New to ICT? Start here.</strong><p>Begin with computer hardware and software, then learn one lesson at a time.</p></div><button className="primary-action" onClick={() => navigate("chapter", 1, 0)}>Start Chapter 1 <ArrowRight size={16}/></button></section>
           <div className="theory-shortcuts">
             <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
             <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
@@ -371,8 +373,8 @@ function App() {
         {(route.page === "practical" || (route.page === "chapter" && chapter.unit !== "Theory")) && <section className="practical-soon">
           <div className="choice-icon"><Layers size={26} strokeWidth={1.8}/></div>
           <h1>Practical</h1>
-          <p>Practical revision is coming soon. Theory lessons, questions and games are ready to use.</p>
-          <button className="primary-action" onClick={() => navigate("notes")}>Go to Theory <ArrowRight size={17}/></button>
+          <p>Step-by-step practical lessons are on the way. You can start learning the theory, try questions and play the games now.</p>
+          <button className="primary-action" onClick={() => navigate("notes")}>Start learning theory <ArrowRight size={17}/></button>
         </section>}
 
         {route.page === "chapter" && chapter.unit === "Theory" && <>
@@ -390,9 +392,9 @@ function App() {
               <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
               <h2>{lesson.title}</h2>
               <div className="article-rule"/>
-              <h3>Key ideas</h3>
+              <h3>What you need to know</h3>
               <ol className="concepts">{lesson.points.map((point, i) => <li key={i}><span className="concept-count">{formatNumber(i + 1)}</span><span>{point}</span></li>)}</ol>
-              <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
+              <section className="lesson-highlight example"><h3>See it in action</h3><p>{lesson.example}</p></section>
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
               {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions to learn</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
@@ -403,7 +405,7 @@ function App() {
         </>}
 
         {route.page === "practice" && <>
-          <Title title="Practice questions" description="Check what you know and see the reasoning behind each answer. For longer questions, write your response before viewing the guidance." />
+          <Title title="Check your understanding" description="Practise one question at a time. You will see the correct answer and a simple explanation. Start with a topic you have learned." />
           <div className="mode-tabs" role="group" aria-label="Practice type">
             <button aria-pressed={practiceType === "choice"} className={practiceType === "choice" ? "active" : ""} onClick={() => setPracticeType("choice")}>Quick questions</button>
             <button aria-pressed={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
@@ -428,7 +430,7 @@ function App() {
         </>}
 
         {route.page === "flashcards" && <>
-          <Title title="Flashcards" description="Try to define the term yourself. Turn the card to check, then keep moving through the set."/>
+          <Title title="Learn key terms" description="Read a term, think about what it means, then turn the card to check. Keep going at your own pace."/>
           <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.filter(ch => theoryFlashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
           {currentFlash && <>
             <div className="flash-progress"><span>CARD {formatNumber(flashIndex % flashPool.length + 1)} / {formatNumber(flashPool.length)}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
@@ -439,7 +441,7 @@ function App() {
         </>}
 
         {route.page === "games" && <>
-          <Title title="Games" description="Eleven original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
+          <Title title="Learn with games" description="Play a game and test what you have learned. Each game includes ICT questions along the way." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
           
           <iframe key={route.game || "all"} title="ICT Arcade original games" src={route.game > 0 ? "/arcade-legacy.html?game=" + route.game : "/arcade-legacy.html"} className="arcade-frame" allow="fullscreen" loading="eager"/>
         </>}
