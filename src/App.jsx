@@ -510,10 +510,7 @@ function App() {
         {route.page === "notes" && <>
           <Title title="Theory" action={<div className="theory-title-actions">
             <span className="theory-total"><strong>{theoryLessons.length}</strong><span>lessons</span></span>
-            <div className="theory-shortcuts">
-              <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions</button>
-              <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards</button>
-            </div>
+            <a className="chapter-back-button" href="#/home"><ArrowLeft size={18}/> Back</a>
           </div>}/>
           <div className="library-toolbar">
             <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
