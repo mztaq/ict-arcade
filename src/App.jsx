@@ -422,10 +422,10 @@ function App() {
           {route.papersView === "home" && <>
             <Title title="Past Papers"/>
             <div className="paper-category-grid">
-              <a className="paper-category" href="#/past-papers/yearly">
+              <a className="paper-category" href="https://pastpapers.papacambridge.com/papers/cie/igcse-ict0417" target="_blank" rel="noopener noreferrer">
                 <span className="paper-category-icon"><CalendarCheck2 size={26} strokeWidth={1.7}/></span>
                 <strong>Yearly Past Papers</strong>
-                <span>Question papers and mark schemes by year</span>
+                <span>Question papers and mark schemes on PapaCambridge</span>
                 <ArrowUpRight className="paper-category-arrow" size={20}/>
               </a>
               <a className="paper-category" href="#/past-papers/solved">
