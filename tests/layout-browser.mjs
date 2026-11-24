@@ -80,7 +80,9 @@ try{
       assert.deepEqual(findings.overlaps,[],width+"px / "+route+": overlapping interface");
       assert.deepEqual(findings.tooSmall,[],width+"px / "+route+": text too small");
       if(["does-not-exist","notes/invalid","games/99","past-papers/yearly/2026/s/invalid"].includes(route)){
-        assert.equal(await page.locator(".not-found h1").innerText(),"Page not found");
+        assert.equal(await page.locator(".not-found p").innerText(),"Page not found.");
+        assert.equal(await page.locator(".site-header").count(),0);
+        assert.equal(await page.locator(".not-found[data-layout]").count(),1);
         assert.equal(await page.locator('.not-found a[href="/"]').count(),1);
       }
       if(route==="home"){
