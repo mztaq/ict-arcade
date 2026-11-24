@@ -30,13 +30,17 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.doesNotMatch(app,/className="sidebar-section-label"/);
   assert.doesNotMatch(app,/className="overline"/);
   assert.match(app,/className="header-theme"/);
+  assert.match(app,/className="home-intro"/);
+  assert.match(app,/className="home-logo-mark"/);
+  assert.match(app,/className="top-nav"/);
+  assert.doesNotMatch(app,/site-sidebar|mobile-backdrop|menu-trigger/);
   assert.match(app,/toggleTheme/);
   assert.match(app,/<Moon size=/);
   assert.match(app,/<Sun size=/);
 });
 test("rounded surfaces, keyboard focus, and mobile layout are present",()=>{
   assert.match(css,/\.course-choice\s*\{/);
-  assert.match(css,/border-radius:13px/);
+  assert.match(css,/border-radius:17px/);
   assert.match(css,/\.header-theme/);
   assert.match(css,/\.course-choices\{grid-template-columns:1fr\}/);
   assert.match(css,/:focus-visible/);
