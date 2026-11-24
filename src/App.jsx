@@ -625,7 +625,7 @@ function App() {
               <h3>Key points</h3>
               <ul className="concepts">{lesson.points.map((point, i) => <li key={i}>{point}</li>)}</ul>
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
-              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
+              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><table className="definitions-table"><thead><tr><th scope="col">Term</th><th scope="col">Definition</th></tr></thead><tbody>{lesson.terms.map(([term, definition]) => <tr key={term}><th scope="row">{term}</th><td>{definition}</td></tr>)}</tbody></table></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
               <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
                 {advice ? <>
