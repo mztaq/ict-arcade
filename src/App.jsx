@@ -637,7 +637,7 @@ function App() {
         </>}
 
       </main>
-      <footer className="site-footer">© {new Date().getFullYear()} ICT Arcade</footer>
+      {route.page === "home" && <footer className="site-footer">© 2026 ICT Arcade. All Rights Reserved</footer>}
     </div>
   </div>;
 }
