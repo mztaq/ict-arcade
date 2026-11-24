@@ -8,7 +8,7 @@ A student-built Cambridge IGCSE ICT revision website with notes, examples, pract
 - Searchable notes with terminology, explanations, examples and exam tips
 - 74 multiple-choice practice questions, 12 written exam-style prompts and answer guidance
 - Interactive flashcards, lesson progress and bookmarked lessons
-- Ten existing arcade games with the original game logic and local scores preserved
+- Eleven existing arcade games with the original game logic and local scores preserved
 - Responsive light and dark themes using the colours of the original ICT Arcade
 
 ## Development
