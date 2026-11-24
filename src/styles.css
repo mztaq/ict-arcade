@@ -169,13 +169,6 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .paper-year strong{font-size:22px;font-weight:750;min-width:0;overflow-wrap:anywhere}
 .paper-year small{font-size:13px;color:var(--ink-soft)}
 .paper-year svg{color:var(--blue);flex-shrink:0;margin-left:auto}
-.paper-source-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);margin-top:var(--space-4)}
-.paper-source-actions a{
-  display:inline-flex;align-items:center;gap:8px;min-height:45px;
-  border:1px solid var(--rule);border-radius:9px;background:var(--paper);
-  padding:10px 15px;color:var(--ink);font-size:15px;font-weight:750
-}
-.paper-source-actions a:hover{border-color:var(--blue);color:var(--blue)}
 .paper-1-message{
   display:flex;align-items:center;justify-content:center;
   flex-direction:column;gap:var(--space-4);
