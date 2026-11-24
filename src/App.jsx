@@ -11,6 +11,7 @@ import {
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
 import {examinerAdvice} from "./examinerAdvice.js";
+import {archivePastPapersUrl, officialPastPapersUrl, yearlyPastPapers, solvedPastPapers} from "./pastPapers.js";
 
 const load = (key, fallback) => {
   try {
@@ -29,7 +30,14 @@ function useStored(key, initial) {
 }
 const getRoute = () => {
   const parts = (location.hash || "#/home").replace(/^#\/?/, "").split("/");
-  return {page: parts[0] || "home", id: Number(parts[1]) || 1, lesson: Number(parts[2]) || 0, game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0};
+  return {
+    page: parts[0] || "home",
+    id: Number(parts[1]) || 1,
+    lesson: Number(parts[2]) || 0,
+    game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0,
+    papersView: parts[0] === "past-papers" ? (parts[1] || "home") : "home",
+    papersNumber: parts[0] === "past-papers" ? Number(parts[2]) || 0 : 0
+  };
 };
 const navigate = (page, id, lesson) => {
   const destination = "#/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson);
@@ -376,8 +384,8 @@ function App() {
               <h1>ICT Arcade</h1>
             </div>
             <h2>Learn ICT step by step</h2>
-            <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
-              <FileText size={17}/> Try past papers <ArrowUpRight size={16}/>
+            <a className="past-papers-link" href="#/past-papers">
+              <FileText size={18}/> Try past papers <ArrowRight size={17}/>
             </a>
           </section>
 
@@ -402,6 +410,75 @@ function App() {
             <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
           </a>
         </div>}
+
+        {route.page === "past-papers" && <>
+          {route.papersView === "home" && <>
+            <Title title="Past Papers"/>
+            <div className="paper-category-grid">
+              <a className="paper-category" href="#/past-papers/yearly">
+                <span className="paper-category-icon"><CalendarCheck2 size={26} strokeWidth={1.7}/></span>
+                <strong>Yearly Past Papers</strong>
+                <span>Question papers and mark schemes by year</span>
+                <ArrowUpRight className="paper-category-arrow" size={20}/>
+              </a>
+              <a className="paper-category" href="#/past-papers/solved">
+                <span className="paper-category-icon"><CheckCircle2 size={26} strokeWidth={1.7}/></span>
+                <strong>Solved Past Papers</strong>
+                <span>Paper 2 and Paper 3</span>
+                <ArrowUpRight className="paper-category-arrow" size={20}/>
+              </a>
+            </div>
+          </>}
+          {route.papersView === "yearly" && <>
+            <Title title="Yearly Past Papers" action={<button type="button" className="chapter-back-button" onClick={()=>navigate("past-papers")}>
+              <ArrowLeft size={16}/> Past Papers
+            </button>}/>
+            <div className="paper-year-grid">
+              {yearlyPastPapers.map(item=><a className="paper-year" key={item.year} href={item.url} target="_blank" rel="noopener noreferrer">
+                <strong>{item.year}</strong>
+                {item.session && <small>{item.session} only</small>}
+                <ArrowUpRight size={18} aria-hidden="true"/>
+              </a>)}
+            </div>
+            <div className="paper-source-actions">
+              <a href={archivePastPapersUrl} target="_blank" rel="noopener noreferrer">All years and sessions <ArrowUpRight size={17}/></a>
+              <a href={officialPastPapersUrl} target="_blank" rel="noopener noreferrer">Cambridge official papers <ArrowUpRight size={17}/></a>
+            </div>
+          </>}
+          {route.papersView === "solved" && <>
+            <Title title={route.papersNumber === 2 || route.papersNumber === 3 ? "Paper " + route.papersNumber : "Solved Past Papers"}
+              action={<button type="button" className="chapter-back-button" onClick={()=>
+                navigate("past-papers",route.papersNumber ? "solved" : undefined)
+              }><ArrowLeft size={16}/> {route.papersNumber ? "Solved Past Papers" : "Past Papers"}</button>}/>
+            {route.papersNumber === 0 ? <>
+              <div className="paper-category-grid">
+                <a className="paper-category" href="#/past-papers/solved/2">
+                  <span className="paper-category-icon"><FileText size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 2</strong>
+                  <span>Document Production, Databases and Presentations</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
+                <a className="paper-category" href="#/past-papers/solved/3">
+                  <span className="paper-category-icon"><Layers size={26} strokeWidth={1.7}/></span>
+                  <strong>Paper 3</strong>
+                  <span>Spreadsheets and Website Authoring</span>
+                  <ArrowUpRight className="paper-category-arrow" size={20}/>
+                </a>
+              </div>
+              <p className="paper-theory-note">Mustaqim and Theory? It's complicated. 💔 He hates Theory, so he didn't solve any Paper 1 papers.</p>
+            </> : [2,3].includes(route.papersNumber) ? (
+              solvedPastPapers[route.papersNumber].length ?
+                <div className="paper-year-grid">
+                  {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.url} href={item.url} target="_blank" rel="noopener noreferrer">
+                    <strong>{item.title}</strong><ArrowUpRight size={18}/>
+                  </a>)}
+                </div> :
+                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/><p>No solved papers uploaded yet.</p></div>
+            ) : <div className="paper-empty"><p>Choose Paper 2 or Paper 3.</p></div>}
+          </>}
+          {!["home","yearly","solved"].includes(route.papersView) && <div className="paper-empty"><p>That collection isn't available.</p>
+            <button className="secondary-action" onClick={()=>navigate("past-papers")}>Past Papers</button></div>}
+        </>}
 
         {route.page === "notes" && <>
           <Title title="Theory" action={<div className="theory-title-actions">
