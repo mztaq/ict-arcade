@@ -4,8 +4,8 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 
 ## Current website
 
-- **Home:** A minimal ICT Arcade symbol, animated Input → Process → Output diagram, Theory, Practical, and Games cards, and a Cambridge Past Papers link.
-- **Theory:** Eleven chapters and 35 lessons with prominent lesson counts, searchable topics, notes, definitions, examples, exam tips and source-linked advice. Questions and Flashcards remain accessible.
+- **Home:** A minimal four-tile ICT Arcade logo without lettering, animated Input → Process → Output diagram, Theory, Practical, and Games cards, and a Cambridge Past Papers link.
+- **Theory:** Eleven chapters and 35 lessons with prominent counts, matching topic icons for every chapter and lesson, searchable notes, definitions, examples and exam advice. Questions and Flashcards remain accessible.
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
@@ -45,5 +45,8 @@ The homepage uses a simple animated input-processing-output diagram made with CS
 All 35 Theory lessons have short, original exam-technique guidance informed by relevant Cambridge IGCSE ICT study material. The advice appears directly in each lesson without an external link. The wording is not copied and is not presented as an official examiner report. Existing lesson exam tips are separate. Practical advice will only be added when the author provides it.
 
 ## Layout
+
+The Theory list uses consistent outlined topic icons. Each lesson has an icon for its subject, with a small check badge once completed. The selected lesson uses a subtle blue icon highlight. All icon styles remain consistent in light and dark themes.
+
 
 Course and chapter lesson totals are displayed prominently. Consistent spacing tokens, flexible filters, wrapping toolbars and responsive lesson grids reduce clipping and crowded layouts on narrower screens.
