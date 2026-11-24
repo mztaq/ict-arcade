@@ -534,7 +534,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .bookmark-button{border:0;background:none;display:inline-flex;align-items:center;gap:8px;color:var(--ink-soft);padding:9px;border-radius:7px;font-size:15px;font-weight:800}
 .bookmark-button:hover,.bookmark-button[aria-pressed="true"]{color:var(--blue);background:var(--blue-soft)}
 .reading-article>h2{font-size:clamp(30px,3.3vw,43px);margin:24px 0 30px;letter-spacing:0}
-.article-rule{border-top:1px solid var(--rule);margin:0 0 25px}
+
 .reading-article>h3,.definitions h3{font-size:24px;margin:0 0 19px}
 .concepts{list-style:disc outside;margin:0 0 27px;padding-left:24px}
 .concepts li{display:list-item;padding:6px 0 6px 5px;font-size:17px;line-height:1.8}
@@ -545,7 +545,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .lesson-highlight h3{font-size:21px;margin:0 0 12px}
 .lesson-highlight p{font-size:17px;line-height:1.8;margin:0}
 .lesson-highlight.example{border:1px solid var(--rule);border-left:3px solid var(--blue);background:var(--paper-secondary);border-radius:9px;padding:21px 20px}
-.lesson-highlight.exam{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.lesson-highlight.exam{padding:12px 0}
 
 .examiner-advice{
   margin:28px 0 0;
@@ -890,3 +890,8 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(prefers-reduced-motion:reduce){.not-found .error-content{transform:none}}
 
 @media(min-width:681px) and (max-width:900px){.solved-paper-options{grid-template-columns:1fr}.solved-paper-options .paper-category{min-height:220px}}
+
+/* Keep lesson content uncluttered, with native dot markers. */
+.reading-article .concepts{list-style-type:disc;list-style-position:outside;padding-left:24px}
+.reading-article .concepts li{display:list-item;list-style-type:disc;border:0}
+.reading-article .article-actions,.reading-article .definitions,.reading-article .definitions dl>div,.reading-article .examiner-advice,.reading-article .examiner-advice p{border-top:0;border-bottom:0}
