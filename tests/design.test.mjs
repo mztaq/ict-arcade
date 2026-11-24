@@ -24,7 +24,8 @@ test("readable study typography avoids decoration and external font dependencies
   assert.match(css, /\.games-hub-card/);
   assert.match(css, /\.hero-motion/);
   assert.match(css, /\.examiner-advice/);
-  assert.match(css, /\.advice-source/);
+  assert.doesNotMatch(css, /\.advice-source/);
+  assert.match(css, /\.lesson-icon/);
   assert.match(css, /\.chapter-stats/);
   assert.match(css, /\.chapter-back-button/);
   assert.doesNotMatch(css, /\.lesson-link\{[^}]*border-bottom/);
