@@ -11,7 +11,8 @@ import {
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
 import {examinerAdvice} from "./examinerAdvice.js";
-import {yearlyPastPapers, solvedPastPapers} from "./pastPapers.js";
+import {solvedPastPapers} from "./pastPapers.js";
+import {PapaPapers} from "./PapaPapers.jsx";
 import PaperViewer from "./PaperViewer.jsx";
 
 const load = (key, fallback) => {
@@ -276,8 +277,7 @@ function PracticalPreview() {
 
 function App() {
   const [route, setRoute] = useState(getRoute);
-  const selectedPaperYear = yearlyPastPapers.find(item=>item.year === route.papersYear);
-  const selectedYearlyPaper = selectedPaperYear?.papers.find(item=>item.id===route.papersId);
+
   const selectedSolvedPaper = solvedPastPapers[route.papersNumber]?.find(item=>item.id===route.papersId);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
@@ -422,7 +422,7 @@ function App() {
           {route.papersView === "home" && <>
             <Title title="Past Papers"/>
             <div className="paper-category-grid">
-              <a className="paper-category" href="https://pastpapers.papacambridge.com/papers/cie/igcse-ict0417" target="_blank" rel="noopener noreferrer">
+              <a className="paper-category" href="#/past-papers/yearly">
                 <span className="paper-category-icon"><CalendarCheck2 size={26} strokeWidth={1.7}/></span>
                 <strong>Yearly Past Papers</strong>
                 <span>Question papers and mark schemes on PapaCambridge</span>
@@ -436,48 +436,7 @@ function App() {
               </a>
             </div>
           </>}
-          {route.papersView === "yearly" && <>
-            <Title title={route.papersId && selectedYearlyPaper ? selectedYearlyPaper.title :
-                route.papersYear ? "Past Papers " + route.papersYear : "Yearly Past Papers"}
-              action={<button type="button" className="chapter-back-button"
-                onClick={()=>route.papersId ? navigate("past-papers","yearly",route.papersYear) :
-                  navigate("past-papers",route.papersYear ? "yearly" : undefined)}>
-                <ArrowLeft size={16}/> {route.papersId ? String(route.papersYear) : route.papersYear ? "All years" : "Past Papers"}
-              </button>}/>
-            {route.papersYear===0 ?
-              <div className="paper-year-grid">
-                {yearlyPastPapers.map(item=><a className="paper-year" key={item.year} href={"#/past-papers/yearly/"+item.year}>
-                  <strong>{item.year}</strong>
-                  <small>{item.papers.length ? item.papers.length + " papers" : "No files yet"}</small>
-                  <ArrowRight size={18} aria-hidden="true"/>
-                </a>)}
-              </div> :
-              !selectedPaperYear ?
-                <div className="paper-empty"><p>That year isn't available.</p></div> :
-              route.papersId ?
-                selectedYearlyPaper ?
-                  <PaperViewer title={selectedYearlyPaper.title}
-                    selectedKind={route.papersDocument}
-                    routePrefix={"#/past-papers/yearly/"+route.papersYear+"/"+selectedYearlyPaper.id}
-                    documents={[
-                      {key:"questionPaper",label:"Question Paper",url:selectedYearlyPaper.questionPaper},
-                      {key:"markScheme",label:"Mark Scheme",url:selectedYearlyPaper.markScheme},
-                      {key:"examinerReport",label:"Examiner Report",url:selectedYearlyPaper.examinerReport}
-                    ]}
-                    sourceFiles={selectedYearlyPaper.sourceFiles||[]}/> :
-                  <div className="paper-empty"><p>This paper isn't available.</p></div> :
-              selectedPaperYear.papers.length ?
-                <div className="paper-year-grid">
-                  {selectedPaperYear.papers.map(item=><a className="paper-year" key={item.id}
-                      href={"#/past-papers/yearly/"+route.papersYear+"/"+item.id}>
-                    <FileText size={20} strokeWidth={1.7} aria-hidden="true"/>
-                    <strong>{item.title}</strong>
-                    <ArrowRight size={18} aria-hidden="true"/>
-                  </a>)}
-                </div> :
-                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/>
-                  <p>No locally hosted papers for {route.papersYear} yet.</p></div>}
-          </>}
+          {route.papersView === "yearly" && <PapaPapers year={route.papersYear} series={route.papersId} folder={route.papersDocument}/>}
           {route.papersView === "solved" && <>
             <Title title={selectedSolvedPaper ? selectedSolvedPaper.title :
                 [1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
