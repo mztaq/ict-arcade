@@ -22,7 +22,9 @@ test("readable study typography avoids decoration and external font dependencies
   assert.match(css, /\.past-papers-link/);
   assert.match(css, /\.featured-games/);
   assert.match(css, /\.games-hub-card/);
-  assert.match(css, /\.hero-motion/);
+  assert.match(css, /\.home-circuit-backdrop/);
+  assert.match(css, /\.circuit-signals/);
+  assert.doesNotMatch(css, /\.hero-motion/);
   assert.match(css, /\.examiner-advice/);
   assert.doesNotMatch(css, /\.advice-source/);
   assert.match(css, /\.lesson-icon/);
