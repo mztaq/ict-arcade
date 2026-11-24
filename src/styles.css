@@ -72,7 +72,7 @@ button:disabled{cursor:not-allowed}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,p{margin-top:0}
-h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
+h1,h2,h3{letter-spacing:-.012em;line-height:1.25}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .skip-link{position:fixed;top:-150px;left:15px;z-index:100;border:2px solid var(--ink);background:var(--yellow);color:var(--yellow-ink);padding:12px 17px;border-radius:8px}
 .skip-link:focus{top:10px}
@@ -94,7 +94,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   padding:7px 0;font-weight:900
 }
 .brand-image{width:34px;height:34px;display:block;border-radius:8px}
-.header-brand-name{font-size:21px;letter-spacing:-.065em;white-space:nowrap}
+.header-brand-name{font-size:21px;letter-spacing:-.012em;font-weight:750;line-height:1.25;white-space:nowrap}
 .header-theme{
   flex:0 0 auto;width:40px;height:40px;
   display:grid;place-items:center;
@@ -106,8 +106,8 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 .site-main{width:100%;max-width:1370px;margin:0 auto;padding:40px clamp(20px,3.4vw,58px) 80px;flex:1;min-width:0}
 .site-footer{border-top:1px solid var(--rule);color:var(--ink-soft);font-size:14px;padding:19px clamp(19px,3.4vw,54px);min-height:58px}
 .home-intro{
-  max-width:1100px;margin:26px auto 0;
-  padding:24px 16px 0;display:flex;flex-direction:column;align-items:center;
+  max-width:1100px;margin:15px auto 0;
+  padding:30px 16px 0;display:flex;flex-direction:column;align-items:center;
   background:transparent;text-align:center
 }
 .home-signature{display:flex;justify-content:center;align-items:center;gap:15px;max-width:100%}
@@ -116,13 +116,13 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   border-radius:14px
 }
 .home-signature h1{
-  margin:0;color:var(--ink);font-weight:850;
-  letter-spacing:-.075em;line-height:1.05;
-  font-size:clamp(43px,5.5vw,65px)
+  margin:0;color:var(--ink);font-weight:750;
+  letter-spacing:-.015em;line-height:1.16;
+  font-size:clamp(40px,4.8vw,57px)
 }
 .home-intro h2{
-  margin:29px 0 10px;
-  font-size:clamp(30px,3.8vw,42px);font-weight:850;letter-spacing:-.05em
+  margin:22px 0 19px;
+  font-size:clamp(28px,3.15vw,36px);font-weight:650;letter-spacing:0
 }
 .past-papers-link{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
@@ -208,54 +208,44 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 }
 .course-title-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .course-title-line>svg:first-child{color:var(--blue)}
-.course-title-line strong{font-size:23px;font-weight:800}
+.course-title-line strong{font-size:27px;font-weight:750;letter-spacing:-.012em;line-height:1.2}
 .course-title-line>svg:last-child{margin-left:auto;color:var(--blue)}
 /* Numbers are the primary information, not small metadata. */
-.course-stats{display:flex;align-items:baseline;gap:var(--space-5);flex-wrap:wrap;margin-top:auto}
+.course-stats{display:flex;align-items:baseline;gap:var(--space-4);flex-wrap:wrap;margin-top:auto}
 .course-stats>span{display:inline-flex;align-items:baseline;gap:8px;white-space:nowrap}
-.course-stats strong{font-size:30px;font-weight:900;line-height:1.1;letter-spacing:-.04em;color:var(--ink)}
-.course-stats small{font-size:16px;font-weight:750;color:var(--ink-soft)}
+.course-stats strong{font-size:22px;font-weight:750;line-height:1.2;letter-spacing:0;color:var(--ink)}
+.course-stats small{font-size:15px;font-weight:600;color:var(--ink-soft)}
 .coming-soon{
   margin-left:auto;color:var(--ink-soft);
   background:var(--paper-secondary);border:1px solid var(--rule);
   border-radius:7px;padding:5px 10px;font-size:14px;font-weight:800
 }
 
-/* A moving data packet follows the actual input-process-output sequence. */
-.hero-motion{
-  width:min(100%,580px);margin:24px auto 0;
-  padding:17px 24px;
-  border:1px solid var(--rule);background:var(--paper);
-  border-radius:13px
+/* Faint, animated circuit traces sit behind the homepage content. */
+.home-screen{position:relative;isolation:isolate}
+.home-screen > :not(.home-circuit-backdrop){position:relative;z-index:1}
+.home-circuit-backdrop{
+  position:absolute;top:-100px;left:-60px;right:-60px;
+  height:650px;overflow:hidden;pointer-events:none;z-index:0;
+  color:var(--blue);opacity:.4
 }
-.signal-chain{display:flex;align-items:center;justify-content:center;width:100%;gap:8px}
-.signal-device{
-  width:89px;flex:0 0 89px;display:flex;flex-direction:column;
-  align-items:center;gap:7px;color:var(--ink)
+.home-circuit-backdrop svg{display:block;width:100%;height:100%;overflow:visible}
+.circuit-lines{opacity:.2}
+.circuit-nodes{opacity:.23}
+.circuit-nodes circle{animation:circuit-node-pulse 6s ease-in-out infinite}
+.circuit-nodes circle:nth-child(3n){animation-delay:-2s}
+.circuit-nodes circle:nth-child(3n+1){animation-delay:-4s}
+.circuit-signals{opacity:.52}
+.circuit-signals path{
+  stroke-dasharray:8 92;
+  stroke-dashoffset:100;
+  animation:circuit-packet 9s linear infinite
 }
-.signal-device svg{color:var(--blue)}
-.signal-device>span{font-size:14px;font-weight:800}
-.signal-cpu svg{animation:chip-tick 3.2s ease-in-out infinite}
-.signal-link{
-  position:relative;flex:1;min-width:18px;height:9px;
-  overflow:hidden;margin-top:-17px
-}
-.signal-link::before{
-  content:"";position:absolute;left:0;right:0;top:4px;
-  height:1px;background:var(--rule)
-}
-.signal-packet{
-  position:absolute;left:-7px;top:1px;width:7px;height:7px;
-  border-radius:50%;background:var(--blue);
-  animation:signal-travel 3.2s linear infinite
-}
-.signal-packet.delay{animation-delay:1.6s}
-@keyframes signal-travel{
-  0%{left:-7px;opacity:0}
-  10%,90%{opacity:1}
-  100%{left:calc(100% + 7px);opacity:0}
-}
-@keyframes chip-tick{0%,45%,55%,100%{opacity:1}50%{opacity:.45}}
+.circuit-signals path:nth-child(2){animation-delay:-2.25s}
+.circuit-signals path:nth-child(3){animation-delay:-4.5s}
+.circuit-signals path:nth-child(4){animation-delay:-6.75s}
+@keyframes circuit-packet{to{stroke-dashoffset:0}}
+@keyframes circuit-node-pulse{0%,100%{opacity:.35}50%{opacity:1}}
 .games-hub-card{
   display:flex;gap:24px;align-items:center;
   max-width:1100px;margin:19px auto 0;padding:22px 24px;
@@ -271,7 +261,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   width:27%;min-width:145px;display:grid;
   grid-template-columns:1fr auto;gap:8px;align-items:center
 }
-.games-hub-info strong{font-size:27px;font-weight:900;letter-spacing:-.035em}
+.games-hub-info strong{font-size:26px;font-weight:750;letter-spacing:-.01em}
 .games-hub-info>span{
   grid-row:2;grid-column:1;
   font-size:15px;color:var(--ink-soft);font-weight:750
@@ -309,7 +299,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 .featured-game-copy small{font-size:14px;line-height:1.5;color:var(--ink-soft)}
 .featured-game-bottom>svg{color:var(--blue);flex-shrink:0}
 .page-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3) var(--space-4);margin:0 0 var(--space-4)}
-.page-title h1{font-size:clamp(36px,4vw,52px);font-weight:900;letter-spacing:-.055em;margin:0}
+.page-title h1{font-size:clamp(35px,4vw,50px);font-weight:750;letter-spacing:-.012em;margin:0}
 .page-title p{font-size:17px;color:var(--ink-soft);line-height:1.7;margin:0;max-width:640px}
 .title-action{flex:0 1 auto;min-width:0}
 .theory-title-actions{display:flex;align-items:center;justify-content:flex-end;gap:var(--space-4);flex-wrap:wrap}
@@ -378,7 +368,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 .practical-soon h1{font-size:clamp(32px,3vw,45px);margin:0 0 12px}
 .practical-soon p{max-width:460px;color:var(--ink-soft);font-size:14px;line-height:1.7;margin:0}
 .chapter-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3);margin:0 0 var(--space-4)}
-.chapter-heading h1{font-size:clamp(32px,3.4vw,47px);margin:0;flex:1 1 300px;min-width:0}
+.chapter-heading h1{font-size:clamp(32px,3.4vw,45px);font-weight:750;letter-spacing:-.012em;margin:0;flex:1 1 300px;min-width:0}
 .chapter-heading p{font-size:14px;color:var(--ink-soft);line-height:1.7;margin:0}
 .reading-layout{display:grid;grid-template-columns:minmax(240px,285px) minmax(0,1fr);gap:var(--space-5);align-items:start}
 .lesson-index{position:sticky;top:92px;min-width:0}
@@ -507,7 +497,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .site-header.home-header{min-height:64px}
   .site-main{padding:24px 18px 52px}
   .home-intro{margin-top:14px;padding-top:30px}
-  .home-intro h2{margin:25px 0 10px}
+  .home-intro h2{margin:21px 0 17px}
   .course-choices{margin-top:31px;gap:12px}
   .course-preview{height:188px;padding:16px 12px 0}
   .preview-browser,.sheet-mock{height:184px}
@@ -532,8 +522,8 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .home-intro{margin-top:19px;padding:39px 8px 0}
   .home-logo-mark{width:47px;height:47px;border-radius:11px}
   .home-signature{gap:11px}
-  .home-signature h1{font-size:clamp(34px,8.4vw,48px)}
-  .home-intro h2{font-size:30px;margin:26px 0 14px}
+  .home-signature h1{font-size:clamp(32px,8.1vw,44px)}
+  .home-intro h2{font-size:27px;margin:21px 0 17px}
   .course-choices{grid-template-columns:1fr;margin-top:28px}
   .course-preview{height:211px;padding:17px 20px 0}
   .preview-browser,.sheet-mock{height:200px}
@@ -545,7 +535,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .mock-term b{min-width:42px}
   .sheet-grid{font-size:10px;grid-template-columns:28px 1.4fr repeat(3,.8fr)}
   .sheet-cell{min-height:23px;padding:0 6px}
-  .course-choice-body{min-height:125px;padding:var(--space-4)}
+  .course-choice-body{min-height:122px;padding:var(--space-4)}
   .featured-games{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .featured-game,.featured-game-large{grid-column:span 1}
   .game-visual,.featured-game-large .game-visual{height:95px}
@@ -556,7 +546,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .page-title{flex-wrap:wrap;align-items:center}
   .chapter-heading{align-items:flex-start}
   .chapter-heading .chapter-back-button{margin-left:auto}
-  .page-title h1{font-size:37px}
+  .page-title h1{font-size:36px}
   .page-title p{font-size:16px}
   .library-toolbar{flex-direction:column;align-items:stretch}
   .search-field{max-width:none}
@@ -602,29 +592,24 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 }
 
 @media(max-width:740px){
-  .hero-motion{margin-top:20px;padding:14px 16px}
+  .home-circuit-backdrop{top:-55px;left:-24px;right:-24px;height:570px;opacity:.32}
   .games-hub-card{padding:19px 17px;gap:14px}
   .games-hub-info{min-width:120px}
   .games-hub-preview .game-visual{height:95px}
 }
 @media(max-width:560px){
-  .hero-motion{padding:13px 9px}
-  .signal-chain{gap:4px}
-  .signal-device{width:60px;flex-basis:60px}
-  .signal-device svg{width:21px;height:21px}
-  .signal-device>span{font-size:12px}
+  .home-circuit-backdrop{top:-30px;left:-12px;right:-12px;height:500px;opacity:.28}
   .games-hub-card{min-height:147px;gap:12px;flex-direction:column;align-items:stretch}
   .games-hub-info{width:100%;display:flex;gap:10px}
-  .games-hub-info strong{font-size:24px}
+  .games-hub-info strong{font-size:25px}
   .games-hub-info>span{margin-left:auto}
   .games-hub-info>svg{flex-shrink:0}
   .games-hub-preview .game-visual{height:88px}
   .games-hub-preview{gap:7px}
 }
 @media(prefers-reduced-motion:reduce){
-  .signal-packet,.signal-cpu svg{animation:none!important}
-  .signal-packet{left:50%;opacity:1}
-
+  .circuit-signals path,.circuit-nodes circle{animation:none!important}
+  .circuit-signals{opacity:.17}
   html{scroll-behavior:auto}
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}
 }
