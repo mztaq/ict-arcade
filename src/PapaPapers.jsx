@@ -1,5 +1,5 @@
 import React from "react";
-import {ArrowLeft,ArrowRight,ArrowUpRight,FolderOpen,FileText,FileArchive} from "lucide-react";
+import {ArrowLeft,ArrowRight,ArrowUpRight,FolderOpen,FileText,FileArchive,CalendarDays,CalendarCheck2,ClipboardCheck,BookOpen} from "lucide-react";
 
 export const years = Array.from({length:10},(_,i)=>2026-i);
 const root="#/past-papers/yearly";
@@ -43,13 +43,13 @@ export function PapaPapers({year,series,folder}){
   const back=type&&exam?seriesRoute:exam?yearRoute:validYear?root:"#/past-papers";
   const title=type&&exam?type[1]:exam?year+" · "+exam.label:validYear?"Past Papers "+year:"Yearly Past Papers";
   const files=exam&&type?filesFor(year,series,folder):[];
-  return <>
-    <div className="page-title"><div><h1>{title}</h1><p>{type&&exam?year+" · "+exam.label:exam?"Choose a document folder":validYear?"Choose an examination series":"Choose a year · 2017–2026"}</p></div><div className="title-action"><a className="chapter-back-button" href={back}><ArrowLeft size={16}/> Back</a></div></div>
-    {!validYear?<div className="paper-year-grid papa-list">{years.map(item=><a className="paper-year" key={item} href={root+"/"+item}><strong>{item}</strong><ArrowRight size={18}/></a>)}</div>:
-      !exam?<div className="paper-year-grid papa-list">{seriesFor(year).map(item=><a className="paper-year" key={item.id} href={yearRoute+"/"+item.id}><strong>{item.label}</strong><ArrowRight size={18}/></a>)}</div>:
-      !type?<div className="paper-year-grid papa-list">{folders.map(([id,label])=><a className="paper-year" key={id} href={seriesRoute+"/"+id}><FolderOpen size={22}/><strong>{label}</strong><ArrowRight size={18}/></a>)}</div>:
-      <div className="paper-year-grid papa-list">{files.map(file=><a className="paper-year papa-file" key={file.name} href={file.url} target="_blank" rel="noopener noreferrer">{folder==="sf"?<FileArchive size={22}/>:<FileText size={22}/>}<span style={{minWidth:0,overflowWrap:"anywhere"}}><strong>{file.title}</strong><small style={{display:"block"}}>{file.name}</small></span><ArrowUpRight size={18}/></a>)}
+  return <section className="papa-browser">
+    <div className="page-title papa-heading"><div><h1>{title}</h1><p>{type&&exam?year+" · "+exam.label:exam?"Choose a document folder":validYear?"Choose an examination series":"Choose a year · 2017–2026"}</p></div><div className="title-action"><a className="chapter-back-button" href={back}><ArrowLeft size={16}/> Back</a></div></div>
+    {!validYear?<div className="paper-year-grid papa-list">{years.map(item=><a className="paper-year" key={item} href={root+"/"+item}><span className="papa-icon"><CalendarDays size={22}/></span><strong>{item}</strong><ArrowRight size={18}/></a>)}</div>:
+      !exam?<div className="paper-year-grid papa-list">{seriesFor(year).map(item=><a className="paper-year" key={item.id} href={yearRoute+"/"+item.id}><span className="papa-icon"><CalendarCheck2 size={22}/></span><strong>{item.label}</strong><ArrowRight size={18}/></a>)}</div>:
+      !type?<div className="paper-year-grid papa-list">{folders.map(([id,label])=><a className="paper-year" key={id} href={seriesRoute+"/"+id}><span className="papa-icon">{id==="qp"?<FileText size={22}/>:id==="ms"?<ClipboardCheck size={22}/>:id==="er"?<BookOpen size={22}/>:<FileArchive size={22}/>}</span><strong>{label}</strong><ArrowRight size={18}/></a>)}</div>:
+      <div className="paper-year-grid papa-list">{files.map(file=><a className="paper-year papa-file" key={file.name} href={file.url} target="_blank" rel="noopener noreferrer"><span className="papa-icon">{folder==="sf"?<FileArchive size={22}/>:<FileText size={22}/>}</span><span style={{minWidth:0,overflowWrap:"anywhere"}}><strong>{file.title}</strong><small style={{display:"block"}}>{file.name}</small></span><ArrowUpRight size={18}/></a>)}
       {!files.length&&<div className="paper-empty"><p>No individual links indexed for this folder yet.</p></div>}
       </div>}
-  </>;
+  </section>;
 }
