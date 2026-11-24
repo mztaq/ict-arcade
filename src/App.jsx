@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
   Check, CheckCircle2, ClipboardList, Eye, EyeOff,
-  Gamepad2, Layers, Menu, Moon, RotateCcw, Search, Sun, X
+  Gamepad2, Layers, Moon, RotateCcw, Search, Sun, X
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -68,7 +68,6 @@ function Title({title, description, action}) {
 
 function App() {
   const [route, setRoute] = useState(getRoute);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
   const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
@@ -89,7 +88,7 @@ function App() {
   const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
-    const onHash = () => { setRoute(getRoute()); setMenuOpen(false); window.scrollTo({top: 0, behavior: "smooth"}); };
+    const onHash = () => { setRoute(getRoute()); window.scrollTo({top: 0, behavior: "smooth"}); };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
@@ -157,59 +156,57 @@ function App() {
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const nav = [
-    {page: "home", label: "Home", icon: BookOpen},
-    {page: "notes", label: "Theory", icon: Layers},
-    {page: "practical", label: "Practical", icon: ClipboardList},
-    {page: "practice", label: "Questions", icon: CheckCircle2},
-    {page: "flashcards", label: "Flashcards", icon: RotateCcw},
-    {page: "games", label: "Games", icon: Gamepad2}
+    {page: "notes", label: "Theory"},
+    {page: "practical", label: "Practical"},
+    {page: "practice", label: "Questions"},
+    {page: "flashcards", label: "Flashcards"},
+    {page: "games", label: "Games"}
   ];
   const activePage = route.page === "chapter" ? (chapter.unit === "Theory" ? "notes" : "practical") : route.page;
 
   return <div className="site-shell">
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
-    {menuOpen && <button className="mobile-backdrop" onClick={() => setMenuOpen(false)} aria-label="Close navigation" />}
-    <aside className={"site-sidebar " + (menuOpen ? "open" : "")} aria-label="Site navigation">
-      <button className="brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
-        <span className="brand-grid" aria-hidden="true"><i /><i /><i /><i /></span>
-        <span>ICT<span className="brand-second">ARCADE</span></span>
+    <header className="site-header">
+      <button className="brand header-brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
+        <span className="brand-grid" aria-hidden="true"><i/><i/><i/><i/></span>
+        <span className="header-brand-name">ICT Arcade<span className="brand-period">.</span></span>
       </button>
-      <nav className="nav-list" aria-label="Study sections">
-        {nav.map(({page, label, icon: Icon}) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => {setMenuOpen(false); navigate(page);}}>
-          <Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span>
-        </button>)}
+      <nav className="top-nav" aria-label="Main navigation">
+        {nav.map(({page, label}) => <button key={page} className={"top-nav-link " + (activePage === page ? "active" : "")}
+          aria-current={activePage === page ? "page" : undefined} onClick={() => navigate(page)}>{label}</button>)}
       </nav>
-      <div className="sidebar-bottom">
-        <div className="sidebar-completion">
-          <div className="completion-value"><strong>{validDone.length}<span> / {theoryLessons.length} lessons</span></strong><span>{overallPercent}%</span></div>
-          <Progress value={overallPercent} label="Theory revision progress"/>
-        </div>
-      </div>
-    </aside>
-
+      <button className="header-theme" type="button" onClick={toggleTheme}
+        title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+        {darkMode ? <Sun size={19} strokeWidth={1.85}/> : <Moon size={19} strokeWidth={1.85}/>}
+      </button>
+    </header>
     <div className="site-body">
-      <header className="site-header">
-        <div className="header-left"><button className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={21}/></button><span className="mobile-title">ICT Arcade</span></div>
-        <button className="header-theme" type="button" onClick={toggleTheme} title={darkMode ? "Switch to light mode" : "Switch to dark mode"} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
-          {darkMode ? <Sun size={20} strokeWidth={1.8}/> : <Moon size={20} strokeWidth={1.8}/>}
-        </button>
-      </header>
       <main id="main-content" tabIndex={-1} className="site-main">
 
         {route.page === "home" && <>
+          <section className="home-intro">
+            <div className="home-signature">
+              <span className="home-logo-mark" aria-hidden="true"><i/><i/><i/><i/></span>
+              <h1>ICT Arcade<span>.</span></h1>
+            </div>
+            <p>Cambridge IGCSE ICT revision. Notes, questions and games in one place.</p>
+            <button className="home-games-link" onClick={() => navigate("games")}>
+              <Gamepad2 size={20} strokeWidth={1.85}/> Play games <ArrowRight size={17}/>
+            </button>
+          </section>
           <section className="choose-course">
-            <h1>What are you revising?</h1>
-            <p>Choose a part of the ICT course.</p>
+            <h2>Choose what to revise</h2>
             <div className="course-choices">
               <button className="course-choice" onClick={() => navigate("notes")}>
                 <span className="choice-icon"><BookOpen size={24} strokeWidth={1.8}/></span>
-                <h2>Theory</h2>
+                <h3>Theory</h3>
                 <p>Computer systems, networks, ICT applications, safety and more.</p>
                 <span className="choice-footer"><span>11 chapters · {theoryLessons.length} lessons</span><ArrowRight size={19}/></span>
               </button>
               <button className="course-choice" onClick={() => navigate("practical")}>
                 <span className="choice-icon"><Layers size={24} strokeWidth={1.8}/></span>
-                <h2>Practical</h2>
+                <h3>Practical</h3>
                 <p>Document production, databases, spreadsheets and website authoring.</p>
                 <span className="choice-footer"><span>Coming soon</span><ArrowRight size={19}/></span>
               </button>
@@ -217,7 +214,7 @@ function App() {
             {validDone.length > 0 && <button className="continue-lesson" onClick={() => {
               const next = theoryLessons.find(l => !done.includes(keyFor(l.chapterId, l.index))) || theoryLessons[0];
               navigate("chapter", next.chapterId, next.index);
-            }}>Continue theory revision <ArrowRight size={17}/></button>}
+            }}>Continue revision <ArrowRight size={17}/></button>}
           </section>
         </>}
 
