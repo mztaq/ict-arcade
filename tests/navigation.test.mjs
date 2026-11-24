@@ -50,8 +50,12 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/className="home-intro"/);
   assert.match(app,/className="home-logo-mark"/);
   assert.match(app,/ict-arcade-mark\.svg/);
-  assert.match(app,/function TheoryPreview\(\)/);
-  assert.match(app,/function PracticalPreview\(\)/);
+  assert.match(app,/function TheoryPreview\(\{theme\}\)/);
+  assert.match(app,/function PracticalPreview\(\{theme\}\)/);
+  assert.match(app,/<RoutePreview page="notes" theme=\{theme\}/);
+  assert.match(app,/<RoutePreview page="practical" theme=\{theme\}/);
+  assert.match(app,/<App previewPage=\{page\} previewTheme=\{theme\}/);
+  assert.match(app,/aria-hidden="true" inert/);
   assert.match(app,/function ArcadeVisual\(\{id\}\)/);
   assert.doesNotMatch(app,/className="top-nav"/);
   assert.match(app,/className="past-papers-link"/);
@@ -86,9 +90,6 @@ test("individual game links lead to the matching original game",()=>{
 });
 
 test("home previews are grounded in course material and games have unique artwork",()=>{
-  assert.match(app,/const section=chapters\[3\]\.lessons\[1\]/);
-  assert.match(app,/section\.terms\.slice\(0,2\)/);
-  assert.match(app,/=SUM\(D2:D4\)/);
   assert.match(app,/const backgrounds = \[/);
   for(let i=1;i<=11;i++)assert.match(app,new RegExp("id==="+i+"&&"));
   assert.match(app,/games-hub-preview/);
