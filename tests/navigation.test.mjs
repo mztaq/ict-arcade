@@ -73,5 +73,5 @@ test("home previews are grounded in course material and games have unique artwor
   assert.match(app,/=SUM\(D2:D4\)/);
   assert.match(app,/const backgrounds = \[/);
   for(let i=1;i<=11;i++)assert.match(app,new RegExp("id==="+i+"&&"));
-  assert.match(app,/className="featured-game-large"/.replace("featured-game-large","featured-game-large") instanceof RegExp ? /featured-game-large/ : /featured-game-large/);
+  assert.match(app,/featured-game-large/);
 });
