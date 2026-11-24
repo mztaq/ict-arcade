@@ -44,31 +44,24 @@ function Progress({value, label}) {
     <span style={{width: Math.max(0, Math.min(value, 100)) + "%"}} />
   </div>;
 }
-function SectionHeader({tag, title, detail, action}) {
-  return <div className="section-heading">
-    <div>{tag && <span className="section-tag">{tag}</span>}<h2>{title}</h2>{detail && <p>{detail}</p>}</div>
-    {action}
-  </div>;
-}
 function ChapterRow({chapter, done, compact = false, onOpen}) {
   const progress = chapterProgress(chapter, done);
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
     <span className="chapter-index">{formatNumber(chapter.id)}</span>
     <span className="chapter-description">
-      <span className="row-type">{chapter.unit} / {chapter.lessons.length} lessons</span>
       <strong>{chapter.title}</strong>
       {!compact && <span className="row-summary">{chapter.description}</span>}
     </span>
     <span className="chapter-status">
-      <span>{progress === 100 ? "Complete" : progress === 0 ? "Not started" : progress + "% done"}</span>
+      <span>{chapter.lessons.length} lessons · {progress === 100 ? "Complete" : progress === 0 ? "Not started" : progress + "%"}</span>
       <span className="mini-progress"><span style={{width: progress + "%"}} /></span>
     </span>
     <ArrowUpRight size={19} strokeWidth={1.7} aria-hidden="true" />
   </button>;
 }
-function Title({eyebrow, title, description, action}) {
+function Title({title, description, action}) {
   return <div className="page-title">
-    <div><span className="overline">{eyebrow}</span><h1>{title}</h1><p>{description}</p></div>
+    <div><h1>{title}</h1><p>{description}</p></div>
     {action && <div className="title-action">{action}</div>}
   </div>;
 }
@@ -80,7 +73,6 @@ function App() {
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
   const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
   const [known, setKnown] = useStored("ict-arcade-mastered", []);
-  const [lastRead, setLastRead] = useStored("ict-arcade-last-read", "1-0");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [quizChapter, setQuizChapter] = useState(0);
@@ -94,6 +86,7 @@ function App() {
   const [flashChapter, setFlashChapter] = useState(0);
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
     const onHash = () => { setRoute(getRoute()); setMenuOpen(false); window.scrollTo({top: 0, behavior: "smooth"}); };
@@ -101,30 +94,35 @@ function App() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
-  useEffect(() => { if (route.page === "chapter") setLastRead(keyFor(route.id, route.lesson)); }, [route.page, route.id, route.lesson, setLastRead]);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = event => setSystemDark(event.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   const chapter = chapters.find(ch => ch.id === route.id) || chapters[0];
   const lessonIndex = Math.max(0, Math.min(route.lesson, chapter.lessons.length - 1));
   const lesson = chapter.lessons[lessonIndex];
   const lessonKey = keyFor(chapter.id, lessonIndex);
-  const validDone = done.filter(k => allLessons.some(l => keyFor(l.chapterId, l.index) === k));
-  const overallPercent = Math.round(validDone.length / allLessons.length * 100);
-  const nextLesson = allLessons.find(l => !done.includes(keyFor(l.chapterId, l.index))) || allLessons[0];
-  const [lastChapterId, lastLessonIndex] = lastRead.split("-").map(Number);
-  const recentChapter = chapters.find(c => c.id === lastChapterId);
-  const resume = recentChapter && recentChapter.lessons[lastLessonIndex] && !done.includes(lastRead)
-    ? {chapterId: lastChapterId, index: lastLessonIndex, title: recentChapter.lessons[lastLessonIndex].title}
-    : {chapterId: nextLesson.chapterId, index: nextLesson.index, title: nextLesson.title};
-  const bookmarkCount = bookmarks.filter(k => allLessons.some(l => keyFor(l.chapterId, l.index) === k)).length;
+  const theoryChapters = chapters.filter(ch => ch.unit === "Theory");
+  const theoryLessons = allLessons.filter(l => l.chapterId <= 11);
+  const theoryQuestions = questions.filter(q => q.chapterId <= 11);
+  const theoryFlashcards = flashcards.filter(card => card.chapterId <= 11);
+  const validDone = done.filter(k => theoryLessons.some(l => keyFor(l.chapterId, l.index) === k));
+  const overallPercent = Math.round(validDone.length / theoryLessons.length * 100);
+  const bookmarkCount = bookmarks.filter(k => theoryLessons.some(l => keyFor(l.chapterId, l.index) === k)).length;
+  const darkMode = theme === "dark" || (theme === "auto" && systemDark);
+  const toggleTheme = () => setTheme(darkMode ? "light" : "dark");
 
   const results = useMemo(() => chapters.filter(ch => {
-    if (filter === "Theory" || filter === "Practical") { if (ch.unit !== filter) return false; }
+    if (ch.unit !== "Theory") return false;
     if (filter === "Saved" && !ch.lessons.some((_, i) => bookmarks.includes(keyFor(ch.id, i)))) return false;
     const searchable = [ch.title, ch.description, ...ch.lessons.flatMap(l => [l.title, ...l.points, l.example, ...l.terms.flat()])].join(" ").toLowerCase();
     return searchable.includes(search.trim().toLowerCase());
   }), [filter, search, bookmarks]);
 
-  const quizItems = useMemo(() => quizChapter ? questions.filter(q => q.chapterId === quizChapter) : questions, [quizChapter]);
+  const quizItems = useMemo(() => quizChapter ? theoryQuestions.filter(q => q.chapterId === quizChapter) : theoryQuestions, [quizChapter, theoryQuestions.length]);
   const finished = quizIndex >= quizItems.length;
   const quizQuestion = !finished ? quizItems[quizIndex] : null;
   const options = useMemo(() => {
@@ -139,7 +137,7 @@ function App() {
     return items;
   }, [quizQuestion, quizIndex]);
 
-  const flashPool = useMemo(() => flashcards.filter(card => !flashChapter || card.chapterId === flashChapter), [flashChapter]);
+  const flashPool = theoryFlashcards.filter(card => !flashChapter || card.chapterId === flashChapter);
   const currentFlash = flashPool[flashIndex % flashPool.length];
   const knownInPool = flashPool.filter(card => known.includes(card.term)).length;
   const writtenQuestion = writtenQuestions[writtenIndex];
@@ -159,14 +157,14 @@ function App() {
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const nav = [
-    {page: "home", label: "Overview", icon: BookOpen},
-    {page: "notes", label: "Notes", icon: Layers},
-    {page: "practice", label: "Questions", icon: ClipboardList},
+    {page: "home", label: "Home", icon: BookOpen},
+    {page: "notes", label: "Theory", icon: Layers},
+    {page: "practical", label: "Practical", icon: ClipboardList},
+    {page: "practice", label: "Questions", icon: CheckCircle2},
     {page: "flashcards", label: "Flashcards", icon: RotateCcw},
     {page: "games", label: "Games", icon: Gamepad2}
   ];
-  const activePage = route.page === "chapter" ? "notes" : route.page;
-  const pageLabel = route.page === "chapter" ? chapter.title : nav.find(item => item.page === route.page)?.label || "Overview";
+  const activePage = route.page === "chapter" ? (chapter.unit === "Theory" ? "notes" : "practical") : route.page;
 
   return <div className="site-shell">
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
@@ -174,115 +172,100 @@ function App() {
     <aside className={"site-sidebar " + (menuOpen ? "open" : "")} aria-label="Site navigation">
       <button className="brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
         <span className="brand-grid" aria-hidden="true"><i /><i /><i /><i /></span>
-        <span>ICT<span className="brand-second">ARCADE</span><small>REVISION / 0417</small></span>
+        <span>ICT<span className="brand-second">ARCADE</span></span>
       </button>
-      <div className="sidebar-section-label">WORKSPACE</div>
       <nav className="nav-list" aria-label="Study sections">
-        {nav.map(({page, label, icon: Icon}, index) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => {setMenuOpen(false); navigate(page);}}>
-          <span className="nav-order">{formatNumber(index + 1)}</span><Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span>
+        {nav.map(({page, label, icon: Icon}) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => {setMenuOpen(false); navigate(page);}}>
+          <Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span>
         </button>)}
       </nav>
       <div className="sidebar-bottom">
         <div className="sidebar-completion">
-          <span className="meta-label">LESSONS FINISHED</span>
-          <div className="completion-value"><strong>{validDone.length}<span> / {allLessons.length}</span></strong><span>{overallPercent}%</span></div>
-          <Progress value={overallPercent} label="Overall revision progress"/>
-        </div>
-        <div className="appearance"><span className="meta-label">APPEARANCE</span>
-          <div className="theme-options" role="group" aria-label="Colour theme">
-            {[["auto", Monitor], ["light", Sun], ["dark", Moon]].map(([value, Icon]) => <button key={value} className={theme === value ? "selected" : ""} onClick={() => setTheme(value)} aria-label={value === "auto" ? "Use system theme" : "Use " + value + " theme"} aria-pressed={theme === value} title={value}><Icon size={16}/></button>)}
-          </div>
+          <div className="completion-value"><strong>{validDone.length}<span> / {theoryLessons.length} lessons</span></strong><span>{overallPercent}%</span></div>
+          <Progress value={overallPercent} label="Theory revision progress"/>
         </div>
       </div>
     </aside>
 
     <div className="site-body">
       <header className="site-header">
-        <div className="header-left"><button className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={21}/></button><span>ICT ARCADE</span><span className="header-divider">/</span><span className="header-location">{pageLabel}</span></div>
-        <span className="header-right">CAMBRIDGE IGCSE <span>0417 / 0983</span></span>
+        <div className="header-left"><button className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={21}/></button><span className="mobile-title">ICT Arcade</span></div>
+        <button className="header-theme" type="button" onClick={toggleTheme} title={darkMode ? "Switch to light mode" : "Switch to dark mode"} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+          {darkMode ? <Sun size={20} strokeWidth={1.8}/> : <Moon size={20} strokeWidth={1.8}/>}
+        </button>
       </header>
       <main id="main-content" tabIndex={-1} className="site-main">
 
         {route.page === "home" && <>
-          <section className="home-lead">
-            <div className="home-lead-main">
-              <span className="overline">CAMBRIDGE IGCSE ICT / STUDY SPACE</span>
-              <h1>Understand the topic.<br/><span>Then prove it.</span></h1>
-              <p>Work through Cambridge IGCSE ICT topics with clear notes and examples, then check your understanding with questions, flashcards and the original arcade games.</p>
-              <button className="primary-action" onClick={() => navigate("notes")}>Explore the course <ArrowRight size={18}/></button>
+          <section className="choose-course">
+            <h1>What are you revising?</h1>
+            <p>Choose a part of the ICT course.</p>
+            <div className="course-choices">
+              <button className="course-choice" onClick={() => navigate("notes")}>
+                <span className="choice-icon"><BookOpen size={24} strokeWidth={1.8}/></span>
+                <h2>Theory</h2>
+                <p>Computer systems, networks, ICT applications, safety and more.</p>
+                <span className="choice-footer"><span>11 chapters · {theoryLessons.length} lessons</span><ArrowRight size={19}/></span>
+              </button>
+              <button className="course-choice" onClick={() => navigate("practical")}>
+                <span className="choice-icon"><Layers size={24} strokeWidth={1.8}/></span>
+                <h2>Practical</h2>
+                <p>Document production, databases, spreadsheets and website authoring.</p>
+                <span className="choice-footer"><span>Coming soon</span><ArrowRight size={19}/></span>
+              </button>
             </div>
-            <aside className="next-up">
-              <div className="next-up-top"><span className="overline">CONTINUE READING</span><BookOpen size={20} aria-hidden="true"/></div>
-              <div className="next-code">{formatNumber(resume.chapterId)}<span>.{formatNumber(resume.index + 1)}</span></div>
-              <h2>{resume.title}</h2>
-              <p>{chapterName(resume.chapterId)}</p>
-              <button className="underlined-action" onClick={() => navigate("chapter", resume.chapterId, resume.index)}>Open lesson <ArrowRight size={17}/></button>
-              <div className="next-progress"><span>{validDone.length} of {allLessons.length} lessons finished</span><Progress value={overallPercent} label="Course completion"/></div>
-            </aside>
+            {validDone.length > 0 && <button className="continue-lesson" onClick={() => {
+              const next = theoryLessons.find(l => !done.includes(keyFor(l.chapterId, l.index))) || theoryLessons[0];
+              navigate("chapter", next.chapterId, next.index);
+            }}>Continue theory revision <ArrowRight size={17}/></button>}
           </section>
-
-          <div className="course-facts" aria-label="Course resources">
-            <div><b>21</b><span>CHAPTERS</span></div>
-            <div><b>{allLessons.length}</b><span>LESSONS</span></div>
-            <div><b>{questions.length}</b><span>QUICK QUESTIONS</span></div>
-            <div><b>11</b><span>ARCADE GAMES</span></div>
-          </div>
-
-          <div className="home-content">
-            <section className="home-chapters">
-              <SectionHeader tag="COURSE INDEX" title="Start with a chapter" action={<button className="link-action" onClick={() => navigate("notes")}>All 21 chapters <ArrowRight size={16}/></button>}/>
-              <div className="chapter-list">{chapters.slice(0, 6).map(ch => <ChapterRow key={ch.id} chapter={ch} done={done} compact onOpen={() => navigate("chapter", ch.id, 0)} />)}</div>
-            </section>
-            <aside className="home-toolbox">
-              <SectionHeader tag="STUDY TOOLS" title="Choose how to revise"/>
-              <button className="study-tool" onClick={() => navigate("practice")}><span className="tool-number">01</span><span><strong>Answer questions</strong><small>{questions.length} checks with explanations and written practice</small></span><ArrowUpRight size={20}/></button>
-              <button className="study-tool" onClick={() => navigate("flashcards")}><span className="tool-number">02</span><span><strong>Test definitions</strong><small>{flashcards.length} key terms to recall</small></span><ArrowUpRight size={20}/></button>
-              <button className="study-tool" onClick={() => navigate("games")}><span className="tool-number">03</span><span><strong>Play the arcade</strong><small>Eleven original games with topic questions</small></span><ArrowUpRight size={20}/></button>
-              <div className="study-note"><span className="meta-label">ONE USEFUL HABIT</span><p>Read a lesson, explain it in your own words, then answer questions without checking your notes.</p></div>
-            </aside>
-          </div>
         </>}
 
         {route.page === "notes" && <>
-          <Title eyebrow="COURSE LIBRARY / 21 CHAPTERS" title="Revision notes" description="Follow the syllabus from computer systems to website authoring. Each chapter includes explanations, examples and the terms you need to know." />
+          <Title title="Theory" description="11 chapters of explanations, examples and key definitions." />
+          <div className="theory-shortcuts">
+            <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
+            <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
+          </div>
           <div className="library-toolbar">
-            <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search topics</span><input placeholder="Search topics, terms or examples" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
+            <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
             <div className="filter-list" role="group" aria-label="Filter chapters">
-              {["All", "Theory", "Practical", "Saved"].map(value => <button key={value} onClick={() => setFilter(value)} className={filter === value ? "selected" : ""} aria-pressed={filter === value}>{value}{value === "Saved" && bookmarkCount > 0 ? " (" + bookmarkCount + ")" : ""}</button>)}
+              {["All", "Saved"].map(value => <button key={value} onClick={() => setFilter(value)} className={filter === value ? "selected" : ""} aria-pressed={filter === value}>{value}{value === "Saved" && bookmarkCount > 0 ? " (" + bookmarkCount + ")" : ""}</button>)}
             </div>
           </div>
           <div className="result-summary"><span>{results.length} chapters</span><span>{results.reduce((total, ch) => total + ch.lessons.length, 0)} lessons</span></div>
-          {results.length ? ["Theory", "Practical"].map(unit => {
-            const listing = results.filter(ch => ch.unit === unit);
-            return listing.length ? <section className="library-section" key={unit}>
-              <div className="library-heading"><span className="section-tag">{unit === "Theory" ? "PART ONE / 01–11" : "PART TWO / 12–21"}</span><h2>{unit}</h2></div>
-              <div className="chapter-list">{listing.map(ch => <ChapterRow key={ch.id} chapter={ch} done={done} onOpen={() => {
-                const savedIndex = ch.lessons.findIndex((_, index) => !done.includes(keyFor(ch.id, index)));
-                navigate("chapter", ch.id, savedIndex === -1 ? 0 : savedIndex);
-              }}/>)}</div>
-            </section> : null;
-          }) : <div className="empty-results"><Search size={26}/><h2>No chapters found</h2><p>Try another term or switch to All chapters.</p><button className="secondary-action" onClick={() => {setFilter("All"); setSearch("");}}>Clear filters</button></div>}
+          {results.length ? <div className="chapter-list">{results.map(ch => <ChapterRow key={ch.id} chapter={ch} done={done} onOpen={() => {
+            const savedIndex = ch.lessons.findIndex((_, index) => !done.includes(keyFor(ch.id, index)));
+            navigate("chapter", ch.id, savedIndex === -1 ? 0 : savedIndex);
+          }}/>)}</div> : <div className="empty-results"><Search size={26}/><h2>No chapters found</h2><p>Try another search or view all theory chapters.</p><button className="secondary-action" onClick={() => {setFilter("All"); setSearch("");}}>Clear filters</button></div>}
         </>}
 
-        {route.page === "chapter" && <>
-          <button className="back-link" onClick={() => navigate("notes")}><ArrowLeft size={16}/> Back to all chapters</button>
-          <div className="chapter-heading"><span className="overline">{chapter.unit.toUpperCase()} / CHAPTER {formatNumber(chapter.id)}</span><h1>{chapter.title}</h1><p>{chapter.description}</p></div>
+        {route.page === "practical" && <section className="practical-soon">
+          <div className="choice-icon"><Layers size={26} strokeWidth={1.8}/></div>
+          <h1>Practical</h1>
+          <p>Practical revision is coming soon. Theory lessons, questions and games are ready to use.</p>
+          <button className="primary-action" onClick={() => navigate("notes")}>Go to Theory <ArrowRight size={17}/></button>
+        </section>}
+
+        {route.page === "chapter" && chapter.unit === "Theory" && <>
+          <button className="back-link" onClick={() => navigate("notes")}><ArrowLeft size={16}/> Back to Theory</button>
+          <div className="chapter-heading"><h1>{chapter.title}</h1><p>{chapter.description}</p></div>
           <div className="reading-layout">
             <aside className="lesson-index" aria-label="Lessons in chapter">
-              <div className="lesson-index-heading"><span className="meta-label">LESSONS</span><span>{chapterProgress(chapter, done)}% done</span></div>
+              <div className="lesson-index-heading"><span>Lessons</span><span>{chapterProgress(chapter, done)}% done</span></div>
               <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
               <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
                 <span>{done.includes(keyFor(chapter.id, i)) ? <Check size={15}/> : formatNumber(i + 1)}</span><span>{entry.title}</span>
               </button>)}</nav>
             </aside>
             <article className="reading-article">
-              <div className="article-topline"><span className="meta-label">LESSON {formatNumber(lessonIndex + 1)} / {formatNumber(chapter.lessons.length)}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
+              <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
               <h2>{lesson.title}</h2>
               <div className="article-rule"/>
               <h3>Key ideas</h3>
               <ol className="concepts">{lesson.points.map((point, i) => <li key={i}><span className="concept-count">{formatNumber(i + 1)}</span><span>{point}</span></li>)}</ol>
-              <section className="lesson-highlight example"><span className="meta-label">IN PRACTICE</span><h3>A real example</h3><p>{lesson.example}</p></section>
-              <section className="lesson-highlight exam"><span className="meta-label">EXAM TECHNIQUE</span><h3>What to remember</h3><p>{lesson.tip}</p></section>
+              <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
+              <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
               {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions to learn</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
                 <div className="article-next">{lessonIndex > 0 && <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex - 1)}><ArrowLeft size={16}/> Previous</button>}{lessonIndex + 1 < chapter.lessons.length ? <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex + 1)}>Next lesson <ArrowRight size={16}/></button> : <button className="secondary-action" onClick={() => {startQuiz(chapter.id); navigate("practice");}}>Test this chapter <ArrowRight size={16}/></button>}</div>
@@ -298,15 +281,15 @@ function App() {
             <button aria-pressed={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
           </div>
           {practiceType === "choice" ? <>
-            <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose question chapter" value={quizChapter} onChange={e => startQuiz(Number(e.target.value))}><option value={0}>All chapters</option>{chapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{quizScore} correct · {quizIndex + (picked !== null ? 1 : 0)} answered</span></div>
+            <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose question chapter" value={quizChapter} onChange={e => startQuiz(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{quizScore} correct · {quizIndex + (picked !== null ? 1 : 0)} answered</span></div>
             {finished ? <div className="quiz-finish"><span className="overline">PRACTICE COMPLETE</span><h2>{quizScore} <span>/ {quizItems.length}</span></h2><p>{quizScore === quizItems.length ? "All correct. Try a different topic or move to written answers." : "Review the notes for any answers you missed, then try another round."}</p><div><button className="primary-action" onClick={() => startQuiz(quizChapter)}><RotateCcw size={16}/> Try again</button><button className="secondary-action" onClick={() => navigate("notes")}>Open notes <ArrowRight size={16}/></button></div></div> :
             <div className="question-paper"><div className="question-progress"><span>QUESTION {formatNumber(quizIndex + 1)} OF {formatNumber(quizItems.length)}</span><span>{chapterName(quizQuestion.chapterId)}</span></div><Progress value={(quizIndex + 1) / quizItems.length * 100} label="Question progress"/><h2>{quizQuestion.question}</h2>
               <div className="option-list">{options.map(({text, value}, i) => <button key={text} disabled={picked !== null} aria-pressed={picked === value} onClick={() => pickAnswer(value)} className={"answer-button " + (picked !== null && value === 0 ? "correct" : "") + (picked === value && value !== 0 ? " incorrect" : "")}><span className="answer-letter">{String.fromCharCode(65 + i)}</span><span>{text}</span>{picked !== null && value === 0 && <CheckCircle2 size={18}/>}</button>)}</div>
               {picked !== null && <div className="answer-explanation" role="status"><strong>{picked === 0 ? "Correct" : "Review this answer"}</strong><p>{quizQuestion.why}</p><button className="primary-action" onClick={nextQuestion}>{quizIndex + 1 === quizItems.length ? "See results" : "Next question"} <ArrowRight size={16}/></button></div>}
             </div>}
           </> : <>
-            <div className="practice-toolbar"><label>QUESTION<select value={writtenIndex} aria-label="Choose written question" onChange={e => {setWrittenIndex(Number(e.target.value)); setShowMarking(false);}}>{writtenQuestions.map((q, i) => <option key={i} value={i}>Q{formatNumber(i + 1)} / Chapter {q.chapterId}</option>)}</select></label><span>{writtenQuestion.marks} marks available</span></div>
-            <div className="question-paper written-paper"><div className="question-progress"><span>LONG-ANSWER QUESTION {formatNumber(writtenIndex + 1)}</span><span>CHAPTER {formatNumber(writtenQuestion.chapterId)}</span></div><h2>{writtenQuestion.prompt}</h2>
+            <div className="practice-toolbar"><label>QUESTION<select value={writtenIndex} aria-label="Choose written question" onChange={e => {setWrittenIndex(Number(e.target.value)); setShowMarking(false);}}>{writtenQuestions.map((q, i) => q.chapterId <= 11 ? <option key={i} value={i}>Q{formatNumber(i + 1)} / Chapter {q.chapterId}</option> : null)}</select></label><span>{writtenQuestion.marks} marks available</span></div>
+            <div className="question-paper written-paper"><div className="question-progress"><span>Question {writtenIndex + 1}</span><span>CHAPTER {formatNumber(writtenQuestion.chapterId)}</span></div><h2>{writtenQuestion.prompt}</h2>
               <label htmlFor="written-response" className="text-area-label">YOUR RESPONSE</label>
               <textarea id="written-response" rows={7} placeholder="Write your answer here before revealing the suggested marking points." value={drafts[writtenIndex] || ""} onChange={e => setDrafts(old => ({...old, [writtenIndex]: e.target.value}))}/>
               <div className="draft-controls"><span>{words} words · Saved on this device</span><button className="plain-action" onClick={() => setDrafts(old => ({...old, [writtenIndex]: ""}))} disabled={!drafts[writtenIndex]}>Clear answer</button></div>
@@ -318,10 +301,10 @@ function App() {
 
         {route.page === "flashcards" && <>
           <Title eyebrow="RECALL PRACTICE" title="Flashcards" description="Try to define the term yourself. Turn the card to check, then keep moving through the set."/>
-          <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{chapters.filter(ch => flashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
+          <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.filter(ch => theoryFlashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
           {currentFlash && <>
             <div className="flash-progress"><span>CARD {formatNumber(flashIndex % flashPool.length + 1)} / {formatNumber(flashPool.length)}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
-            <button className={"revision-card " + (flipped ? "is-flipped" : "")} onClick={() => setFlipped(v => !v)} aria-label={flipped ? "Show term" : "Reveal definition"}><span className="meta-label">{flipped ? "DEFINITION" : "TERM"}</span><strong>{flipped ? currentFlash.definition : currentFlash.term}</strong><span className="flash-turn"><RotateCcw size={17}/> {flipped ? "Show term" : "Reveal answer"}</span></button>
+            <button className={"revision-card " + (flipped ? "is-flipped" : "")} onClick={() => setFlipped(v => !v)} aria-label={flipped ? "Show term" : "Reveal definition"}><strong>{flipped ? currentFlash.definition : currentFlash.term}</strong><span className="flash-turn"><RotateCcw size={17}/> {flipped ? "Show term" : "Reveal answer"}</span></button>
             <div className="flash-controls"><button className="secondary-action" onClick={advanceFlash}>Review later <ArrowRight size={16}/></button><button className="primary-action" onClick={() => {setKnown(prev => prev.includes(currentFlash.term) ? prev : [...prev, currentFlash.term]); advanceFlash();}}><Check size={17}/> I knew this</button></div>
             <p className="flash-caption">Cards marked as known stay recorded in this browser. Keep reviewing them for long-term recall.</p>
           </>}
@@ -329,12 +312,12 @@ function App() {
 
         {route.page === "games" && <>
           <Title eyebrow="THE ORIGINAL ICT ARCADE" title="Games" description="Eleven original games, each with ICT questions built into play. Scores and controls work the same way as before." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
-          <div className="game-note"><Gamepad2 size={20}/><span>Choose a topic inside the arcade. Your saved game score stays in this browser.</span></div>
+          
           <iframe title="ICT Arcade original games" src="/arcade-legacy.html" className="arcade-frame" allow="fullscreen" loading="eager"/>
         </>}
 
       </main>
-      <footer className="site-footer"><span>ICT ARCADE © {new Date().getFullYear()}</span><span>Independent Cambridge IGCSE ICT study resource</span></footer>
+      <footer className="site-footer">© {new Date().getFullYear()} ICT Arcade</footer>
     </div>
   </div>;
 }
