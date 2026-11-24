@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
+import {examinerAdvice} from "./examinerAdvice.js";
 
 const load = (key, fallback) => {
   try {
@@ -48,10 +49,7 @@ function ChapterRow({chapter, done, compact = false, onOpen}) {
   const progress = chapterProgress(chapter, done);
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
     <span className="chapter-index">{formatNumber(chapter.id)}</span>
-    <span className="chapter-description">
-      <strong>{chapter.title}</strong>
-      {!compact && <span className="row-summary">{chapter.description}</span>}
-    </span>
+    <span className="chapter-description"><strong>{chapter.title}</strong></span>
     <span className="chapter-status">
       <span>{chapter.lessons.length} lessons · {progress === 100 ? "Complete" : progress === 0 ? "Not started" : progress + "%"}</span>
       <span className="mini-progress"><span style={{width: progress + "%"}} /></span>
@@ -61,7 +59,7 @@ function ChapterRow({chapter, done, compact = false, onOpen}) {
 }
 function Title({title, description, action}) {
   return <div className="page-title">
-    <div><h1>{title}</h1><p>{description}</p></div>
+    <div><h1>{title}</h1>{description && <p>{description}</p>}</div>
     {action && <div className="title-action">{action}</div>}
   </div>;
 }
@@ -259,6 +257,7 @@ function App() {
   const lessonIndex = Math.max(0, Math.min(route.lesson, chapter.lessons.length - 1));
   const lesson = chapter.lessons[lessonIndex];
   const lessonKey = keyFor(chapter.id, lessonIndex);
+  const advice = examinerAdvice[lessonKey] || [];
   const theoryChapters = chapters.filter(ch => ch.unit === "Theory");
   const theoryLessons = allLessons.filter(l => l.chapterId <= 11);
   const theoryQuestions = questions.filter(q => q.chapterId <= 11);
@@ -343,15 +342,14 @@ function App() {
             <a className="course-choice theory-card" href="#/notes">
               <TheoryPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><BookOpen size={20}/><strong>Learn the theory</strong><ArrowUpRight size={19}/></span>
-                <span className="course-description">Understand ICT topics with clear explanations, everyday examples and simple definitions. Start from the basics.</span>
+                <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
+                <span className="course-description">11 chapters · {theoryLessons.length} lessons</span>
               </span>
             </a>
             <a className="course-choice practical-card" href="#/practical">
               <PracticalPreview/>
               <span className="course-choice-body">
-                <span className="course-title-line"><Layers size={20}/><strong>Build practical skills</strong><span className="coming-soon">Coming soon</span></span>
-                <span className="course-description">Learn how to create documents, spreadsheets, databases and websites, one skill at a time.</span>
+                <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
               </span>
             </a>
           </section>
@@ -363,8 +361,7 @@ function App() {
         </>}
 
         {route.page === "notes" && <>
-          <Title title="Learn the theory" description="New to ICT? Start with Chapter 1. Each lesson explains an idea, shows an example and teaches useful terms." />
-          <section className="start-learning"><strong>Start here</strong><button className="primary-action" onClick={() => navigate("chapter", 1, 0)}>Start Chapter 1 <ArrowRight size={16}/></button></section>
+          <Title title="Theory" />
           <div className="theory-shortcuts">
             <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
             <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
@@ -375,7 +372,7 @@ function App() {
               {["All", "Saved"].map(value => <button key={value} onClick={() => setFilter(value)} className={filter === value ? "selected" : ""} aria-pressed={filter === value}>{value}{value === "Saved" && bookmarkCount > 0 ? " (" + bookmarkCount + ")" : ""}</button>)}
             </div>
           </div>
-          <div className="result-summary"><span>{results.length} chapters</span><span>{results.reduce((total, ch) => total + ch.lessons.length, 0)} lessons</span></div>
+          {(search.trim() || filter !== "All") && <div className="result-summary">{results.length} matching chapters</div>}
           {results.length ? <div className="chapter-list">{results.map(ch => <ChapterRow key={ch.id} chapter={ch} done={done} onOpen={() => {
             const savedIndex = ch.lessons.findIndex((_, index) => !done.includes(keyFor(ch.id, index)));
             navigate("chapter", ch.id, savedIndex === -1 ? 0 : savedIndex);
@@ -383,18 +380,16 @@ function App() {
         </>}
 
         {(route.page === "practical" || (route.page === "chapter" && chapter.unit !== "Theory")) && <section className="practical-soon">
-          <div className="choice-icon"><Layers size={26} strokeWidth={1.8}/></div>
           <h1>Practical</h1>
-          <p>Step-by-step practical lessons are on the way. You can start learning the theory, try questions and play the games now.</p>
-          <button className="primary-action" onClick={() => navigate("notes")}>Start learning theory <ArrowRight size={17}/></button>
+          <p>Coming soon</p>
         </section>}
 
         {route.page === "chapter" && chapter.unit === "Theory" && <>
           <button className="back-link" onClick={() => navigate("notes")}><ArrowLeft size={16}/> Back to Theory</button>
-          <div className="chapter-heading"><h1>{chapter.title}</h1><p>{chapter.description}</p></div>
+          <div className="chapter-heading"><h1>{chapter.title}</h1></div>
           <div className="reading-layout">
             <aside className="lesson-index" aria-label="Lessons in chapter">
-              <div className="lesson-index-heading"><span>Lessons</span><span>{chapterProgress(chapter, done)}% done</span></div>
+              <div className="lesson-index-heading"><span>Contents</span><span>{chapterProgress(chapter, done)}%</span></div>
               <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
               <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
                 <span>{done.includes(keyFor(chapter.id, i)) ? <Check size={15}/> : formatNumber(i + 1)}</span><span>{entry.title}</span>
@@ -404,11 +399,14 @@ function App() {
               <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
               <h2>{lesson.title}</h2>
               <div className="article-rule"/>
-              <h3>What you need to know</h3>
+              <h3>Key points</h3>
               <ol className="concepts">{lesson.points.map((point, i) => <li key={i}><span className="concept-count">{formatNumber(i + 1)}</span><span>{point}</span></li>)}</ol>
-              <section className="lesson-highlight example"><h3>See it in action</h3><p>{lesson.example}</p></section>
+              <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
+              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
-              {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions to learn</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
+              <section className="examiner-advice" aria-label="Examiner advice"><h3>Examiner advice</h3>
+                {advice.length ? <ul>{advice.map((tip,i)=><li key={i}>{tip}</li>)}</ul> : <p>Coming soon</p>}
+              </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
                 <div className="article-next">{lessonIndex > 0 && <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex - 1)}><ArrowLeft size={16}/> Previous</button>}{lessonIndex + 1 < chapter.lessons.length ? <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex + 1)}>Next lesson <ArrowRight size={16}/></button> : <button className="secondary-action" onClick={() => {startQuiz(chapter.id); navigate("practice");}}>Test this chapter <ArrowRight size={16}/></button>}</div>
               </div>
@@ -417,7 +415,7 @@ function App() {
         </>}
 
         {route.page === "practice" && <>
-          <Title title="Check your understanding" description="Practise one question at a time. You will see the correct answer and a simple explanation. Start with a topic you have learned." />
+          <Title title="Questions" />
           <div className="mode-tabs" role="group" aria-label="Practice type">
             <button aria-pressed={practiceType === "choice"} className={practiceType === "choice" ? "active" : ""} onClick={() => setPracticeType("choice")}>Quick questions</button>
             <button aria-pressed={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
@@ -436,25 +434,25 @@ function App() {
               <textarea id="written-response" rows={7} placeholder="Write your answer here before revealing the suggested marking points." value={drafts[writtenIndex] || ""} onChange={e => setDrafts(old => ({...old, [writtenIndex]: e.target.value}))}/>
               <div className="draft-controls"><span>{words} words · Saved on this device</span><button className="plain-action" onClick={() => setDrafts(old => ({...old, [writtenIndex]: ""}))} disabled={!drafts[writtenIndex]}>Clear answer</button></div>
               <button className="secondary-action" onClick={() => setShowMarking(v => !v)}>{showMarking ? <EyeOff size={16}/> : <Eye size={16}/>} {showMarking ? "Hide answer guidance" : "View answer guidance"}</button>
-              {showMarking && <div className="marking-guidance"><strong>Indicative points</strong><p>Original revision guidance, not an official mark scheme. Compare these points with your own response.</p><ol>{writtenQuestion.points.map((point, i) => <li key={i}>{point}</li>)}</ol></div>}
+              {showMarking && <div className="marking-guidance"><strong>Suggested points</strong><p>Not an official mark scheme.</p><ol>{writtenQuestion.points.map((point, i) => <li key={i}>{point}</li>)}</ol></div>}
             </div>
           </>}
         </>}
 
         {route.page === "flashcards" && <>
-          <Title title="Learn key terms" description="Read a term, think about what it means, then turn the card to check. Keep going at your own pace."/>
+          <Title title="Flashcards" />
           <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{theoryChapters.filter(ch => theoryFlashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
           {currentFlash && <>
             <div className="flash-progress"><span>CARD {formatNumber(flashIndex % flashPool.length + 1)} / {formatNumber(flashPool.length)}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
             <button className={"revision-card " + (flipped ? "is-flipped" : "")} onClick={() => setFlipped(v => !v)} aria-label={flipped ? "Show term" : "Reveal definition"}><strong>{flipped ? currentFlash.definition : currentFlash.term}</strong><span className="flash-turn"><RotateCcw size={17}/> {flipped ? "Show term" : "Reveal answer"}</span></button>
             <div className="flash-controls"><button className="secondary-action" onClick={advanceFlash}>Review later <ArrowRight size={16}/></button><button className="primary-action" onClick={() => {setKnown(prev => prev.includes(currentFlash.term) ? prev : [...prev, currentFlash.term]); advanceFlash();}}><Check size={17}/> I knew this</button></div>
-            <p className="flash-caption">Cards marked as known stay recorded in this browser. Keep reviewing them for long-term recall.</p>
+            
           </>}
         </>}
 
         {route.page === "games" && <>
           <Title title={route.game > 0 ? arcadeGames.find(game=>game.id === route.game)?.name || "Games" : "Games"}
-            description={route.game > 0 ? "Answer ICT questions while you play." : "Choose a game."}
+            description={undefined}
             action={route.game > 0 ? <button className="secondary-action" onClick={()=>navigate("games")}>All games <ArrowLeft size={17}/></button> : <a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Classic arcade <ArrowUpRight size={17}/></a>}/>
           {route.game > 0 ?
             <iframe key={route.game} title={arcadeGames.find(game=>game.id === route.game)?.name || "ICT Arcade game"}
