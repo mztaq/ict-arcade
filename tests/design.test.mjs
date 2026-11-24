@@ -15,6 +15,9 @@ test("editorial interface avoids gradient blobs and default typeface", () => {
   assert.doesNotMatch(css, /\.top-nav/);
   assert.match(css, /\.past-papers-link/);
   assert.match(css, /\.featured-games/);
+  assert.match(css, /\.games-hub-card/);
+  assert.match(css, /\.hero-motion/);
+  assert.doesNotMatch(app, /home-intro-detail/);
   assert.match(css, /--accent:#315db3/);
   assert.match(css, /--canvas:#f7f9fc/);
   assert.doesNotMatch(css,/--hero-bg:|\.preview-sheet/);
@@ -34,7 +37,8 @@ test("study interface includes real navigation, results, and persisted drafts", 
 });
 test("legacy arcade game entry stays reachable without decorative emoji icons", () => {
   assert.match(app, /arcade-legacy\.html/);
-  assert.match(app, /src=\{route\.game > 0/);
+  assert.match(app, /route\.game > 0/);
+  assert.match(app, /arcade-legacy\.html\?game=/);
   assert.match(arcade, /class="game-index"/);
   assert.doesNotMatch(arcade, /<span>\$\{g\[0\]\}<\/span>/);
   assert.doesNotMatch(arcade, /<h1>\$\{g\[0\]\}/);
