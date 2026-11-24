@@ -32,7 +32,7 @@ const minimumReadableSize={
   "past-papers/yearly":[[".papa-year-group-heading h2",21],[".papa-series-link",15]],
   "past-papers/solved":[[".paper-category strong",23]],
   notes:[[".chapter-description strong",16],[".chapter-lessons span",14]],
-  "chapter/1/0":[[".concepts li",16],[".lesson-link",16],[".definitions dd",16]],
+  "chapter/1/0":[[".concepts li",16],[".lesson-link",16],[".definitions-table tbody td",16]],
   practice:[[".answer-button",16],[".question-paper>h2",24]],
   flashcards:[[".revision-card strong",28]],
   games:[[".featured-game-copy strong",16]]
@@ -84,6 +84,11 @@ try{
         assert.equal(await page.locator(".site-header").count(),0);
         assert.equal(await page.locator(".not-found[data-layout]").count(),1);
         assert.equal(await page.locator('.not-found a[href="/"]').count(),1);
+      }
+      if(route==="chapter/1/0"){
+        assert.equal(await page.locator(".definitions-table thead th").allTextContents().then(x=>x.join("|")),"Term|Definition");
+        assert.ok(await page.locator(".definitions-table tbody tr").count()>0);
+        assert.equal(await page.locator("ul.concepts").first().evaluate(el=>getComputedStyle(el).listStyleType),"disc");
       }
       if(route==="home"){
         const hierarchy=await page.evaluate(()=>{
