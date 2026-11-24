@@ -241,7 +241,7 @@ function CircuitBackdrop() {
   </div>;
 }
 
-// Render the actual route inside a non-interactive miniature viewport.
+// An isolated browser viewport keeps the real page's layout independent of the homepage.
 function RoutePreview({page,theme}) {
   const viewport=React.useRef(null);
   const [scale,setScale]=useState(0);
@@ -254,16 +254,19 @@ function RoutePreview({page,theme}) {
     observer.observe(element);
     return ()=>observer.disconnect();
   },[]);
-  return <div ref={viewport} className={"course-preview live-route-preview "+(page==="notes"?"theory-preview":"practical-preview")} aria-hidden="true" inert>
-    <div className="live-route-canvas" style={{transform:"scale("+scale+")",visibility:scale?"visible":"hidden"}}>
-      <App previewPage={page} previewTheme={theme}/>
-    </div>
+  return <div ref={viewport} className="course-preview live-route-preview" aria-hidden="true" inert>
+    <iframe className="live-route-frame" title={page==="notes"?"Theory preview":"Practical preview"}
+      src={location.pathname+"?preview="+page+"&theme="+encodeURIComponent(theme)+"#/"+page}
+      tabIndex={-1} scrolling="no" style={{transform:"scale("+scale+")",visibility:scale?"visible":"hidden"}}/>
   </div>;
 }
 function TheoryPreview({theme}) {return <RoutePreview page="notes" theme={theme}/>;}
 function PracticalPreview({theme}) {return <RoutePreview page="practical" theme={theme}/>;}
 
-function App({previewPage,previewTheme} = {}) {
+function App() {
+  const params = new URLSearchParams(location.search);
+  const previewPage = ["notes","practical"].includes(params.get("preview")) ? params.get("preview") : undefined;
+  const previewTheme = ["auto","light","dark"].includes(params.get("theme")) ? params.get("theme") : undefined;
   const [route, setRoute] = useState(()=>previewPage?{...getRoute(),page:previewPage}:getRoute());
 
   const selectedSolvedPaper = solvedPastPapers[route.papersNumber]?.find(item=>item.id===route.papersId);
@@ -293,7 +296,7 @@ function App({previewPage,previewTheme} = {}) {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, [previewPage]);
-  useEffect(() => { if(!previewPage)document.documentElement.dataset.theme = theme; }, [theme,previewPage]);
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme,previewPage]);
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = event => setSystemDark(event.matches);
@@ -357,7 +360,7 @@ function App({previewPage,previewTheme} = {}) {
   const advanceFlash = () => {setFlipped(false); setFlashIndex(i => i + 1);};
   const toggleDone = () => setDone(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
-  const MainRegion = previewPage ? "div" : "main";
+  const MainRegion = "main";
   return <div className="site-shell">
     {!previewPage && <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>}
     <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
@@ -372,7 +375,7 @@ function App({previewPage,previewTheme} = {}) {
       </button>
     </header>
     <div className="site-body">
-      <MainRegion id={previewPage?undefined:"main-content"} tabIndex={-1} className="site-main">
+      <MainRegion id="main-content" tabIndex={-1} className="site-main">
 
         {route.page === "home" && <div className="home-screen">
           <CircuitBackdrop/>
