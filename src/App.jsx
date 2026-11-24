@@ -622,7 +622,6 @@ function App() {
             <article className="reading-article">
               <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
               <h2>{lesson.title}</h2>
-              <div className="article-rule"/>
               <h3>Key points</h3>
               <ul className="concepts">{lesson.points.map((point, i) => <li key={i}>{point}</li>)}</ul>
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
@@ -630,7 +629,7 @@ function App() {
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
               <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
                 {advice ? <>
-                  {advice.points.map((tip,i)=><p key={i}>{tip}</p>)}
+                  <ul className="concepts">{advice.points.map((tip,i)=><li key={i}>{tip}</li>)}</ul>
                 </> : <p>Coming soon</p>}
               </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
