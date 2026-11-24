@@ -3,7 +3,10 @@ import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
   Check, CheckCircle2, Eye, EyeOff,
   Layers, FileText, Moon, RotateCcw, Search, Sun, X, Keyboard, Cpu, Monitor,
-  HardDrive, Network, HeartPulse, PanelsTopLeft, Workflow, ShieldCheck, UsersRound, MessagesSquare, FolderOpen
+  HardDrive, Network, HeartPulse, PanelsTopLeft, Workflow, ShieldCheck, UsersRound, MessagesSquare, FolderOpen,
+  MonitorSmartphone, Binary, RadioTower, Printer, Disc3, MemoryStick, Router, Cloud,
+  House, CarFront, SlidersHorizontal, BrainCircuit, CalendarCheck2, Stethoscope,
+  PencilRuler, ClipboardCheck, ShieldAlert, LockKeyhole, Copyright, Mail, Globe2, FileArchive
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -46,6 +49,7 @@ function Progress({value, label}) {
     <span style={{width: Math.max(0, Math.min(value, 100)) + "%"}} />
   </div>;
 }
+// One consistent Lucide outline family. Mappings follow the actual chapter/lesson topics.
 const chapterIcons = {
   1: Cpu,
   2: Keyboard,
@@ -58,6 +62,19 @@ const chapterIcons = {
   9: UsersRound,
   10: MessagesSquare,
   11: FolderOpen
+};
+const lessonIcons = {
+  1: [PanelsTopLeft, Cpu, Binary, MonitorSmartphone],
+  2: [Keyboard, RadioTower, Printer],
+  3: [HardDrive, Disc3, MemoryStick],
+  4: [Network, Router, Cloud],
+  5: [House, CarFront, HeartPulse],
+  6: [MessagesSquare, SlidersHorizontal, BrainCircuit, CalendarCheck2, Stethoscope],
+  7: [Search, PencilRuler, ClipboardCheck, BookOpen],
+  8: [ShieldCheck, ShieldAlert, LockKeyhole],
+  9: [UsersRound, Copyright],
+  10: [Mail, Globe2, RadioTower],
+  11: [FolderOpen, FileArchive]
 };
 function ChapterRow({chapter, done, compact = false, onOpen}) {
   const ChapterIcon = chapterIcons[chapter.id] || BookOpen;
@@ -415,9 +432,19 @@ function App() {
                 <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
                 {chapterProgress(chapter, done) > 0 && <span>{chapterProgress(chapter, done)}% complete</span>}
               </div>
-              <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
-                <span className="lesson-icon">{done.includes(keyFor(chapter.id, i)) ? <CheckCircle2 size={19} strokeWidth={1.8} aria-hidden="true"/> : i === lessonIndex ? <BookOpen size={19} strokeWidth={1.8} aria-hidden="true"/> : <FileText size={19} strokeWidth={1.8} aria-hidden="true"/>}</span><span>{entry.title}</span>
-              </button>)}</nav>
+              <nav>{chapter.lessons.map((entry, i) => {
+                const LessonIcon = lessonIcons[chapter.id]?.[i] || BookOpen;
+                const completed = done.includes(keyFor(chapter.id, i));
+                return <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")}
+                  onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
+                  <span className={"lesson-icon " + (completed ? "is-complete" : "")}>
+                    <LessonIcon size={21} strokeWidth={1.8} aria-hidden="true"/>
+                    {completed && <Check size={11} strokeWidth={2.7} className="lesson-check" aria-hidden="true"/>}
+                  </span>
+                  <span>{entry.title}</span>
+                  {completed && <span className="sr-only">Completed</span>}
+                </button>;
+              })}</nav>
             </aside>
             <article className="reading-article">
               <div className="article-topline"><span className="lesson-count">{lessonIndex + 1} of {chapter.lessons.length}</span><button onClick={toggleBookmark} className="bookmark-button" aria-label={bookmarks.includes(lessonKey) ? "Remove lesson bookmark" : "Bookmark lesson"} aria-pressed={bookmarks.includes(lessonKey)}>{bookmarks.includes(lessonKey) ? <BookmarkCheck size={19}/> : <Bookmark size={19}/>}<span>{bookmarks.includes(lessonKey) ? "Saved" : "Save"}</span></button></div>
