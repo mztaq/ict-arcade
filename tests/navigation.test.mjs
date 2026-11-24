@@ -115,7 +115,7 @@ test("lesson counts have clear visual hierarchy",()=>{
   assert.match(app,/className="chapter-stats"/);
   assert.match(app,/className="chapter-lessons"/);
   assert.match(app,/className="theory-total"/);
-  assert.match(css,/\.course-stats strong\{font-size:30px/);
+  assert.match(css,/\.course-stats strong\{font-size:22px/);
   assert.match(css,/\.chapter-lessons strong\{font-size:29px/);
   assert.doesNotMatch(css,/\.chapter-status\{|\.mini-progress\{/);
   assert.match(css,/\.practice-toolbar\{[^}]*flex-wrap:wrap/);
