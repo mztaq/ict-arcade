@@ -9,7 +9,7 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
-- **Appearance:** A clean white and navy design with a single soft-blue accent, responsive light/dark themes and no navbar or sidebar. The top-right theme toggle and inner-page home link remain.
+- **Appearance:** Clean white/navy styles with a modern system sans-serif font, 17px reading text, larger headings, lesson navigation and answer controls. Mobile styles retain readable sizes without overflow. Light/dark themes, the top-right toggle and inner-page home link remain.
 
 The content files contain additional practical lesson summaries and questions for future development. They are not published in the current Practical section.
 
