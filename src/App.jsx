@@ -318,33 +318,33 @@ function App() {
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
-            <button className="course-choice theory-card" onClick={() => navigate("notes")}>
+            <a className="course-choice theory-card" href="#/notes">
               <TheoryPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
                 <span className="course-description">11 chapters · {theoryLessons.length} lessons · Notes, explanations and exam practice.</span>
               </span>
-            </button>
-            <button className="course-choice practical-card" onClick={() => navigate("practical")}>
+            </a>
+            <a className="course-choice practical-card" href="#/practical">
               <PracticalPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
                 <span className="course-description">Spreadsheets, databases, documents and web authoring.</span>
               </span>
-            </button>
+            </a>
           </section>
 
           <section className="home-games">
             <div className="home-section-heading"><h2>Games</h2><span>11 games</span></div>
             <div className="featured-games">
-              {arcadeGames.map((game,i) => <button key={game.id} className={"featured-game "+(i<2?"featured-game-large":"")}
-                onClick={() => navigate("games",game.id)} aria-label={"Play "+game.name}>
+              {arcadeGames.map((game,i) => <a key={game.id} href={"#/games/"+game.id} className={"featured-game "+(i<2?"featured-game-large":"")}
+                aria-label={"Play "+game.name}>
                 <ArcadeVisual id={game.id}/>
                 <span className="featured-game-bottom">
                   <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
                   <ArrowUpRight size={19} aria-hidden="true"/>
                 </span>
-              </button>)}
+              </a>)}
             </div>
           </section>
         </>}
