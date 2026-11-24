@@ -102,7 +102,8 @@ test("notes layout includes a clean contents list and author-controlled examiner
   assert.match(app,/Exam advice/);
   assert.match(app,/examinerAdvice\[lessonKey\]/);
   assert.match(app,/advice\.points\.map/);
-  assert.match(app,/Reference notes/);
+  assert.doesNotMatch(app,/Reference notes/);
+  assert.doesNotMatch(app,/className="advice-source"/);
   assert.doesNotMatch(app,/Based on Save My Exams/);
   assert.match(adviceSource,/export const examinerAdvice = \{/);
   assert.doesNotMatch(app,/New to ICT\? Start here/);
@@ -126,4 +127,15 @@ test("lesson back button sits beside the chapter heading and contents items use 
   assert.match(css,/\.lesson-index nav\{display:flex;flex-direction:column;gap:4px;border:0\}/);
   assert.match(css,/\.lesson-link\{[^}]*border:0;[^}]*border-radius:8px/);
   assert.doesNotMatch(app,/className="back-link"/);
+});
+
+test("lesson and chapter navigation use icons instead of visible numbers",()=>{
+  assert.match(app,/const chapterIcons = \{/);
+  assert.match(app,/className="chapter-index"><ChapterIcon/);
+  assert.match(app,/className="lesson-icon"/);
+  assert.match(app,/<CheckCircle2 size=\{19\}/);
+  assert.match(app,/<FileText size=\{19\}/);
+  assert.doesNotMatch(app,/className="chapter-index">\{formatNumber\(chapter\.id\)\}/);
+  assert.doesNotMatch(app,/formatNumber\(i \+ 1\)\}<\/span><span>\{entry\.title\}/);
+  assert.match(css,/\.lesson-icon\{/);
 });
