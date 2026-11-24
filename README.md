@@ -8,7 +8,7 @@ A student-built ICT learning website designed for beginners, with Cambridge IGCS
 - **Theory:** Eleven chapters and 35 lessons with prominent counts, matching topic icons for every chapter and lesson, searchable notes, definitions, examples and exam advice. Questions and Flashcards remain accessible.
 - **Practical:** Coming soon. The practical chapters are kept in the content source for a later release and are not shown as finished lessons.
 - **Games:** The homepage Games card opens a dedicated gallery with all eleven original games. Each has distinct artwork and a direct link to its original instructions. Mechanics and browser-local scores are preserved.
-- **Past Papers:** The hub offers Yearly Past Papers, linked to public archives and Cambridge's official selection, and Solved Past Papers split into Paper 2 and Paper 3. No authored solved files have been uploaded yet. Paper 1 has no solved collection.
+- **Past Papers:** The hub offers Yearly Past Papers, linked to public archives and Cambridge's official selection, and Solved Past Papers with Paper 1, Paper 2 and Paper 3 cards. Paper 1 opens a large humorous note that Mustaqim hates Theory, with no solutions. Paper 2 and 3 show their available authored files, currently none uploaded.
 - **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
 - **Appearance:** Clean white/navy styles with a modern system sans-serif font, 17px reading text, comfortable heading tracking, a lighter homepage headline, and larger lesson navigation and answer controls. Mobile styles retain readable sizes without overflow. Light/dark themes, the top-right toggle and inner-page home link remain.
 
@@ -55,4 +55,4 @@ Course and chapter lesson totals are displayed prominently. Consistent spacing t
 
 ## Adding solved practical papers
 
-Place the author's own verified worked files in `public/solved-papers/`, then add an entry to `solvedPastPapers[2]` or `solvedPastPapers[3]` in `src/pastPapers.js` with `{title, url}`. Keep the `url` under `/solved-papers/`. This avoids listing papers that have not been solved or uploaded. The page intentionally has no Paper 1 solutions.
+Place the author's own verified worked files in `public/solved-papers/`, then add an entry to `solvedPastPapers[2]` or `solvedPastPapers[3]` in `src/pastPapers.js` with `{title, url}`. Keep the `url` under `/solved-papers/`. This avoids listing papers that have not been solved or uploaded. The Paper 1 card intentionally displays a joke rather than any solved files.
