@@ -9,10 +9,11 @@ const css=readFileSync(new URL("../src/styles.css",import.meta.url),"utf8");
 test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/Learn ICT step by step/);
   assert.doesNotMatch(app,/Start with the basics, practise as you go/);
-  assert.match(app,/function HeroMotion\(\)/);
-  assert.match(app,/Input<\/span>/);
-  assert.match(app,/Process<\/span>/);
-  assert.match(app,/Output<\/span>/);
+  assert.match(app,/function CircuitBackdrop\(\)/);
+  assert.match(app,/className="home-circuit-backdrop"/);
+  assert.match(app,/className="circuit-signals"/);
+  assert.doesNotMatch(app,/function HeroMotion\(\)/);
+  assert.doesNotMatch(app,/className="signal-chain"/);
   assert.match(app,/<h1>ICT Arcade<\/h1>/);
   assert.match(app,/<span className="header-brand-name">ICT Arcade<\/span>/);
   assert.match(app,/className="course-choices"/);
@@ -152,4 +153,15 @@ test("every Theory lesson has a distinct topic-specific outline icon",()=>{
   assert.doesNotMatch(app,/formatNumber\(i \+ 1\)\}<\/span><span>\{entry\.title\}/);
   assert.match(css,/\.lesson-icon\{/);
   assert.match(css,/\.lesson-link\.active \.lesson-icon\{/);
+});
+
+test("homepage typography keeps titles above statistics and animation behind content",()=>{
+  assert.match(css,/\.course-title-line strong\{font-size:27px/);
+  assert.match(css,/\.course-stats strong\{font-size:22px/);
+  assert.match(css,/\.home-intro h2\{[^}]*font-weight:600/);
+  assert.match(css,/\.home-screen\{[^}]*overflow:clip/);
+  assert.match(css,/\.home-circuit-backdrop\{/);
+  assert.match(css,/@keyframes circuit-packet/);
+  assert.match(css,/\.circuit-signals path,.circuit-nodes circle\{animation:none!important\}/);
+  assert.doesNotMatch(css,/\.hero-motion\{/);
 });
