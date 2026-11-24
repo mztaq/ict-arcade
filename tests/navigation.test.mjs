@@ -99,9 +99,21 @@ test("notes layout includes a clean contents list and author-controlled examiner
   assert.match(app,/Contents/);
   assert.match(app,/Key points/);
   assert.match(app,/Exam tip/);
-  assert.match(app,/Examiner advice/);
+  assert.match(app,/Exam advice/);
   assert.match(app,/examinerAdvice\[lessonKey\]/);
-  assert.match(app,/advice\.length/);
-  assert.match(adviceSource,/export const examinerAdvice = \{\};/);
+  assert.match(app,/advice\.points\.map/);
+  assert.match(app,/Based on Save My Exams/);
+  assert.match(adviceSource,/export const examinerAdvice = \{/);
   assert.doesNotMatch(app,/New to ICT\? Start here/);
+});
+
+test("lesson counts have clear visual hierarchy",()=>{
+  assert.match(app,/className="course-stats"/);
+  assert.match(app,/className="chapter-stats"/);
+  assert.match(app,/className="chapter-lessons"/);
+  assert.match(app,/className="theory-total"/);
+  assert.match(css,/\.course-stats strong\{font-size:26px/);
+  assert.match(css,/\.chapter-lessons strong\{font-size:25px/);
+  assert.doesNotMatch(css,/\.chapter-status\{|\.mini-progress\{/);
+  assert.match(css,/\.practice-toolbar\{[^}]*flex-wrap:wrap/);
 });
