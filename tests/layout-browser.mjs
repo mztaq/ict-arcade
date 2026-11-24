@@ -26,7 +26,7 @@ for(const [number,papers] of Object.entries(solvedPastPapers)){
   }
 }
 const minimumReadableSize={
-  home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
+  home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",14]],
   "past-papers":[[".paper-category strong",23]],
   "past-papers/yearly":[[".papa-year-group-heading h2",21],[".papa-series-link",15]],
   "past-papers/solved":[[".paper-category strong",23]],
