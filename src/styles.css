@@ -560,11 +560,11 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .examiner-advice ul{margin:0;padding:0 0 0 18px}
 .examiner-advice li{padding:4px 0;font-size:14px;line-height:1.65}
 .definitions{margin-top:26px}
-.definitions dl{margin:0;border-top:1px solid var(--rule)}
-.definitions dl>div{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.definitions dl{margin:0;border:0}
+.definitions dl>div{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:10px 0;border:0}
 .definitions dt{font-size:16px;font-weight:800}
 .definitions dd{font-size:17px;color:var(--ink-soft);line-height:1.7;margin:0}
-.article-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px;border-top:1px solid var(--rule);padding-top:24px}
+.article-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:26px;padding-top:24px}
 .article-next{display:flex;flex-wrap:wrap;gap:8px}
 .mode-tabs{display:flex;gap:25px;border-bottom:1px solid var(--rule);margin:28px 0 22px}
 .mode-tabs button{background:none;border:0;border-bottom:3px solid transparent;color:var(--ink-soft);min-height:50px;font-size:16px;font-weight:800;padding:8px 0 12px}
@@ -895,3 +895,5 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .reading-article .concepts{list-style-type:disc;list-style-position:outside;padding-left:24px}
 .reading-article .concepts li{display:list-item;list-style-type:disc;border:0}
 .reading-article .article-actions,.reading-article .definitions,.reading-article .definitions dl>div,.reading-article .examiner-advice,.reading-article .examiner-advice p{border-top:0;border-bottom:0}
+
+.reading-article .definitions dl,.reading-article .definitions dl>div,.reading-article .definitions dt,.reading-article .definitions dd,.reading-article .lesson-highlight.exam,.reading-article .examiner-advice,.reading-article .article-actions{border:0;box-shadow:none}
