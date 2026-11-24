@@ -787,3 +787,16 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 /* Override the generic card span width cap for the full-width illustration. */
 .paper-category.papers-home-card > .papers-home-art{width:100%;max-width:none;min-width:0;justify-self:stretch;box-sizing:border-box}
 .paper-category.papers-home-card{grid-template-columns:minmax(0,1fr)}
+
+.papa-year-groups{display:flex;flex-direction:column;gap:14px;width:100%}
+.papa-year-group{padding:18px;border:1px solid var(--rule);border-radius:14px;background:var(--paper);min-width:0}
+.papa-year-group-heading{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.papa-year-group-heading h2{font-size:24px;font-weight:700;margin:0;line-height:1.2}
+.papa-year-group-heading small{margin-left:auto;color:var(--ink-soft);font-size:13px}
+.papa-series-grid{display:grid;grid-template-columns:repeat(var(--series-count),minmax(0,1fr));gap:10px}
+.papa-series-link{display:flex;align-items:center;gap:10px;min-width:0;min-height:50px;padding:10px 13px;border:1px solid var(--rule);border-radius:9px;background:var(--paper-secondary);color:var(--ink);font-size:15px;font-weight:600;transition:background .15s,border-color .15s}
+.papa-series-link svg{flex-shrink:0;color:var(--blue)}
+.papa-series-link svg:last-child{margin-left:auto}
+.papa-series-link:hover{background:var(--blue-soft);border-color:var(--blue)}
+@media(max-width:600px){.papa-series-grid{grid-template-columns:1fr}.papa-year-group{padding:14px}.papa-year-group-heading small{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.papa-series-link{transition:none}}
