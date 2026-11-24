@@ -32,11 +32,16 @@ function useStored(key, initial) {
   }, [key, value]);
   return [value, setValue];
 }
-// Migrate old hash bookmarks without creating an extra history entry.
-if (location.pathname === "/" && location.hash.startsWith("#/")) {
-  const legacy = location.hash.slice(1);
-  if (!legacy.startsWith("//")) history.replaceState(null, "", legacy === "/home" ? "/" : legacy);
+// Migrate old hash bookmarks on initial load and same-document navigation.
+function migrateLegacyRoute() {
+  if (location.pathname === "/" && location.hash.startsWith("#/")) {
+    const legacy = location.hash.slice(1);
+    if (!legacy.startsWith("//") && !legacy.includes("\\")) {
+      history.replaceState(null, "", legacy === "/home" ? "/" : legacy);
+    }
+  }
 }
+migrateLegacyRoute();
 const getRoute = () => {
   const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
   const [page, first, second, third, fourth] = parts;
@@ -350,7 +355,7 @@ function App() {
   const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
-    const onRoute = () => { setRoute(getRoute()); window.scrollTo({top:0,behavior:"instant"}); };
+    const onRoute = () => { migrateLegacyRoute(); setRoute(getRoute()); window.scrollTo({top:0,behavior:"instant"}); };
     const onLink = event => {
       if(event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)return;
       const anchor = event.target.closest?.("a[href]");
@@ -361,8 +366,9 @@ function App() {
       goTo(url.pathname);
     };
     window.addEventListener("popstate", onRoute);
+    window.addEventListener("hashchange", onRoute);
     document.addEventListener("click", onLink);
-    return () => {window.removeEventListener("popstate", onRoute);document.removeEventListener("click", onLink);};
+    return () => {window.removeEventListener("popstate", onRoute);window.removeEventListener("hashchange", onRoute);document.removeEventListener("click", onLink);};
   }, []);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => {
