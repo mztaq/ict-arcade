@@ -38,6 +38,8 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/cambridgeinternational\.org\/programmes-and-qualifications/);
   assert.match(app,/className="featured-games"/);
   assert.match(app,/navigate\("games", game\.id\)/);
+  assert.match(app,/const arcadeGames = \[/);
+  assert.equal((app.match(/\{id: \d+, name:/g)||[]).length,11);
   assert.doesNotMatch(app,/site-sidebar|mobile-backdrop|menu-trigger/);
   assert.match(app,/toggleTheme/);
   assert.match(app,/<Moon size=/);
