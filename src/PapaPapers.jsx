@@ -2,7 +2,7 @@ import React from "react";
 import {ArrowLeft,ArrowRight,ArrowUpRight,FolderOpen,FileText,FileArchive,CalendarDays,CalendarCheck2,ClipboardCheck,BookOpen} from "lucide-react";
 
 export const years = Array.from({length:10},(_,i)=>2026-i);
-const root="#/past-papers/yearly";
+const root="/past-papers/yearly";
 const host="https://pastpapers.papacambridge.com";
 const upload=host+"/directories/CAIE/CAIE-pastpapers/upload/";
 const labels={m:"February / March",s:"May / June",w:"October / November"};
@@ -39,7 +39,7 @@ export function PapaPapers({year,series,folder}){
   const type=folders.find(([id])=>id===folder);
   const yearRoute=root+"/"+year;
   const seriesRoute=yearRoute+"/"+series;
-  const back=type&&exam?seriesRoute:exam?root:"#/past-papers";
+  const back=type&&exam?seriesRoute:exam?root:"/past-papers";
   const title=type&&exam?type[1]:exam?year+" · "+exam.label:"Yearly Past Papers";
   const files=exam&&type?filesFor(year,series,folder):[];
   return <section className="papa-browser">
