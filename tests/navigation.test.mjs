@@ -8,7 +8,11 @@ const css=readFileSync(new URL("../src/styles.css",import.meta.url),"utf8");
 
 test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/Learn ICT step by step/);
-  assert.match(app,/Start with the basics, practise as you go/);
+  assert.doesNotMatch(app,/Start with the basics, practise as you go/);
+  assert.match(app,/function HeroMotion\(\)/);
+  assert.match(app,/Input<\/span>/);
+  assert.match(app,/Process<\/span>/);
+  assert.match(app,/Output<\/span>/);
   assert.match(app,/<h1>ICT Arcade<\/h1>/);
   assert.match(app,/<span className="header-brand-name">ICT Arcade<\/span>/);
   assert.match(app,/className="course-choices"/);
@@ -29,7 +33,7 @@ test("unreleased practical lessons do not appear in theory navigation",()=>{
   assert.match(app,/theoryChapters\.map/);
   assert.match(app,/theoryQuestions/);
   assert.match(app,/theoryFlashcards/);
-  assert.match(app,/New to ICT\? Start here/);
+  assert.match(app,/<strong>Start here<\/strong>/);
   assert.match(app,/Start Chapter 1/);
 });
 test("interface removes redundant breadcrumb and appearance settings",()=>{
@@ -48,7 +52,9 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.doesNotMatch(app,/className="top-nav"/);
   assert.match(app,/className="past-papers-link"/);
   assert.match(app,/cambridgeinternational\.org\/programmes-and-qualifications/);
-  assert.match(app,/className="featured-games"/);
+  assert.match(app,/className="games-hub-card"/);
+  assert.match(app,/href="#\/games"/);
+  assert.match(app,/className="featured-games games-page-grid"/);
   assert.match(app,/href=\{"#\/games\/"\+game\.id\}/);
   assert.match(app,/const arcadeGames = \[/);
   assert.equal((app.match(/\{id: \d+, name:/g)||[]).length,11);
@@ -81,5 +87,6 @@ test("home previews are grounded in course material and games have unique artwor
   assert.match(app,/=SUM\(D2:D4\)/);
   assert.match(app,/const backgrounds = \[/);
   for(let i=1;i<=11;i++)assert.match(app,new RegExp("id==="+i+"&&"));
-  assert.match(app,/featured-game-large/);
+  assert.match(app,/games-hub-preview/);
+  assert.match(app,/games-page-grid/);
 });
