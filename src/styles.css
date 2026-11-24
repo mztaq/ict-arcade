@@ -119,10 +119,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   margin:29px 0 10px;
   font-size:clamp(26px,3.7vw,35px);font-weight:900;letter-spacing:-.05em
 }
-.home-intro-detail{
-  max-width:550px;margin:0 0 20px;color:var(--ink-soft);
-  line-height:1.7;font-size:14px;
-}
 .past-papers-link{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   min-height:45px;padding:10px 17px;background:var(--paper);
@@ -215,14 +211,67 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   background:var(--paper-secondary);border:1px solid var(--rule);
   border-radius:7px;padding:4px 9px;font-size:11px;font-weight:800
 }
-.home-games{max-width:1100px;margin:52px auto 0}
-.home-section-heading{
-  display:flex;align-items:baseline;justify-content:space-between;
-  gap:12px;margin-bottom:17px
+
+/* A moving data packet follows the actual input-process-output sequence. */
+.hero-motion{
+  width:min(100%,580px);margin:24px auto 0;
+  padding:17px 24px;
+  border:1px solid var(--rule);background:var(--paper);
+  border-radius:13px
 }
-.home-section-heading h2{font-size:25px;font-weight:900;margin:0}
-.home-section-heading p{margin:7px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.6}
-.home-section-heading>span{font-size:12px;color:var(--ink-soft);font-weight:750}
+.signal-chain{display:flex;align-items:center;justify-content:center;width:100%;gap:8px}
+.signal-device{
+  width:89px;flex:0 0 89px;display:flex;flex-direction:column;
+  align-items:center;gap:7px;color:var(--ink)
+}
+.signal-device svg{color:var(--blue)}
+.signal-device>span{font-size:11px;font-weight:800}
+.signal-cpu svg{animation:chip-tick 3.2s ease-in-out infinite}
+.signal-link{
+  position:relative;flex:1;min-width:18px;height:2px;
+  background:var(--rule);overflow:hidden;border-radius:3px;
+  margin-top:-17px
+}
+.signal-packet{
+  position:absolute;left:-7px;top:-2px;width:7px;height:7px;
+  border-radius:50%;background:var(--blue);
+  animation:signal-travel 3.2s linear infinite
+}
+.signal-packet.delay{animation-delay:1.6s}
+@keyframes signal-travel{
+  0%{left:-7px;opacity:0}
+  10%,90%{opacity:1}
+  100%{left:calc(100% + 7px);opacity:0}
+}
+@keyframes chip-tick{0%,45%,55%,100%{opacity:1}50%{opacity:.45}}
+.games-hub-card{
+  display:flex;gap:24px;align-items:center;
+  max-width:1100px;margin:19px auto 0;padding:22px 24px;
+  min-height:166px;border:1px solid var(--rule);border-radius:15px;
+  background:var(--paper);color:var(--ink);overflow:hidden;
+  transition:border-color .16s,transform .16s,box-shadow .16s
+}
+.games-hub-card:hover{
+  border-color:var(--blue);transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(14,37,48,.08)
+}
+.games-hub-info{
+  width:27%;min-width:145px;display:grid;
+  grid-template-columns:1fr auto;gap:8px;align-items:center
+}
+.games-hub-info strong{font-size:23px;font-weight:900;letter-spacing:-.035em}
+.games-hub-info>span{
+  grid-row:2;grid-column:1;
+  font-size:12px;color:var(--ink-soft);font-weight:750
+}
+.games-hub-info>svg{grid-row:1;grid-column:2;color:var(--blue)}
+.games-hub-preview{
+  flex:1;min-width:0;display:flex;align-items:center;gap:10px;
+  overflow:hidden
+}
+.games-hub-preview .game-visual{
+  flex:1;min-width:0;height:119px;border-radius:8px;overflow:hidden
+}
 .featured-games{
   display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px
 }
@@ -397,7 +446,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .theory-mock-content aside{padding:10px 5px}
   .mock-lesson{padding:12px}
   .mock-term{font-size:8.5px}
-  .home-games{margin-top:44px}
   .featured-game{grid-column:span 6}
   .featured-game-large{grid-column:span 6}
 }
@@ -433,7 +481,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .home-signature{gap:11px}
   .home-signature h1{font-size:clamp(32px,8.4vw,45px)}
   .home-intro h2{font-size:27px;margin:24px 0 10px}
-  .home-intro-detail{font-size:13px;max-width:340px;margin-bottom:18px}
   .start-learning{align-items:flex-start;flex-direction:column;padding:18px}
   .start-learning .primary-action{width:100%}
   .course-choices{grid-template-columns:1fr;margin-top:28px}
@@ -448,7 +495,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .sheet-grid{font-size:10px;grid-template-columns:28px 1.4fr repeat(3,.8fr)}
   .sheet-cell{min-height:23px;padding:0 6px}
   .course-choice-body{min-height:95px}
-  .home-games{margin-top:36px}
   .featured-games{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .featured-game,.featured-game-large{grid-column:span 1}
   .game-visual,.featured-game-large .game-visual{height:95px}
@@ -456,7 +502,6 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .featured-game-copy strong,.featured-game-large .featured-game-copy strong{font-size:12.5px}
   .featured-game-copy small{font-size:10px}
   .featured-game-bottom>svg{width:15px}
-  .home-section-heading h2{font-size:22px}
   .page-title{flex-wrap:wrap;align-items:start}
   .page-title h1{font-size:34px}
   .page-title p{font-size:13px}
@@ -497,7 +542,31 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
   .featured-game,.featured-game-large{grid-column:span 1}
   .game-visual,.featured-game-large .game-visual{height:118px}
 }
+
+@media(max-width:740px){
+  .hero-motion{margin-top:20px;padding:14px 16px}
+  .games-hub-card{padding:19px 17px;gap:14px}
+  .games-hub-info{min-width:120px}
+  .games-hub-preview .game-visual{height:95px}
+}
+@media(max-width:560px){
+  .hero-motion{padding:13px 9px}
+  .signal-chain{gap:4px}
+  .signal-device{width:60px;flex-basis:60px}
+  .signal-device svg{width:21px;height:21px}
+  .signal-device>span{font-size:10px}
+  .games-hub-card{min-height:147px;gap:12px;flex-direction:column;align-items:stretch}
+  .games-hub-info{width:100%;display:flex;gap:10px}
+  .games-hub-info strong{font-size:20px}
+  .games-hub-info>span{margin-left:auto}
+  .games-hub-info>svg{flex-shrink:0}
+  .games-hub-preview .game-visual{height:88px}
+  .games-hub-preview{gap:7px}
+}
 @media(prefers-reduced-motion:reduce){
+  .signal-packet,.signal-cpu svg{animation:none!important}
+  .signal-packet{left:50%;opacity:1}
+
   html{scroll-behavior:auto}
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}
 }
