@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {chromium} from "playwright";
+import {yearlyPastPapers} from "../src/pastPapers.js";
 
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
@@ -95,8 +96,14 @@ try{
         assert.equal(await page.locator('#main-content a[href^="#/past-papers/yearly/"]').count(),7);
       }
       if(route==="past-papers/yearly/2026"||route==="past-papers/yearly/2020"){
+        const year=Number(route.split("/")[2]);
+        const papers=yearlyPastPapers.find(item=>item.year===year).papers;
         assert.match(await page.locator(".page-title h1").innerText(),/Past Papers 20/);
-        assert.match(await page.locator(".paper-empty").innerText(),/No locally hosted papers/);
+        if(papers.length){
+          assert.equal(await page.locator(".paper-year").count(),papers.length);
+        } else {
+          assert.match(await page.locator(".paper-empty").innerText(),/No locally hosted papers/);
+        }
         assert.equal(await page.locator('#main-content a[href^="http"]').count(),0);
       }
       if(route==="past-papers/solved"){
