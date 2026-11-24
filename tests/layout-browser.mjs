@@ -28,7 +28,7 @@ for(const [number,papers] of Object.entries(solvedPastPapers)){
 const minimumReadableSize={
   home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
   "past-papers":[[".paper-category strong",23]],
-  "past-papers/yearly":[[".paper-year strong",21]],
+  "past-papers/yearly":[[".papa-year-group-heading h2",21],[".papa-series-link",15]],
   "past-papers/solved":[[".paper-category strong",23]],
   notes:[[".chapter-description strong",16],[".chapter-lessons span",14]],
   "chapter/1/0":[[".concepts li",16],[".lesson-link",16],[".definitions dd",16]],
@@ -109,16 +109,11 @@ try{
         assert.equal(await page.locator('a[href="#/past-papers/yearly"]').count(),1);
         assert.equal(await page.locator('a[href="#/past-papers/solved"]').count(),1);
       }
-      if(route==="past-papers/yearly"){
-        assert.equal(await page.locator(".paper-year").count(),10,"Yearly past paper links");
-        assert.equal(await page.locator('#main-content a[href^="http"]').count(),0,"No external paper archives");
-        assert.equal(await page.locator('#main-content a[href^="#/past-papers/yearly/"]').count(),10);
-      }
-      if(route==="past-papers/yearly/2026"||route==="past-papers/yearly/2020"){
-        const year=Number(route.split("/")[2]);
-        assert.match(await page.locator(".page-title h1").innerText(),/Past Papers 20/);
-        assert.equal(await page.locator(".paper-year").count(),year===2026?2:3);
+      if(["past-papers/yearly","past-papers/yearly/2026","past-papers/yearly/2020"].includes(route)){
+        assert.equal(await page.locator(".papa-year-group").count(),10);
+        assert.equal(await page.locator(".papa-series-link").count(),29);
         assert.equal(await page.locator('#main-content a[href^="http"]').count(),0);
+        assert.equal(await page.locator('.papa-series-link[href="#/past-papers/yearly/2026/s"]').count(),1);
       }
       if(route==="past-papers/yearly/2026/s")assert.equal(await page.locator(".paper-year").count(),4);
       if(route==="past-papers/yearly/2026/s/qp"||route==="past-papers/yearly/2026/s/sf"){
