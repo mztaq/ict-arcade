@@ -844,3 +844,16 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(max-width:1020px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:24px}}
 @media(max-width:740px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:18px}}
 @media(max-width:560px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:14px}}
+
+/* Live route previews: same React components and theme, clipped at miniature scale. */
+.live-course-card{position:relative}
+.live-course-link::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit}
+.live-course-card:focus-within{outline:3px solid var(--blue);outline-offset:3px}
+.course-preview.live-route-preview{display:block;position:relative;padding:0;overflow:hidden;background:var(--canvas);pointer-events:none}
+.live-route-canvas{position:absolute;top:0;left:0;width:1000px;transform-origin:top left;pointer-events:none;text-align:left}
+.live-route-canvas .site-shell{min-height:0}
+.live-route-canvas .site-header{position:static;min-height:70px;padding-inline:35px}
+.live-route-canvas .site-main{width:100%;max-width:none;padding:28px 35px 40px}
+.live-route-canvas .page-title h1{font-size:46px}
+.live-route-canvas .chapter-row{min-height:90px}
+.live-route-canvas .practical-soon{margin:45px auto;padding:38px}
