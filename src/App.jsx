@@ -273,6 +273,7 @@ function PracticalPreview() {
 
 function App() {
   const [route, setRoute] = useState(getRoute);
+  const selectedPaperYear = yearlyPastPapers.find(item=>item.year === route.papersYear);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
   const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
@@ -443,10 +444,10 @@ function App() {
                   <ArrowRight size={18} aria-hidden="true"/>
                 </a>)}
               </div> :
-              yearlyPastPapers.find(item=>item.year === route.papersYear) ?
-                yearlyPastPapers.find(item=>item.year === route.papersYear).papers.length ?
+              selectedPaperYear ?
+                selectedPaperYear.papers.length ?
                   <div className="paper-year-grid">
-                    {yearlyPastPapers.find(item=>item.year === route.papersYear).papers.map(item=><a className="paper-year" key={item.url} href={item.url} download>
+                    {selectedPaperYear.papers.map(item=><a className="paper-year" key={item.url} href={item.url} download>
                       <FileText size={18} aria-hidden="true"/><strong>{item.title}</strong>
                     </a>)}
                   </div> :
