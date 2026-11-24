@@ -80,6 +80,126 @@ const arcadeGames = [
   {id: 11, name: "Mr. Toner's ICT Superstore", detail: "Pick the correct device for each customer."}
 ];
 
+
+function ArcadeVisual({id}) {
+  const backgrounds = ["#122D3A","#252D3A","#132F2C","#23303B","#183A48","#242D3D","#203242","#162B3B","#283341","#2E303E","#263A3A"];
+  const block=(x,y,w,h,color,extra={})=><rect x={x} y={y} width={w} height={h} fill={color} {...extra}/>;
+  return <div className="game-visual" aria-hidden="true">
+    <svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <rect width="320" height="150" fill={backgrounds[id-1] || "#122D3A"}/>
+      {id===1&&<>
+        {block(0,121,320,29,"#2C5362")}{block(0,121,320,6,"#57BFC2")}
+        {block(56,91,70,9,"#2C5362")}{block(190,70,78,9,"#2C5362")}
+        {block(210,47,27,25,"#F8C56B")}{<text x="223" y="65" fontSize="17" fontWeight="bold" textAnchor="middle" fill="#25333D">?</text>}
+        {block(77,103,19,18,"#FF7659")}{block(82,97,13,7,"#FFB693")}
+        {block(278,108,16,13,"#73E1D6")}
+        <path d="M148 120l12-17 12 17m7 0l12-17 12 17" stroke="#FF7659" strokeWidth="4" fill="none"/>
+      </>}
+      {id===2&&<>
+        {[0,1,2,3,4,5].map(x=><path key={x} d={"M"+(x*65)+" 0V150"} stroke="#394655" strokeWidth="1"/>)}
+        {[0,1,2,3].map(y=><path key={y} d={"M0 "+(y*48)+"H320"} stroke="#394655" strokeWidth="1"/>)}
+        <path d="M127 8h67v78h-67z" stroke="#77808B" strokeWidth="8" fill="#182333"/>
+        <path d="M143 33l17-17 17 17-17 17z" fill="#F1BF65"/>
+        <path d="M147 115l13-21 13 21-13 23z" fill="#5ED0C7"/>
+        <circle cx="66" cy="72" r="15" stroke="#E68C69" strokeWidth="4" fill="#362D37"/>
+        <circle cx="258" cy="78" r="15" stroke="#E68C69" strokeWidth="4" fill="#362D37"/>
+      </>}
+      {id===3&&<>
+        {[0,1,2,3,4,5,6,7].map(x=><path key={x} d={"M"+(x*46)+" 0V150"} stroke="#31554B" strokeWidth="1"/>)}
+        {[0,1,2,3,4].map(y=><path key={y} d={"M0 "+(y*35)+"H320"} stroke="#31554B" strokeWidth="1"/>)}
+        {[[3,1],[4,1],[4,2],[5,2],[5,3],[6,3]].map(([x,y],i)=><rect key={i} x={x*37+6} y={y*30+4} width="25" height="25" rx="5" fill={i===5?"#B4F0CF":"#5DD0AE"}/>)}
+        <circle cx="258" cy="106" r="3" fill="#182F2A"/><circle cx="52" cy="85" r="10" fill="#FC795D"/><rect x="52" y="72" width="3" height="7" rx="2" fill="#B9E39B"/>
+      </>}
+      {id===4&&<>
+        {block(42,0,235,150,"#3B4650")}
+        {[22,80,138].map((x,i)=>block(150,x,5,26,"#CBD6D7",{key:i,rx:2}))}
+        <path d="M42 0V150M277 0V150" stroke="#D6E2E1" strokeWidth="5"/>
+        <rect x="95" y="73" width="73" height="38" rx="11" fill="#F6BE57"/>
+        <rect x="109" y="80" width="40" height="22" rx="5" fill="#23445B"/>
+        {block(104,67,14,9,"#101B25",{rx:3})}{block(142,67,14,9,"#101B25",{rx:3})}
+        <circle cx="236" cy="32" r="12" fill="#FF8666"/><circle cx="236" cy="32" r="5" fill="#FFF0DA"/>
+      </>}
+      {id===5&&<>
+        {block(0,0,320,150,"#215268")}
+        <circle cx="57" cy="35" r="15" fill="#E0F4E8" opacity=".8"/>
+        {block(230,0,49,66,"#66B9A0")}{block(225,60,59,11,"#A4DEAE")}
+        {block(230,113,49,37,"#66B9A0")}{block(225,103,59,11,"#A4DEAE")}
+        <ellipse cx="111" cy="77" rx="23" ry="19" fill="#FC8765"/><path d="M90 81l-16 8 19 3z" fill="#E9B164"/><circle cx="120" cy="72" r="3.5" fill="#13232C"/><ellipse cx="105" cy="88" rx="12" ry="6" fill="#FFD0A1"/>
+      </>}
+      {id===6&&<>
+        {[0,1,2,3,4,5,6].map(x=><path key={x} d={"M"+(55+x*30)+" 12V150"} stroke="#3C4657" strokeWidth="1"/>)}
+        {[0,1,2,3,4].map(y=><path key={y} d={"M55 "+(12+y*30)+"H265"} stroke="#3C4657" strokeWidth="1"/>)}
+        {[[1,3],[2,3],[3,3],[3,2],[4,4],[4,3],[5,3],[5,2],[0,4],[1,4],[2,4],[3,4]].map(([x,y],i)=><rect key={i} x={57+x*30} y={14+y*27} width="25" height="23" rx="2" fill={i<4?"#FF8A62":i<8?"#5FCABF":"#F0C66C"}/>)}
+        {[[2,0],[3,0],[4,0],[3,1]].map(([x,y],i)=><rect key={i} x={57+x*30} y={14+y*27} width="25" height="23" rx="2" fill="#8BADC9"/>)}
+      </>}
+      {id===7&&<>
+        {[38,82,126].map((y,i)=><rect key={i} x="16" y={y} width="290" height="7" fill="#5F7B85"/>)}
+        {[100,229].map(x=><g key={x}><path d={"M"+x+" 13V145m19-132v132"} stroke="#E9BB76" strokeWidth="5"/>{[30,45,60,75,90,105,120,135].map(y=><path key={y} d={"M"+x+" "+y+"h19"} stroke="#E9BB76" strokeWidth="3"/>)}</g>)}
+        <rect x="60" y="106" width="18" height="19" rx="3" fill="#57CFC7"/><circle cx="69" cy="99" r="8" fill="#F4AA86"/>
+        <circle cx="273" cy="111" r="10" fill="#F38B68"/><circle cx="269" cy="108" r="2" fill="#1B2634"/>
+      </>}
+      {id===8&&<>
+        {[68,130,192,254].map((x,i)=><g key={x}><path d={"M"+(x-16)+" 32h32v19h-8v8h-6v-8h-5v8h-6v-8h-7z"} fill={i%2?"#F7BC75":"#69D6D0"}/><rect x={x-7} y="38" width="4" height="5" fill="#152634"/><rect x={x+5} y="38" width="4" height="5" fill="#152634"/></g>)}
+        <rect x="152" y="111" width="18" height="23" fill="#E5E8E0"/><path d="M143 126h36l-7-14h-22z" fill="#6FC6D0"/>
+        <rect x="160" y="76" width="3" height="24" fill="#F8B85D"/><circle cx="161.5" cy="72" r="3" fill="#F8B85D"/>
+      </>}
+      {id===9&&<>
+        {[0,1,2,3].map(row=>[0,1,2,3,4,5].map(col=><rect key={row+"-"+col} x={17+col*49} y={20+row*23} width="44" height="17" rx="3" fill={["#F6BD75","#77C5C7","#FC856B","#B7D9CF"][row]} />))}
+        <circle cx="203" cy="112" r="7" fill="#F7F4EC"/><path d="M169 126l-11-7" stroke="#F7F4EC" strokeWidth="2"/>
+        <rect x="110" y="137" width="103" height="8" rx="4" fill="#F7F4EC"/>
+      </>}
+      {id===10&&<>
+        <rect x="0" y="130" width="320" height="20" fill="#44505A"/>
+        <rect x="17" y="21" width="129" height="8" rx="3" fill="#77C9B8"/><rect x="174" y="21" width="129" height="8" rx="3" fill="#FC8C6E"/>
+        <circle cx="109" cy="78" r="14" fill="#E9B28F"/><path d="M98 92l25 0 17 29h-63z" fill="#6EC9C5"/><path d="M111 100l-30 7m42 0 33-12" stroke="#6EC9C5" strokeWidth="11" strokeLinecap="round"/>
+        <circle cx="226" cy="78" r="14" fill="#E9B28F"/><path d="M213 92h26l13 29h-55z" fill="#FC8969"/><path d="M214 101l-31-7m55 8 22 11" stroke="#FC8969" strokeWidth="10" strokeLinecap="round"/>
+      </>}
+      {id===11&&<>
+        <rect x="23" y="18" width="274" height="111" rx="7" fill="#324D50"/>
+        <rect x="32" y="29" width="94" height="77" rx="4" fill="#D8E8D9"/>
+        <rect x="43" y="43" width="73" height="9" fill="#5A847D"/><rect x="43" y="58" width="47" height="7" fill="#90B5A6"/>
+        <rect x="181" y="83" width="92" height="39" fill="#C9A874"/><rect x="190" y="92" width="31" height="23" fill="#F58D69"/><rect x="229" y="94" width="32" height="21" fill="#78D0C2"/>
+        <rect x="180" y="45" width="47" height="32" rx="3" fill="#1B2B37"/><rect x="186" y="51" width="35" height="17" fill="#8DC9BD"/><rect x="238" y="34" width="37" height="43" rx="3" fill="#F1C578"/>
+      </>}
+    </svg>
+  </div>;
+}
+
+function TheoryPreview() {
+  const section=chapters[3].lessons[1];
+  return <div className="course-preview theory-preview" aria-hidden="true">
+    <div className="preview-browser">
+      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>ICT / Theory</span><span>04 / 11</span></div>
+      <div className="theory-mock-content">
+        <aside><span>01 Systems</span><span>02 Devices</span><span className="selected">04 Networks</span><span>05 Effects of IT</span></aside>
+        <div className="mock-lesson">
+          <span className="mock-kicker">Lesson 02</span>
+          <strong>{section.title}</strong>
+          <div className="mock-rule"/>
+          {section.terms.slice(0,2).map(([term,definition])=><div className="mock-term" key={term}><b>{term}</b><span>{definition}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </div>;
+}
+function PracticalPreview() {
+  const cells=[
+    ["","A","B","C","D"],
+    ["1","Item","Qty","Price","Total"],
+    ["2","Notebook","2","7","14"],
+    ["3","Cable","3","12","36"],
+    ["4","Mouse","1","35","35"],
+    ["5","Total","","","85"]
+  ];
+  return <div className="course-preview practical-preview" aria-hidden="true">
+    <div className="sheet-mock">
+      <div className="preview-toolbar"><span className="preview-dots"><i/><i/><i/></span><span>Spreadsheet</span><span>Sheet 01</span></div>
+      <div className="formula-bar"><span>ƒx</span><code>=SUM(D2:D4)</code></div>
+      <div className="sheet-grid">{cells.flatMap((row,i)=>row.map((cell,j)=><span key={i+"-"+j} className={"sheet-cell "+(i===0?"sheet-col ":"")+(j===0?"sheet-row ":"")+(i===5&&j===4?"sheet-total":"")}>{cell}</span>))}</div>
+    </div>
+  </div>;
+}
+
 function App() {
   const [route, setRoute] = useState(getRoute);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
