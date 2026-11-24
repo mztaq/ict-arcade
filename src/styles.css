@@ -844,11 +844,3 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 @media(max-width:1020px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:24px}}
 @media(max-width:740px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:18px}}
 @media(max-width:560px){.site-header:not(.home-header),.site-header:not(.home-header):has(~ .site-body .papers-home),.site-header:not(.home-header):has(~ .site-body .papa-browser){padding-inline:14px}}
-
-/* Live route previews: same React components and theme, clipped at miniature scale. */
-.live-course-card{position:relative}
-.live-course-link::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit}
-.live-course-card:focus-within{outline:3px solid var(--blue);outline-offset:3px}
-.course-preview.live-route-preview{display:block;position:relative;padding:0;overflow:hidden;background:var(--canvas);pointer-events:none}
-.live-route-frame{position:absolute;display:block;top:0;left:0;width:1000px;height:1000px;max-width:none;border:0;margin:0;transform-origin:top left;pointer-events:none;background:var(--canvas)}
-.course-preview.live-route-preview{width:100%;flex:0 0 auto;align-self:stretch;isolation:isolate}
