@@ -56,16 +56,16 @@ header{flex-wrap:wrap}#who{padding:4px 12px;font-size:.9rem}
 .lb{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden}.lb td,.lb th{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left}
 @media(max-width:520px){.two{gap:8px}.m{padding:10px;font-size:.9rem}}
 
-/* Editorial ICT Arcade menu. Game engines and controls below are unchanged. */
-:root{--bg:#f6f6f2;--card:#fff;--ink:#222b36;--mut:#5d6874;--acc:#244fb0;--ok:#156b4e;--bad:#a83d39;--yel:#f3c956;--line:#d9dedc}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171b1e;--card:#20262b;--ink:#f0eee8;--mut:#b7bec0;--acc:#b1c7ff;--ok:#89dcb8;--bad:#ffb5ab;--line:#40484d}}
-:root[data-theme="dark"]{--bg:#171b1e;--card:#20262b;--ink:#f0eee8;--mut:#b7bec0;--acc:#b1c7ff;--ok:#89dcb8;--bad:#ffb5ab;--line:#40484d}
+/* ICT Arcade visual tokens. Gameplay and score calculations are unchanged. */
+:root{--bg:#f2f7f9;--card:#ffffff;--ink:#172832;--mut:#536977;--acc:#1e6879;--ok:#217553;--bad:#ad443e;--yel:#eebe68;--line:#d6e3e9}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101e28;--card:#1b2c37;--ink:#f3f7f8;--mut:#b0c3cc;--acc:#83d2dd;--ok:#91dfb4;--bad:#ffb2a8;--yel:#e9bd70;--line:#39505d}}
+:root[data-theme="dark"]{--bg:#101e28;--card:#1b2c37;--ink:#f3f7f8;--mut:#b0c3cc;--acc:#83d2dd;--ok:#91dfb4;--bad:#ffb2a8;--yel:#e9bd70;--line:#39505d}
 body{font-family:"Trebuchet MS",Verdana,sans-serif}
 header{background:var(--card);color:var(--ink);border-bottom:1px solid var(--line);padding:13px 18px}
 header b{font-size:1.07rem;letter-spacing:-.035em}
 main{max-width:860px}
-#sc{border-radius:0;font-size:.85rem;letter-spacing:.04em}
-.chip{border:1px solid var(--line);border-radius:3px;font-size:.88rem;padding:7px 13px}
+#sc{border-radius:7px;font-size:.85rem;letter-spacing:.04em;color:#172832}
+.chip{border:1px solid var(--line);border-radius:8px;font-size:.88rem;padding:7px 13px}
 .chip.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
 .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line)}
 .card{display:grid;grid-template-columns:37px minmax(0,1fr);grid-template-rows:auto 1fr;gap:3px 11px;min-height:101px;border:0;border-radius:0;border-bottom:1px solid var(--line);padding:15px 12px;background:transparent}
@@ -74,8 +74,8 @@ main{max-width:860px}
 .card .game-index{display:block;grid-row:span 2;font:700 15px Consolas,monospace;color:var(--acc);padding-top:4px}
 .card b{font-size:1.02rem}
 .card small{grid-column:2;font-size:.78rem;line-height:1.45}
-.btn,.btn.alt,.opt,.m,.how,.inp,.lb,.item{border-radius:4px}
-.btn{font-size:.92rem;border-radius:3px;padding:11px 17px}
+.btn,.btn.alt,.opt,.m,.how,.inp,.lb,.item{border-radius:9px}
+.btn{font-size:.92rem;border-radius:9px;padding:11px 17px}
 .how h2{color:var(--acc)}
 .opt,.m{border-width:1px}
 .opt:hover,.m:hover{background:var(--card)}
