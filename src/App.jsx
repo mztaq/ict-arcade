@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
   Check, CheckCircle2, Eye, EyeOff,
-  Layers, FileText, Moon, RotateCcw, Search, Sun, X
+  Layers, FileText, Moon, RotateCcw, Search, Sun, X, Keyboard, Cpu, Monitor
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -165,6 +165,27 @@ function ArcadeVisual({id}) {
   </div>;
 }
 
+function HeroMotion() {
+  return <div className="hero-motion" aria-label="How a computer works: input, processing and output" role="img">
+    <div className="signal-chain" aria-hidden="true">
+      <div className="signal-device">
+        <Keyboard size={24} strokeWidth={1.7}/>
+        <span>Input</span>
+      </div>
+      <div className="signal-link"><span className="signal-packet"/><span className="signal-packet delay"/></div>
+      <div className="signal-device signal-cpu">
+        <Cpu size={27} strokeWidth={1.7}/>
+        <span>Process</span>
+      </div>
+      <div className="signal-link"><span className="signal-packet"/><span className="signal-packet delay"/></div>
+      <div className="signal-device">
+        <Monitor size={24} strokeWidth={1.7}/>
+        <span>Output</span>
+      </div>
+    </div>
+  </div>;
+}
+
 function TheoryPreview() {
   const section=chapters[3].lessons[1];
   return <div className="course-preview theory-preview" aria-hidden="true">
@@ -312,10 +333,10 @@ function App() {
               <h1>ICT Arcade</h1>
             </div>
             <h2>Learn ICT step by step</h2>
-            <p className="home-intro-detail">Start with the basics, practise as you go, and build confidence in ICT.</p>
             <a className="past-papers-link" href="https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/" target="_blank" rel="noopener noreferrer">
               <FileText size={17}/> Try past papers <ArrowUpRight size={16}/>
             </a>
+            <HeroMotion/>
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
@@ -335,24 +356,15 @@ function App() {
             </a>
           </section>
 
-          <section className="home-games">
-            <div className="home-section-heading"><div><h2>Learn with games</h2><p>Play quick games to practise the topics you have learned.</p></div><span>11 games</span></div>
-            <div className="featured-games">
-              {arcadeGames.map((game,i) => <a key={game.id} href={"#/games/"+game.id} className={"featured-game "+(i<2?"featured-game-large":"")}
-                aria-label={"Play "+game.name}>
-                <ArcadeVisual id={game.id}/>
-                <span className="featured-game-bottom">
-                  <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
-                  <ArrowUpRight size={19} aria-hidden="true"/>
-                </span>
-              </a>)}
-            </div>
-          </section>
+          <a className="games-hub-card" href="#/games" aria-label="Browse all 11 ICT Arcade games">
+            <span className="games-hub-info"><strong>Games</strong><span>11 games</span><ArrowUpRight size={21}/></span>
+            <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
+          </a>
         </>}
 
         {route.page === "notes" && <>
           <Title title="Learn the theory" description="New to ICT? Start with Chapter 1. Each lesson explains an idea, shows an example and teaches useful terms." />
-          <section className="start-learning"><div><strong>New to ICT? Start here.</strong><p>Begin with computer hardware and software, then learn one lesson at a time.</p></div><button className="primary-action" onClick={() => navigate("chapter", 1, 0)}>Start Chapter 1 <ArrowRight size={16}/></button></section>
+          <section className="start-learning"><strong>Start here</strong><button className="primary-action" onClick={() => navigate("chapter", 1, 0)}>Start Chapter 1 <ArrowRight size={16}/></button></section>
           <div className="theory-shortcuts">
             <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions <ArrowRight size={15}/></button>
             <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards <ArrowRight size={15}/></button>
@@ -441,9 +453,21 @@ function App() {
         </>}
 
         {route.page === "games" && <>
-          <Title title="Learn with games" description="Play a game and test what you have learned. Each game includes ICT questions along the way." action={<a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Play full screen <ArrowUpRight size={17}/></a>}/>
-          
-          <iframe key={route.game || "all"} title="ICT Arcade original games" src={route.game > 0 ? "/arcade-legacy.html?game=" + route.game : "/arcade-legacy.html"} className="arcade-frame" allow="fullscreen" loading="eager"/>
+          <Title title={route.game > 0 ? arcadeGames.find(game=>game.id === route.game)?.name || "Games" : "Games"}
+            description={route.game > 0 ? "Answer ICT questions while you play." : "Choose a game."}
+            action={route.game > 0 ? <button className="secondary-action" onClick={()=>navigate("games")}>All games <ArrowLeft size={17}/></button> : <a className="secondary-action" href="/arcade-legacy.html" target="_blank" rel="noopener noreferrer">Classic arcade <ArrowUpRight size={17}/></a>}/>
+          {route.game > 0 ?
+            <iframe key={route.game} title={arcadeGames.find(game=>game.id === route.game)?.name || "ICT Arcade game"}
+              src={"/arcade-legacy.html?game="+route.game} className="arcade-frame" allow="fullscreen" loading="eager"/> :
+            <div className="featured-games games-page-grid">
+              {arcadeGames.map(game=><a key={game.id} href={"#/games/"+game.id} className="featured-game" aria-label={"Play "+game.name}>
+                <ArcadeVisual id={game.id}/>
+                <span className="featured-game-bottom">
+                  <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
+                  <ArrowUpRight size={19} aria-hidden="true"/>
+                </span>
+              </a>)}
+            </div>}
         </>}
 
       </main>
