@@ -4,7 +4,7 @@ import {chromium} from "playwright";
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
-const routes=["home","past-papers","past-papers/yearly","past-papers/solved","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
+const routes=["home","past-papers","past-papers/yearly","past-papers/solved","past-papers/solved/1","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 const minimumReadableSize={
   home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
   "past-papers":[[".paper-category strong",23]],
@@ -93,9 +93,13 @@ try{
         assert.equal(await page.locator(".paper-year").count(),7,"Yearly past paper links");
       }
       if(route==="past-papers/solved"){
-        assert.equal(await page.locator(".paper-category").count(),2,"Only Papers 2 and 3");
-        assert.equal(await page.locator('a[href="#/past-papers/solved/1"]').count(),0);
-        assert.equal(await page.locator(".paper-theory-note").count(),1);
+        assert.equal(await page.locator(".paper-category").count(),3,"Papers 1, 2 and 3");
+        assert.equal(await page.locator('a[href="#/past-papers/solved/1"]').count(),1);
+        assert.equal(await page.locator(".paper-theory-note").count(),0);
+      }
+      if(route==="past-papers/solved/1"){
+        assert.match(await page.locator(".paper-1-message h2").innerText(),/Mustaqim hates Theory, so no solved Paper 1 papers/);
+        assert.equal(await page.locator(".paper-year").count(),0);
       }
       if(route==="past-papers/solved/2"||route==="past-papers/solved/3"){
         assert.match(await page.locator(".paper-empty").innerText(),/No solved papers uploaded yet/);
