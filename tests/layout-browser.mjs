@@ -7,6 +7,7 @@ const sizes=[320,390,768,1280];
 const routes=["home","notes","chapter/1/0","practice","flashcards","practical","games"];
 const pairs=[
   [".page-title h1",".title-action"],
+  [".chapter-heading h1",".chapter-back-button"],
   [".chapter-row .chapter-description",".chapter-row .chapter-stats"],
   [".reading-layout .lesson-index",".reading-layout .reading-article"],
   [".course-choice .course-title-line strong",".course-choice .coming-soon"],
