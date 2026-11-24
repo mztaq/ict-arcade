@@ -783,3 +783,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .papers-home-card .paper-category-arrow{top:auto;bottom:25px;right:20px}
 @media(max-width:680px){.papers-home-grid{grid-template-columns:1fr}.paper-category.papers-home-card{grid-template-rows:112px auto;gap:15px;padding:14px}.papers-home-card .papers-home-art{height:112px}.papers-home-art svg{height:107px}.papers-home-copy strong{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.papers-home-card,.papers-home-art svg{transition:none!important;transform:none!important}}
+
+/* Override the generic card span width cap for the full-width illustration. */
+.paper-category.papers-home-card > .papers-home-art{width:100%;max-width:none;min-width:0;justify-self:stretch;box-sizing:border-box}
+.paper-category.papers-home-card{grid-template-columns:minmax(0,1fr)}
