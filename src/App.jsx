@@ -14,6 +14,7 @@ import {examinerAdvice} from "./examinerAdvice.js";
 import {solvedPastPapers} from "./pastPapers.js";
 import {PapaPapers} from "./PapaPapers.jsx";
 import PaperViewer from "./PaperViewer.jsx";
+import {notFoundJokes} from "./notFoundJokes.js";
 
 const load = (key, fallback) => {
   try {
@@ -73,13 +74,6 @@ const goTo = destination => {
   } else window.scrollTo({top:0});
 };
 const navigate = (page, id, lesson) => goTo(page === "home" ? "/" : "/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson));
-const notFoundJokes = [
-  "This page got 0 marks for answering the question.",
-  "The file was not found. Have you tried turning it off and on again?",
-  "Even Ctrl+F couldn't find this page.",
-  "Looks like this page forgot to save its work.",
-  "404: The only ICT question without a mark scheme."
-];
 function NotFound() {
   const [joke] = useState(() => notFoundJokes[Math.floor(Math.random()*notFoundJokes.length)]);
   return <section className="not-found">
