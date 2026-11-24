@@ -102,7 +102,8 @@ test("notes layout includes a clean contents list and author-controlled examiner
   assert.match(app,/Exam advice/);
   assert.match(app,/examinerAdvice\[lessonKey\]/);
   assert.match(app,/advice\.points\.map/);
-  assert.match(app,/Based on Save My Exams/);
+  assert.match(app,/Reference notes/);
+  assert.doesNotMatch(app,/Based on Save My Exams/);
   assert.match(adviceSource,/export const examinerAdvice = \{/);
   assert.doesNotMatch(app,/New to ICT\? Start here/);
 });
@@ -116,4 +117,13 @@ test("lesson counts have clear visual hierarchy",()=>{
   assert.match(css,/\.chapter-lessons strong\{font-size:25px/);
   assert.doesNotMatch(css,/\.chapter-status\{|\.mini-progress\{/);
   assert.match(css,/\.practice-toolbar\{[^}]*flex-wrap:wrap/);
+});
+
+test("lesson back button sits beside the chapter heading and contents items use no dividers",()=>{
+  assert.match(app,/<div className="chapter-heading">\s*<h1>\{chapter\.title\}<\/h1>\s*<button type="button" className="chapter-back-button"/);
+  assert.match(css,/\.chapter-back-button\{/);
+  assert.match(css,/\.chapter-heading\{display:flex;align-items:center;justify-content:space-between/);
+  assert.match(css,/\.lesson-index nav\{display:flex;flex-direction:column;gap:4px;border:0\}/);
+  assert.match(css,/\.lesson-link\{[^}]*border:0;[^}]*border-radius:8px/);
+  assert.doesNotMatch(app,/className="back-link"/);
 });
