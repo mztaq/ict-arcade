@@ -64,7 +64,9 @@ test("legacy arcade game entry stays reachable without decorative emoji icons", 
 test("brand symbol has no letter shapes or embedded text",()=>{
   const svg=readFileSync(new URL("../public/ict-arcade-mark.svg", import.meta.url),"utf8");
   assert.doesNotMatch(svg,/<text[\s>]/i);
-  assert.match(svg,/<path\s/);
-  assert.match(svg,/circle\s/);
+  assert.doesNotMatch(svg,/<path\s/i);
+  assert.doesNotMatch(svg,/<circle\s/i);
+  assert.equal((svg.match(/<rect\s/g)||[]).length,5);
+  assert.match(svg,/fill="#A7CAFF"/);
   assert.doesNotMatch(app, /ICT Arcade<span>\.<\/span>/);
 });
