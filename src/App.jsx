@@ -12,6 +12,7 @@ import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
 import {examinerAdvice} from "./examinerAdvice.js";
 import {yearlyPastPapers, solvedPastPapers} from "./pastPapers.js";
+import PaperViewer from "./PaperViewer.jsx";
 
 const load = (key, fallback) => {
   try {
@@ -37,7 +38,9 @@ const getRoute = () => {
     game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0,
     papersView: parts[0] === "past-papers" ? (parts[1] || "home") : "home",
     papersNumber: parts[0] === "past-papers" && parts[1] === "solved" ? Number(parts[2]) || 0 : 0,
-    papersYear: parts[0] === "past-papers" && parts[1] === "yearly" ? Number(parts[2]) || 0 : 0
+    papersYear: parts[0] === "past-papers" && parts[1] === "yearly" ? Number(parts[2]) || 0 : 0,
+    papersId: parts[0] === "past-papers" && ["yearly","solved"].includes(parts[1]) ? (parts[3] || "") : "",
+    papersDocument: parts[0] === "past-papers" ? (parts[4] || "") : ""
   };
 };
 const navigate = (page, id, lesson) => {
@@ -274,6 +277,8 @@ function PracticalPreview() {
 function App() {
   const [route, setRoute] = useState(getRoute);
   const selectedPaperYear = yearlyPastPapers.find(item=>item.year === route.papersYear);
+  const selectedYearlyPaper = selectedPaperYear?.papers.find(item=>item.id===route.papersId);
+  const selectedSolvedPaper = solvedPastPapers[route.papersNumber]?.find(item=>item.id===route.papersId);
   const [theme, setTheme] = useStored("ict-arcade-theme", "auto");
   const [done, setDone] = useStored("ict-arcade-lessons-done", []);
   const [bookmarks, setBookmarks] = useStored("ict-arcade-bookmarks", []);
@@ -432,51 +437,72 @@ function App() {
             </div>
           </>}
           {route.papersView === "yearly" && <>
-            <Title title={route.papersYear ? "Past Papers " + route.papersYear : "Yearly Past Papers"}
-              action={<button type="button" className="chapter-back-button" onClick={()=>navigate("past-papers",route.papersYear ? "yearly" : undefined)}>
-                <ArrowLeft size={16}/> {route.papersYear ? "All years" : "Past Papers"}
+            <Title title={route.papersId && selectedYearlyPaper ? selectedYearlyPaper.title :
+                route.papersYear ? "Past Papers " + route.papersYear : "Yearly Past Papers"}
+              action={<button type="button" className="chapter-back-button"
+                onClick={()=>route.papersId ? navigate("past-papers","yearly",route.papersYear) :
+                  navigate("past-papers",route.papersYear ? "yearly" : undefined)}>
+                <ArrowLeft size={16}/> {route.papersId ? String(route.papersYear) : route.papersYear ? "All years" : "Past Papers"}
               </button>}/>
-            {route.papersYear === 0 ?
+            {route.papersYear===0 ?
               <div className="paper-year-grid">
                 {yearlyPastPapers.map(item=><a className="paper-year" key={item.year} href={"#/past-papers/yearly/"+item.year}>
                   <strong>{item.year}</strong>
-                  <small>{item.papers.length ? item.papers.length + " files" : "No files yet"}</small>
+                  <small>{item.papers.length ? item.papers.length + " papers" : "No files yet"}</small>
                   <ArrowRight size={18} aria-hidden="true"/>
                 </a>)}
               </div> :
-              selectedPaperYear ?
-                selectedPaperYear.papers.length ?
-                  <div className="paper-year-grid">
-                    {selectedPaperYear.papers.map(item=><a className="paper-year" key={item.url} href={item.url} download>
-                      <FileText size={18} aria-hidden="true"/><strong>{item.title}</strong>
-                    </a>)}
-                  </div> :
-                  <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/><p>No locally hosted papers for {route.papersYear} yet.</p></div> :
-                <div className="paper-empty"><p>That year isn't available.</p></div>}
+              !selectedPaperYear ?
+                <div className="paper-empty"><p>That year isn't available.</p></div> :
+              route.papersId ?
+                selectedYearlyPaper ?
+                  <PaperViewer title={selectedYearlyPaper.title}
+                    selectedKind={route.papersDocument}
+                    routePrefix={"#/past-papers/yearly/"+route.papersYear+"/"+selectedYearlyPaper.id}
+                    documents={[
+                      {key:"questionPaper",label:"Question Paper",url:selectedYearlyPaper.questionPaper},
+                      {key:"markScheme",label:"Mark Scheme",url:selectedYearlyPaper.markScheme},
+                      {key:"examinerReport",label:"Examiner Report",url:selectedYearlyPaper.examinerReport}
+                    ]}
+                    sourceFiles={selectedYearlyPaper.sourceFiles||[]}/> :
+                  <div className="paper-empty"><p>This paper isn't available.</p></div> :
+              selectedPaperYear.papers.length ?
+                <div className="paper-year-grid">
+                  {selectedPaperYear.papers.map(item=><a className="paper-year" key={item.id}
+                      href={"#/past-papers/yearly/"+route.papersYear+"/"+item.id}>
+                    <FileText size={20} strokeWidth={1.7} aria-hidden="true"/>
+                    <strong>{item.title}</strong>
+                    <ArrowRight size={18} aria-hidden="true"/>
+                  </a>)}
+                </div> :
+                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/>
+                  <p>No locally hosted papers for {route.papersYear} yet.</p></div>}
           </>}
           {route.papersView === "solved" && <>
-            <Title title={[1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
-              action={<button type="button" className="chapter-back-button" onClick={()=>
-                navigate("past-papers",route.papersNumber ? "solved" : undefined)
-              }><ArrowLeft size={16}/> {route.papersNumber ? "Solved Past Papers" : "Past Papers"}</button>}/>
+            <Title title={selectedSolvedPaper ? selectedSolvedPaper.title :
+                [1,2,3].includes(route.papersNumber) ? "Paper " + route.papersNumber : "Solved Past Papers"}
+              action={<button type="button" className="chapter-back-button"
+                onClick={()=>route.papersId ?
+                  navigate("past-papers","solved",route.papersNumber) :
+                  navigate("past-papers",route.papersNumber ? "solved" : undefined)}>
+                <ArrowLeft size={16}/> {route.papersId ? "Paper "+route.papersNumber :
+                  route.papersNumber ? "Solved Past Papers" : "Past Papers"}
+              </button>}/>
             {route.papersNumber === 0 ? <>
               <div className="paper-category-grid solved-paper-options">
                 <a className="paper-category" href="#/past-papers/solved/1">
                   <span className="paper-category-icon"><BookOpen size={26} strokeWidth={1.7}/></span>
-                  <strong>Paper 1</strong>
-                  <span>Theory</span>
+                  <strong>Paper 1</strong><span>Theory</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
                 <a className="paper-category" href="#/past-papers/solved/2">
                   <span className="paper-category-icon"><FileText size={26} strokeWidth={1.7}/></span>
-                  <strong>Paper 2</strong>
-                  <span>Document Production, Databases and Presentations</span>
+                  <strong>Paper 2</strong><span>Document Production, Databases and Presentations</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
                 <a className="paper-category" href="#/past-papers/solved/3">
                   <span className="paper-category-icon"><Layers size={26} strokeWidth={1.7}/></span>
-                  <strong>Paper 3</strong>
-                  <span>Spreadsheets and Website Authoring</span>
+                  <strong>Paper 3</strong><span>Spreadsheets and Website Authoring</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
               </div>
@@ -486,13 +512,24 @@ function App() {
                 <h2>Mustaqim hates Theory, so no solved Paper 1 papers.</h2>
               </div>
             ) : [2,3].includes(route.papersNumber) ? (
+              route.papersId ?
+                selectedSolvedPaper ?
+                  <PaperViewer title={selectedSolvedPaper.title}
+                    selectedKind={route.papersDocument}
+                    routePrefix={"#/past-papers/solved/"+route.papersNumber+"/"+selectedSolvedPaper.id}
+                    documents={[{key:"workedSolution",label:"Worked Solution",url:selectedSolvedPaper.url}]}
+                    sourceFiles={selectedSolvedPaper.sourceFiles||[]}/> :
+                  <div className="paper-empty"><p>This solution isn't available.</p></div> :
               solvedPastPapers[route.papersNumber].length ?
                 <div className="paper-year-grid">
-                  {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.url} href={item.url} target="_blank" rel="noopener noreferrer">
-                    <strong>{item.title}</strong><ArrowUpRight size={18}/>
+                  {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.id}
+                      href={"#/past-papers/solved/"+route.papersNumber+"/"+item.id}>
+                    <FileText size={20} strokeWidth={1.7} aria-hidden="true"/>
+                    <strong>{item.title}</strong><ArrowRight size={18} aria-hidden="true"/>
                   </a>)}
                 </div> :
-                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/><p>No solved papers uploaded yet.</p></div>
+                <div className="paper-empty"><FileText size={29} strokeWidth={1.6} aria-hidden="true"/>
+                  <p>No solved papers uploaded yet.</p></div>
             ) : <div className="paper-empty"><p>Choose Paper 1, Paper 2 or Paper 3.</p></div>}
           </>}
           {!["home","yearly","solved"].includes(route.papersView) && <div className="paper-empty"><p>That collection isn't available.</p>
