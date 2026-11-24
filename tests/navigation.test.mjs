@@ -18,8 +18,8 @@ test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/<h1>ICT Arcade<\/h1>/);
   assert.match(app,/<span className="header-brand-name">ICT Arcade<\/span>/);
   assert.match(app,/className="course-choices"/);
-  assert.match(app,/href="#\/notes"/);
-  assert.match(app,/href="#\/practical"/);
+  assert.match(app,/href="\/notes"/);
+  assert.match(app,/href="\/practical"/);
   assert.match(app,/Coming soon/);
   assert.match(app,/<strong>Theory<\/strong>/);
   assert.match(app,/<Title title="Theory"/);
@@ -55,11 +55,11 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/function ArcadeVisual\(\{id\}\)/);
   assert.doesNotMatch(app,/className="top-nav"/);
   assert.match(app,/className="past-papers-link"/);
-  assert.match(app,/href="#\/past-papers"/);
+  assert.match(app,/href="\/past-papers"/);
   assert.match(app,/className="games-hub-card"/);
-  assert.match(app,/href="#\/games"/);
+  assert.match(app,/href="\/games"/);
   assert.match(app,/className="featured-games games-page-grid"/);
-  assert.match(app,/href=\{"#\/games\/"\+game\.id\}/);
+  assert.match(app,/href=\{"\/games\/"\+game\.id\}/);
   assert.match(app,/const arcadeGames = \[/);
   assert.equal((app.match(/\{id: \d+, name:/g)||[]).length,11);
   assert.doesNotMatch(app,/site-sidebar|mobile-backdrop|menu-trigger/);
@@ -173,14 +173,14 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/route\.papersView === "solved"/);
   assert.match(app,/Yearly Past Papers/);
   assert.match(app,/Solved Past Papers/);
-  assert.match(app,/href="#\/past-papers\/yearly"/);
+  assert.match(app,/href="\/past-papers\/yearly"/);
   assert.match(papa,/href=\{root\+"\/"\+item\+"\/"\+entry\.id\}/);
   assert.doesNotMatch(app,/archivePastPapersUrl|officialPastPapersUrl/);
   assert.match(app,/<PaperViewer title=\{selectedSolvedPaper.title\}/);
-  assert.match(app,/href="#\/past-papers\/solved"/);
-  assert.match(app,/href="#\/past-papers\/solved\/2"/);
-  assert.match(app,/href="#\/past-papers\/solved\/3"/);
-  assert.match(app,/href="#\/past-papers\/solved\/1"/);
+  assert.match(app,/href="\/past-papers\/solved"/);
+  assert.match(app,/href="\/past-papers\/solved\/2"/);
+  assert.match(app,/href="\/past-papers\/solved\/3"/);
+  assert.match(app,/href="\/past-papers\/solved\/1"/);
   assert.match(app,/className="paper-1-message"/);
   assert.match(app,/Mustaqim hates Theory, so no solved Paper 1 papers/);
   assert.doesNotMatch(app,/className="paper-theory-note"/);
@@ -189,8 +189,8 @@ test("past papers homepage has yearly and solved collections only",()=>{
 test("PDF viewer previews solved papers and only downloads source files",()=>{
   const viewer=readFileSync(new URL("../src/PaperViewer.jsx",import.meta.url),"utf8");
   assert.match(app,/key:"workedSolution",label:"Worked Solution"/);
-  assert.match(app,/papersId: parts\[0\]/);
-  assert.match(app,/papersDocument: parts\[0\]/);
+  assert.match(app,/papersId: page === "past-papers"/);
+  assert.match(app,/papersDocument: page === "past-papers"/);
   assert.match(app,/selectedSolvedPaper/);
   assert.match(viewer,/iframe className="paper-pdf-frame" src=\{active.url\}/);
   assert.match(viewer,/href=\{active.url\} download/);
@@ -211,4 +211,15 @@ test("yearly library routes to PapaCambridge files only on click",()=>{
   for(const label of ["Question Papers","Mark Schemes","Examiner Reports","Source Files"])assert.ok(papa.includes(label));
   assert.match(papa,/href=\{file.url\} target="_blank" rel="noopener noreferrer"/);
   assert.doesNotMatch(papa,/iframe|fetch\(/);
+});
+
+test("clean path navigation and themed missing pages",()=>{
+  assert.match(app,/location\.pathname/);
+  assert.match(app,/history\.pushState/);
+  assert.match(app,/history\.replaceState/);
+  assert.match(app,/addEventListener\("popstate"/);
+  assert.match(app,/function NotFound\(\)/);
+  assert.match(app,/route\.page === "not-found"/);
+  assert.doesNotMatch(app,/href="#\//);
+  assert.doesNotMatch(papa,/const root="#/);
 });
