@@ -17,6 +17,8 @@ test("editorial interface avoids gradient blobs and default typeface", () => {
   assert.match(css, /\.featured-games/);
   assert.match(css, /\.games-hub-card/);
   assert.match(css, /\.hero-motion/);
+  assert.match(css, /\.examiner-advice/);
+  assert.doesNotMatch(css, /\.start-learning/);
   assert.doesNotMatch(app, /home-intro-detail/);
   assert.match(css, /--accent:#315db3/);
   assert.match(css, /--canvas:#f7f9fc/);
