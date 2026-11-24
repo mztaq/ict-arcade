@@ -1,9 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#f7f9fc" />
+<script>
+(function () {
+  var theme = "auto";
+  try {
+    var saved = JSON.parse(localStorage.getItem("ict-arcade-theme"));
+    if (saved === "light" || saved === "dark" || saved === "auto") theme = saved;
+  } catch (_) {}
+  document.documentElement.dataset.theme = theme;
+  var dark = theme === "dark" || (theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.querySelector('meta[name="theme-color"]').content = dark ? "#101722" : "#f7f9fc";
+})();
+</script>
+<style>
+html { background: #f7f9fc; color-scheme: light; }
+html[data-theme="dark"] { background: #101722; color-scheme: dark; }
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] { background: #101722; color-scheme: dark; }
+}
+body { margin: 0; }
+</style>
 <meta name="description" content="ICT Arcade helps you learn ICT from the basics with clear lessons, everyday examples, questions and learning games." />
 <title>ICT Arcade | Learn ICT Step by Step</title>
 <link rel="icon" type="image/svg+xml" href="/ict-arcade-mark.svg" />
