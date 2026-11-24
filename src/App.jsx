@@ -2,7 +2,8 @@ import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
   Check, CheckCircle2, Eye, EyeOff,
-  Layers, FileText, Moon, RotateCcw, Search, Sun, X, Keyboard, Cpu, Monitor
+  Layers, FileText, Moon, RotateCcw, Search, Sun, X, Keyboard, Cpu, Monitor,
+  HardDrive, Network, HeartPulse, PanelsTopLeft, Workflow, ShieldCheck, UsersRound, MessagesSquare, FolderOpen
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -45,10 +46,24 @@ function Progress({value, label}) {
     <span style={{width: Math.max(0, Math.min(value, 100)) + "%"}} />
   </div>;
 }
+const chapterIcons = {
+  1: Cpu,
+  2: Keyboard,
+  3: HardDrive,
+  4: Network,
+  5: HeartPulse,
+  6: PanelsTopLeft,
+  7: Workflow,
+  8: ShieldCheck,
+  9: UsersRound,
+  10: MessagesSquare,
+  11: FolderOpen
+};
 function ChapterRow({chapter, done, compact = false, onOpen}) {
+  const ChapterIcon = chapterIcons[chapter.id] || BookOpen;
   const progress = chapterProgress(chapter, done);
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
-    <span className="chapter-index">{formatNumber(chapter.id)}</span>
+    <span className="chapter-index"><ChapterIcon size={22} strokeWidth={1.8} aria-hidden="true"/></span>
     <span className="chapter-description"><strong>{chapter.title}</strong></span>
     <span className="chapter-stats">
       <span className="chapter-lessons"><strong>{chapter.lessons.length}</strong><span>lessons</span></span>
@@ -401,7 +416,7 @@ function App() {
                 {chapterProgress(chapter, done) > 0 && <span>{chapterProgress(chapter, done)}% complete</span>}
               </div>
               <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
-                <span>{done.includes(keyFor(chapter.id, i)) ? <Check size={15}/> : formatNumber(i + 1)}</span><span>{entry.title}</span>
+                <span className="lesson-icon">{done.includes(keyFor(chapter.id, i)) ? <CheckCircle2 size={19} strokeWidth={1.8} aria-hidden="true"/> : i === lessonIndex ? <BookOpen size={19} strokeWidth={1.8} aria-hidden="true"/> : <FileText size={19} strokeWidth={1.8} aria-hidden="true"/>}</span><span>{entry.title}</span>
               </button>)}</nav>
             </aside>
             <article className="reading-article">
@@ -416,7 +431,6 @@ function App() {
               <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
                 {advice ? <>
                   {advice.points.map((tip,i)=><p key={i}>{tip}</p>)}
-                  <a href={advice.source} target="_blank" rel="noopener noreferrer" className="advice-source" aria-label="Open revision reference notes">Reference notes <ArrowUpRight size={14} aria-hidden="true"/></a>
                 </> : <p>Coming soon</p>}
               </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
