@@ -740,3 +740,7 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
   html{scroll-behavior:auto}
   *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Yearly papers: one full-width row per entry at every viewport. */
+.paper-year-grid.papa-list{display:flex;flex-direction:column;gap:8px}
+.papa-list .paper-year{width:100%;min-height:64px;box-sizing:border-box}
