@@ -4,9 +4,12 @@ import {chromium} from "playwright";
 // Browser-level checks for horizontal overflow and overlapping key interface regions.
 const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
-const routes=["home","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
+const routes=["home","past-papers","past-papers/yearly","past-papers/solved","past-papers/solved/2","past-papers/solved/3","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 const minimumReadableSize={
   home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
+  "past-papers":[[".paper-category strong",23]],
+  "past-papers/yearly":[[".paper-year strong",21]],
+  "past-papers/solved":[[".paper-category strong",23]],
   notes:[[".chapter-description strong",16],[".chapter-lessons span",14]],
   "chapter/1/0":[[".concepts li",16],[".lesson-link",16],[".definitions dd",16]],
   practice:[[".answer-button",16],[".question-paper>h2",24]],
@@ -80,6 +83,22 @@ try{
           width+"px: homepage letter spacing is too tight");
         assert.ok(hierarchy.hasBackdrop&&hierarchy.boxRemoved,
           width+"px: animated background should replace the boxed diagram");
+      }
+      if(route==="past-papers"){
+        assert.equal(await page.locator(".paper-category").count(),2,"Past paper choice count");
+        assert.equal(await page.locator('a[href="#/past-papers/yearly"]').count(),1);
+        assert.equal(await page.locator('a[href="#/past-papers/solved"]').count(),1);
+      }
+      if(route==="past-papers/yearly"){
+        assert.equal(await page.locator(".paper-year").count(),7,"Yearly past paper links");
+      }
+      if(route==="past-papers/solved"){
+        assert.equal(await page.locator(".paper-category").count(),2,"Only Papers 2 and 3");
+        assert.equal(await page.locator('a[href="#/past-papers/solved/1"]').count(),0);
+        assert.equal(await page.locator(".paper-theory-note").count(),1);
+      }
+      if(route==="past-papers/solved/2"||route==="past-papers/solved/3"){
+        assert.match(await page.locator(".paper-empty").innerText(),/No solved papers uploaded yet/);
       }
       console.log("PASS "+width+"px / "+route);
     }
