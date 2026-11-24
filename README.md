@@ -1,33 +1,35 @@
 # ICT Arcade
 
-A student-built Cambridge IGCSE ICT revision website with notes, examples, practice and arcade games.
+A student-built Cambridge IGCSE ICT revision website.
 
-## What's included
+## Current website
 
-- Original revision lessons for all 21 Cambridge IGCSE ICT coursebook chapters, covering 11 theory and 10 practical chapters
-- Searchable notes with terminology, explanations, examples and exam tips
-- 74 multiple-choice practice questions, 12 written exam-style prompts and answer guidance
-- Interactive flashcards, lesson progress and bookmarked lessons
-- Eleven existing arcade games with the original game logic and local scores preserved
-- Responsive light and dark themes using the colours of the original ICT Arcade
+- **Home:** Choose Theory or Practical.
+- **Theory:** Eleven available chapters with searchable notes, original examples, key definitions, questions and flashcards.
+- **Practical:** Coming soon. The ten practical chapters are preserved in the content source for a later release but are not shown as finished revision material.
+- **Games:** All eleven original arcade games remain available, with their original gameplay and local scores.
+- **Progress:** Save bookmarks, studied lessons, flashcard knowledge and written answer drafts in your browser.
+- **Appearance:** Responsive light and dark styles switched using the single top-right icon.
+
+The content files contain additional practical lesson summaries and questions for future development. They are not published in the current Practical section.
 
 ## Development
 
-Node.js 20 or later:
+Node.js 20 or newer.
 
 ```bash
 npm install
 npm run dev
+npm test
+npm run build
 ```
 
-Production build: `npm run build`. Content checks: `npm test`.
+## Project structure
 
-## Structure
+- `src/content.js`: Original lesson summaries covering the coursebook structure.
+- `src/questions.js`: Original multiple-choice and written-answer practice.
+- `src/App.jsx`: React homepage, Theory pages, and learning tools.
+- `src/styles.css`: Shared design styles and responsive layout.
+- `public/arcade-legacy.html`: Original arcade games.
 
-- `src/content.js`: Independently written revision lessons
-- `src/questions.js`: Original multiple-choice and written-answer practice
-- `src/App.jsx`: React learning experience
-- `src/styles.css`: Layout, original palette and responsive design
-- `public/arcade-legacy.html`: Original arcade gameplay, unchanged
-
-The website is an independent study resource, not an official Cambridge product. The supplied coursebook and teaching material informed the new study content. Copyrighted book pages and official mark schemes are not redistributed. Browser storage keeps study progress and original game scores locally.
+This website is an independent study aid, not an official Cambridge product. It does not host the coursebook pages or official mark schemes.
