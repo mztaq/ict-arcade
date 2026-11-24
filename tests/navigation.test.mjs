@@ -33,7 +33,11 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/className="header-theme"/);
   assert.match(app,/className="home-intro"/);
   assert.match(app,/className="home-logo-mark"/);
-  assert.match(app,/className="top-nav"/);
+  assert.doesNotMatch(app,/className="top-nav"/);
+  assert.match(app,/className="past-papers-link"/);
+  assert.match(app,/cambridgeinternational\.org\/programmes-and-qualifications/);
+  assert.match(app,/className="featured-games"/);
+  assert.match(app,/navigate\("games", game\.id\)/);
   assert.doesNotMatch(app,/site-sidebar|mobile-backdrop|menu-trigger/);
   assert.match(app,/toggleTheme/);
   assert.match(app,/<Moon size=/);
@@ -41,8 +45,18 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
 });
 test("rounded surfaces, keyboard focus, and mobile layout are present",()=>{
   assert.match(css,/\.course-choice\s*\{/);
-  assert.match(css,/border-radius:17px/);
+  assert.match(css,/border-radius:15px/);
   assert.match(css,/\.header-theme/);
-  assert.match(css,/\.course-choices\{grid-template-columns:1fr\}/);
+  assert.match(css,/\.course-choices\{grid-template-columns:1fr/);
   assert.match(css,/:focus-visible/);
+});
+
+test("individual game links lead to the matching original game",()=>{
+  const arcade=readFileSync(new URL("../public/arcade-legacy.html",import.meta.url),"utf8");
+  assert.match(app,/route\.game > 0/);
+  assert.match(app,/arcade-legacy\.html\?game=/);
+  assert.match(arcade,/function openRequestedGame\(\)/);
+  assert.match(arcade,/Number\.isInteger\(requested\)/);
+  assert.match(arcade,/intro\(requested-1\)/);
+  assert.match(arcade,/load\(n\);openRequestedGame\(\)/);
 });
