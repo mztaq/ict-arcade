@@ -228,12 +228,15 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.2}
 .signal-device>span{font-size:11px;font-weight:800}
 .signal-cpu svg{animation:chip-tick 3.2s ease-in-out infinite}
 .signal-link{
-  position:relative;flex:1;min-width:18px;height:2px;
-  background:var(--rule);overflow:hidden;border-radius:3px;
-  margin-top:-17px
+  position:relative;flex:1;min-width:18px;height:9px;
+  overflow:hidden;margin-top:-17px
+}
+.signal-link::before{
+  content:"";position:absolute;left:0;right:0;top:4px;
+  height:1px;background:var(--rule)
 }
 .signal-packet{
-  position:absolute;left:-7px;top:-2px;width:7px;height:7px;
+  position:absolute;left:-7px;top:1px;width:7px;height:7px;
   border-radius:50%;background:var(--blue);
   animation:signal-travel 3.2s linear infinite
 }
