@@ -472,7 +472,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
 
 @media(max-width:1020px){
   .site-main{padding:26px 24px 54px}
-  .reading-layout{grid-template-columns:205px minmax(0,1fr);gap:23px}
+  .reading-layout{grid-template-columns:245px minmax(0,1fr);gap:24px}
   .course-preview{height:210px;padding:16px 18px 0}
   .preview-browser,.sheet-mock{height:196px}
   .theory-mock-content{grid-template-columns:95px minmax(0,1fr)}
@@ -483,8 +483,8 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .featured-game-large{grid-column:span 6}
 }
 @media(max-width:740px){
-  .site-header{min-height:58px;padding:0 17px}
-  .site-header.home-header{min-height:58px}
+  .site-header{min-height:64px;padding:0 17px}
+  .site-header.home-header{min-height:64px}
   .site-main{padding:24px 18px 52px}
   .home-intro{margin-top:14px;padding-top:30px}
   .home-intro h2{margin:25px 0 10px}
@@ -512,8 +512,8 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .home-intro{margin-top:19px;padding:39px 8px 0}
   .home-logo-mark{width:47px;height:47px;border-radius:11px}
   .home-signature{gap:11px}
-  .home-signature h1{font-size:clamp(32px,8.4vw,45px)}
-  .home-intro h2{font-size:27px;margin:24px 0 10px}
+  .home-signature h1{font-size:clamp(34px,8.4vw,48px)}
+  .home-intro h2{font-size:30px;margin:26px 0 14px}
   .course-choices{grid-template-columns:1fr;margin-top:28px}
   .course-preview{height:211px;padding:17px 20px 0}
   .preview-browser,.sheet-mock{height:200px}
@@ -525,36 +525,36 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .mock-term b{min-width:42px}
   .sheet-grid{font-size:10px;grid-template-columns:28px 1.4fr repeat(3,.8fr)}
   .sheet-cell{min-height:23px;padding:0 6px}
-  .course-choice-body{min-height:112px;padding:var(--space-3)}
+  .course-choice-body{min-height:125px;padding:var(--space-4)}
   .featured-games{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .featured-game,.featured-game-large{grid-column:span 1}
   .game-visual,.featured-game-large .game-visual{height:95px}
-  .featured-game-bottom,.featured-game-large .featured-game-bottom{padding:12px;min-height:93px}
-  .featured-game-copy strong,.featured-game-large .featured-game-copy strong{font-size:12.5px}
-  .featured-game-copy small{font-size:10px}
+  .featured-game-bottom,.featured-game-large .featured-game-bottom{padding:15px;min-height:115px}
+  .featured-game-copy strong,.featured-game-large .featured-game-copy strong{font-size:16px}
+  .featured-game-copy small{font-size:13px}
   .featured-game-bottom>svg{width:15px}
   .page-title{flex-wrap:wrap;align-items:center}
   .chapter-heading{align-items:flex-start}
   .chapter-heading .chapter-back-button{margin-left:auto}
-  .page-title h1{font-size:34px}
-  .page-title p{font-size:13px}
+  .page-title h1{font-size:37px}
+  .page-title p{font-size:16px}
   .library-toolbar{flex-direction:column;align-items:stretch}
   .search-field{max-width:none}
   .filter-list{width:100%;min-width:0}
   .filter-list button{flex:1}
   .chapter-row{grid-template-columns:26px minmax(0,1fr) auto;gap:10px;padding:var(--space-3) var(--space-2);min-height:88px}
   .chapter-stats{flex-direction:column;align-items:flex-end;gap:4px}
-  .chapter-lessons strong{font-size:22px}
-  .chapter-lessons span{font-size:12px}
-  .chapter-percent{font-size:12px}
+  .chapter-lessons strong{font-size:25px}
+  .chapter-lessons span{font-size:14px}
+  .chapter-percent{font-size:14px}
   .theory-title-actions{width:100%;justify-content:space-between;gap:var(--space-2)}
-  .theory-total strong{font-size:26px}
-  .chapter-index{font-size:14px;min-width:25px}
-  .chapter-description strong{font-size:14px}
+  .theory-total strong{font-size:30px}
+  .chapter-index{font-size:16px;min-width:25px}
+  .chapter-description strong{font-size:17px}
   .chapter-row>svg{display:none}
-  .reading-article{padding:23px 17px}
-  .reading-article>h2{font-size:28px}
-  .concepts li{font-size:13px;gap:9px}
+  .reading-article{padding:27px 19px}
+  .reading-article>h2{font-size:32px}
+  .concepts li{font-size:16px;gap:11px}
   .definitions dl>div{display:block}
   .definitions dt{margin-bottom:6px}
   .article-actions{align-items:stretch;flex-direction:column}
@@ -565,11 +565,11 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .practice-toolbar label{width:100%;justify-content:space-between}
   .practice-toolbar select{min-width:0;max-width:100%;width:min(100%,340px)}
   .question-paper,.quiz-finish{padding:23px 18px}
-  .question-paper>h2{font-size:21px}
-  .answer-button{gap:10px;font-size:12px;padding:10px}
-  .answer-letter{width:27px;height:27px}
+  .question-paper>h2{font-size:25px}
+  .answer-button{gap:12px;font-size:16px;padding:14px}
+  .answer-letter{width:32px;height:32px}
   .revision-card{min-height:280px;padding:23px}
-  .revision-card strong{font-size:26px}
+  .revision-card strong{font-size:30px}
   .site-footer{padding:16px 17px}
   .arcade-frame{height:830px}
 }
@@ -593,7 +593,7 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.24}
   .signal-device>span{font-size:10px}
   .games-hub-card{min-height:147px;gap:12px;flex-direction:column;align-items:stretch}
   .games-hub-info{width:100%;display:flex;gap:10px}
-  .games-hub-info strong{font-size:20px}
+  .games-hub-info strong{font-size:24px}
   .games-hub-info>span{margin-left:auto}
   .games-hub-info>svg{flex-shrink:0}
   .games-hub-preview .game-visual{height:88px}
