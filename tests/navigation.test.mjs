@@ -21,7 +21,8 @@ test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/Coming soon/);
   assert.match(app,/Learn the theory/);
   assert.match(app,/Build practical skills/);
-  assert.match(app,/Learn with games/);
+  assert.match(app,/className="games-hub-card"/);
+  assert.match(app,/Browse all 11 ICT Arcade games/);
   assert.match(app,/Try past papers/);
   assert.equal(chapters.filter(ch=>ch.unit==="Theory").length,11);
   assert.equal(chapters.filter(ch=>ch.unit==="Practical").length,10);
