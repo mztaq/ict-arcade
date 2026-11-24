@@ -169,7 +169,7 @@ function App() {
   const pageLabel = route.page === "chapter" ? chapter.title : nav.find(item => item.page === route.page)?.label || "Overview";
 
   return <div className="site-shell">
-    <a className="skip-link" href="#main-content">Skip to content</a>
+    <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
     {menuOpen && <button className="mobile-backdrop" onClick={() => setMenuOpen(false)} aria-label="Close navigation" />}
     <aside className={"site-sidebar " + (menuOpen ? "open" : "")} aria-label="Site navigation">
       <button className="brand" onClick={() => navigate("home")} aria-label="ICT Arcade home">
@@ -178,7 +178,7 @@ function App() {
       </button>
       <div className="sidebar-section-label">WORKSPACE</div>
       <nav className="nav-list" aria-label="Study sections">
-        {nav.map(({page, label, icon: Icon}, index) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => navigate(page)}>
+        {nav.map(({page, label, icon: Icon}, index) => <button key={page} className={"nav-item " + (activePage === page ? "active" : "")} aria-current={activePage === page ? "page" : undefined} onClick={() => {setMenuOpen(false); navigate(page);}}>
           <span className="nav-order">{formatNumber(index + 1)}</span><Icon size={18} strokeWidth={1.7} aria-hidden="true"/><span>{label}</span>
         </button>)}
       </nav>
@@ -201,7 +201,7 @@ function App() {
         <div className="header-left"><button className="menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={21}/></button><span>ICT ARCADE</span><span className="header-divider">/</span><span className="header-location">{pageLabel}</span></div>
         <span className="header-right">CAMBRIDGE IGCSE <span>0417 / 0983</span></span>
       </header>
-      <main id="main-content" className="site-main">
+      <main id="main-content" tabIndex={-1} className="site-main">
 
         {route.page === "home" && <>
           <section className="home-lead">
@@ -293,9 +293,9 @@ function App() {
 
         {route.page === "practice" && <>
           <Title eyebrow="EXAM PREPARATION" title="Practice questions" description="Check what you know and see the reasoning behind each answer. For longer questions, write your response before viewing the guidance." />
-          <div className="mode-tabs" role="tablist" aria-label="Practice type">
-            <button role="tab" aria-selected={practiceType === "choice"} className={practiceType === "choice" ? "active" : ""} onClick={() => setPracticeType("choice")}>Quick questions</button>
-            <button role="tab" aria-selected={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
+          <div className="mode-tabs" role="group" aria-label="Practice type">
+            <button aria-pressed={practiceType === "choice"} className={practiceType === "choice" ? "active" : ""} onClick={() => setPracticeType("choice")}>Quick questions</button>
+            <button aria-pressed={practiceType === "written"} className={practiceType === "written" ? "active" : ""} onClick={() => setPracticeType("written")}>Written answers</button>
           </div>
           {practiceType === "choice" ? <>
             <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose question chapter" value={quizChapter} onChange={e => startQuiz(Number(e.target.value))}><option value={0}>All chapters</option>{chapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{quizScore} correct · {quizIndex + (picked !== null ? 1 : 0)} answered</span></div>
@@ -318,7 +318,7 @@ function App() {
 
         {route.page === "flashcards" && <>
           <Title eyebrow="RECALL PRACTICE" title="Flashcards" description="Try to define the term yourself. Turn the card to check, then keep moving through the set."/>
-          <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{chapters.map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
+          <div className="practice-toolbar"><label>CHAPTER<select aria-label="Choose flashcard chapter" value={flashChapter} onChange={e => selectFlashChapter(Number(e.target.value))}><option value={0}>All chapters</option>{chapters.filter(ch => flashcards.some(card => card.chapterId === ch.id)).map(ch => <option key={ch.id} value={ch.id}>{formatNumber(ch.id)} / {ch.title}</option>)}</select></label><span>{knownInPool} of {flashPool.length} known</span></div>
           {currentFlash && <>
             <div className="flash-progress"><span>CARD {formatNumber(flashIndex % flashPool.length + 1)} / {formatNumber(flashPool.length)}</span><span>{chapterName(currentFlash.chapterId)}</span></div>
             <button className={"revision-card " + (flipped ? "is-flipped" : "")} onClick={() => setFlipped(v => !v)} aria-label={flipped ? "Show term" : "Reveal definition"}><span className="meta-label">{flipped ? "DEFINITION" : "TERM"}</span><strong>{flipped ? currentFlash.definition : currentFlash.term}</strong><span className="flash-turn"><RotateCcw size={17}/> {flipped ? "Show term" : "Reveal answer"}</span></button>
