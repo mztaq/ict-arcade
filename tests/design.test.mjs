@@ -20,7 +20,8 @@ test("study interface includes real navigation, results, and persisted drafts", 
   assert.match(app, /tabIndex=\{-1\}/);
   assert.match(app, /setDrafts/);
   assert.match(app, /role="status"/);
-  assert.match(app, /PRACTICE COMPLETE/);
+  assert.match(app, /className="quiz-finish"/);
+  assert.match(app, /quizScore/);
   assert.match(app, /BookmarkCheck/);
   assert.match(app, /aria-label="Filter chapters"/);
 });
