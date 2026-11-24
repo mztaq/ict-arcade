@@ -50,9 +50,9 @@ function ChapterRow({chapter, done, compact = false, onOpen}) {
   return <button className={"chapter-row " + (compact ? "is-compact" : "")} onClick={onOpen}>
     <span className="chapter-index">{formatNumber(chapter.id)}</span>
     <span className="chapter-description"><strong>{chapter.title}</strong></span>
-    <span className="chapter-status">
-      <span>{chapter.lessons.length} lessons · {progress === 100 ? "Complete" : progress === 0 ? "Not started" : progress + "%"}</span>
-      <span className="mini-progress"><span style={{width: progress + "%"}} /></span>
+    <span className="chapter-stats">
+      <span className="chapter-lessons"><strong>{chapter.lessons.length}</strong><span>lessons</span></span>
+      {progress > 0 && <span className="chapter-percent">{progress}%</span>}
     </span>
     <ArrowUpRight size={19} strokeWidth={1.7} aria-hidden="true" />
   </button>;
@@ -257,7 +257,7 @@ function App() {
   const lessonIndex = Math.max(0, Math.min(route.lesson, chapter.lessons.length - 1));
   const lesson = chapter.lessons[lessonIndex];
   const lessonKey = keyFor(chapter.id, lessonIndex);
-  const advice = examinerAdvice[lessonKey] || [];
+  const advice = examinerAdvice[lessonKey];
   const theoryChapters = chapters.filter(ch => ch.unit === "Theory");
   const theoryLessons = allLessons.filter(l => l.chapterId <= 11);
   const theoryQuestions = questions.filter(q => q.chapterId <= 11);
@@ -343,7 +343,7 @@ function App() {
               <TheoryPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong><ArrowUpRight size={19}/></span>
-                <span className="course-description">11 chapters · {theoryLessons.length} lessons</span>
+                <span className="course-stats"><span><strong>{theoryChapters.length}</strong><small>chapters</small></span><span><strong>{theoryLessons.length}</strong><small>lessons</small></span></span>
               </span>
             </a>
             <a className="course-choice practical-card" href="#/practical">
@@ -361,9 +361,12 @@ function App() {
         </>}
 
         {route.page === "notes" && <>
-          <Title title="Theory" action={<div className="theory-shortcuts">
-            <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions</button>
-            <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards</button>
+          <Title title="Theory" action={<div className="theory-title-actions">
+            <span className="theory-total"><strong>{theoryLessons.length}</strong><span>lessons</span></span>
+            <div className="theory-shortcuts">
+              <button onClick={() => navigate("practice")}><CheckCircle2 size={17}/> Questions</button>
+              <button onClick={() => navigate("flashcards")}><RotateCcw size={17}/> Flashcards</button>
+            </div>
           </div>}/>
           <div className="library-toolbar">
             <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
@@ -388,8 +391,11 @@ function App() {
           <div className="chapter-heading"><h1>{chapter.title}</h1></div>
           <div className="reading-layout">
             <aside className="lesson-index" aria-label="Lessons in chapter">
-              <div className="lesson-index-heading"><span>Contents</span><span>{chapterProgress(chapter, done)}%</span></div>
-              <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
+              <div className="lesson-index-heading"><span>Contents</span><strong>{chapter.lessons.length} lessons</strong></div>
+              <div className="lesson-index-progress">
+                <Progress value={chapterProgress(chapter, done)} label="Chapter completion"/>
+                {chapterProgress(chapter, done) > 0 && <span>{chapterProgress(chapter, done)}% complete</span>}
+              </div>
               <nav>{chapter.lessons.map((entry, i) => <button key={entry.title} className={"lesson-link " + (i === lessonIndex ? "active" : "")} onClick={() => navigate("chapter", chapter.id, i)} aria-current={i === lessonIndex ? "page" : undefined}>
                 <span>{done.includes(keyFor(chapter.id, i)) ? <Check size={15}/> : formatNumber(i + 1)}</span><span>{entry.title}</span>
               </button>)}</nav>
@@ -403,8 +409,11 @@ function App() {
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
               {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
-              <section className="examiner-advice" aria-label="Examiner advice"><h3>Examiner advice</h3>
-                {advice.length ? <ul>{advice.map((tip,i)=><li key={i}>{tip}</li>)}</ul> : <p>Coming soon</p>}
+              <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
+                {advice ? <>
+                  {advice.points.map((tip,i)=><p key={i}>{tip}</p>)}
+                  <a href={advice.source} target="_blank" rel="noopener noreferrer" className="advice-source">Based on Save My Exams <ArrowUpRight size={14} aria-hidden="true"/></a>
+                </> : <p>Coming soon</p>}
               </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
                 <div className="article-next">{lessonIndex > 0 && <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex - 1)}><ArrowLeft size={16}/> Previous</button>}{lessonIndex + 1 < chapter.lessons.length ? <button className="secondary-action" onClick={() => navigate("chapter", chapter.id, lessonIndex + 1)}>Next lesson <ArrowRight size={16}/></button> : <button className="secondary-action" onClick={() => {startQuiz(chapter.id); navigate("practice");}}>Test this chapter <ArrowRight size={16}/></button>}</div>
