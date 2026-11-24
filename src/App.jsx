@@ -387,8 +387,12 @@ function App() {
         </section>}
 
         {route.page === "chapter" && chapter.unit === "Theory" && <>
-          <button className="back-link" onClick={() => navigate("notes")}><ArrowLeft size={16}/> Back to Theory</button>
-          <div className="chapter-heading"><h1>{chapter.title}</h1></div>
+          <div className="chapter-heading">
+            <h1>{chapter.title}</h1>
+            <button type="button" className="chapter-back-button" onClick={() => navigate("notes")}>
+              <ArrowLeft size={16} aria-hidden="true"/> Back to Theory
+            </button>
+          </div>
           <div className="reading-layout">
             <aside className="lesson-index" aria-label="Lessons in chapter">
               <div className="lesson-index-heading"><span>Contents</span><strong>{chapter.lessons.length} lessons</strong></div>
@@ -412,7 +416,7 @@ function App() {
               <section className="examiner-advice" aria-label="Theory exam advice"><h3>Exam advice</h3>
                 {advice ? <>
                   {advice.points.map((tip,i)=><p key={i}>{tip}</p>)}
-                  <a href={advice.source} target="_blank" rel="noopener noreferrer" className="advice-source">Based on Save My Exams <ArrowUpRight size={14} aria-hidden="true"/></a>
+                  <a href={advice.source} target="_blank" rel="noopener noreferrer" className="advice-source" aria-label="Open revision reference notes">Reference notes <ArrowUpRight size={14} aria-hidden="true"/></a>
                 </> : <p>Coming soon</p>}
               </section>
               <div className="article-actions"><button className={done.includes(lessonKey) ? "done-action" : "primary-action"} onClick={toggleDone}>{done.includes(lessonKey) ? <CheckCircle2 size={17}/> : <Check size={17}/>} {done.includes(lessonKey) ? "Completed" : "Mark as studied"}</button>
