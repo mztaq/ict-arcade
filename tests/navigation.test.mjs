@@ -176,7 +176,8 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/href=\{"#\/past-papers\/yearly\/"\+item\.year\}/);
   assert.match(app,/No locally hosted papers for/);
   assert.doesNotMatch(app,/archivePastPapersUrl|officialPastPapersUrl/);
-  assert.match(app,/href=\{item\.url\} download/);
+  assert.match(app,/<PaperViewer title=\{selectedYearlyPaper.title\}/);
+  assert.match(app,/<PaperViewer title=\{selectedSolvedPaper.title\}/);
   assert.match(app,/href="#\/past-papers\/solved"/);
   assert.match(app,/href="#\/past-papers\/solved\/2"/);
   assert.match(app,/href="#\/past-papers\/solved\/3"/);
@@ -184,4 +185,25 @@ test("past papers homepage has yearly and solved collections only",()=>{
   assert.match(app,/className="paper-1-message"/);
   assert.match(app,/Mustaqim hates Theory, so no solved Paper 1 papers/);
   assert.doesNotMatch(app,/className="paper-theory-note"/);
+});
+
+test("PDF viewer previews question papers, mark schemes and reports but only downloads source files",()=>{
+  const viewer=readFileSync(new URL("../src/PaperViewer.jsx",import.meta.url),"utf8");
+  assert.match(app,/key:"questionPaper",label:"Question Paper"/);
+  assert.match(app,/key:"markScheme",label:"Mark Scheme"/);
+  assert.match(app,/key:"examinerReport",label:"Examiner Report"/);
+  assert.match(app,/key:"workedSolution",label:"Worked Solution"/);
+  assert.match(app,/papersId: parts\[0\]/);
+  assert.match(app,/papersDocument: parts\[0\]/);
+  assert.match(app,/selectedYearlyPaper/);
+  assert.match(app,/selectedSolvedPaper/);
+  assert.match(viewer,/iframe className="paper-pdf-frame" src=\{active.url\}/);
+  assert.match(viewer,/href=\{active.url\} download/);
+  assert.match(viewer,/href=\{file.url\} download/);
+  assert.match(viewer,/sourceFiles\.map\(/);
+  assert.match(viewer,/className="paper-document-tabs"/);
+  assert.match(viewer,/unavailable/);
+  assert.doesNotMatch(viewer,/iframe[^\n]*file.url/);
+  assert.match(css,/\.paper-pdf-frame\{/);
+  assert.match(css,/\.paper-source-file\{/);
 });
