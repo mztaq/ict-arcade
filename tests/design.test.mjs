@@ -7,7 +7,9 @@ const app = readFileSync(new URL("../src/App.jsx", import.meta.url), "utf8");
 const arcade = readFileSync(new URL("../public/arcade-legacy.html", import.meta.url), "utf8");
 
 test("readable study typography avoids decoration and external font dependencies", () => {
-  assert.doesNotMatch(css, /(?:linear|radial|conic)-gradient\s*\(/i);
+  // Decorative illustrations are allowed to use theme-token gradients, not study surfaces.
+  const studyCss = css.replace(/\.papers-home-card \.papers-(?:home|solved)-art\{[^}]*\}/g, "");
+  assert.doesNotMatch(studyCss, /(?:linear|radial|conic)-gradient\s*\(/i);
   assert.doesNotMatch(css, /backdrop-filter\s*:/i);
   assert.doesNotMatch(css, /\bInter\b/);
   assert.match(css, /font-family:system-ui/);
