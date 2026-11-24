@@ -6,7 +6,7 @@ const origin="http://127.0.0.1:4173";
 const sizes=[320,390,768,1280];
 const routes=["home","notes","chapter/1/0","chapter/6/4","chapter/11/1","practice","flashcards","practical","games"];
 const minimumReadableSize={
-  home:[[".home-intro h2",30],[".course-title-line strong",22],[".course-stats small",15]],
+  home:[[".home-intro h2",26],[".course-title-line strong",22],[".course-stats small",15]],
   notes:[[".chapter-description strong",16],[".chapter-lessons span",14]],
   "chapter/1/0":[[".concepts li",16],[".lesson-link",16],[".definitions dd",16]],
   practice:[[".answer-button",16],[".question-paper>h2",24]],
@@ -55,6 +55,32 @@ try{
         width+"px / "+route+": horizontal overflow "+(findings.full-findings.vw)+"px");
       assert.deepEqual(findings.overlaps,[],width+"px / "+route+": overlapping interface");
       assert.deepEqual(findings.tooSmall,[],width+"px / "+route+": text too small");
+      if(route==="home"){
+        const hierarchy=await page.evaluate(()=>{
+          const title=document.querySelector(".course-choice .course-title-line strong");
+          const total=document.querySelector(".course-choice .course-stats strong");
+          const heading=document.querySelector(".home-intro h2");
+          const backdrop=document.querySelector(".home-circuit-backdrop");
+          const brand=document.querySelector(".home-signature h1");
+          return {
+            titleSize:parseFloat(getComputedStyle(title).fontSize),
+            totalSize:parseFloat(getComputedStyle(total).fontSize),
+            headingWeight:parseFloat(getComputedStyle(heading).fontWeight),
+            headingTracking:parseFloat(getComputedStyle(heading).letterSpacing),
+            brandTracking:parseFloat(getComputedStyle(brand).letterSpacing),
+            hasBackdrop:!!backdrop,
+            boxRemoved:!document.querySelector(".hero-motion,.signal-chain")
+          };
+        });
+        assert.ok(hierarchy.titleSize>=hierarchy.totalSize+3,
+          width+"px: Theory card title must be larger than lesson totals");
+        assert.ok(hierarchy.headingWeight<=650,
+          width+"px: homepage headline is too bold");
+        assert.ok(hierarchy.headingTracking>=0 && hierarchy.brandTracking>=0,
+          width+"px: homepage letter spacing is too tight");
+        assert.ok(hierarchy.hasBackdrop&&hierarchy.boxRemoved,
+          width+"px: animated background should replace the boxed diagram");
+      }
       console.log("PASS "+width+"px / "+route);
     }
     await page.close();
