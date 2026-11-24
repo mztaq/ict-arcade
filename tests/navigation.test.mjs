@@ -188,9 +188,6 @@ test("past papers homepage has yearly and solved collections only",()=>{
 
 test("PDF viewer previews solved papers and only downloads source files",()=>{
   const viewer=readFileSync(new URL("../src/PaperViewer.jsx",import.meta.url),"utf8");
-  assert.match(app,/key:"questionPaper",label:"Question Paper"/);
-  assert.match(app,/key:"markScheme",label:"Mark Scheme"/);
-  assert.match(app,/key:"examinerReport",label:"Examiner Report"/);
   assert.match(app,/key:"workedSolution",label:"Worked Solution"/);
   assert.match(app,/papersId: parts\[0\]/);
   assert.match(app,/papersDocument: parts\[0\]/);
@@ -209,6 +206,8 @@ test("PDF viewer previews solved papers and only downloads source files",()=>{
 test("yearly library routes to PapaCambridge files only on click",()=>{
   assert.match(app,/<PapaPapers year=/);
   assert.match(papa,/Choose an examination series/);
+  assert.match(papa,/className="papa-series-link"/);
+  assert.doesNotMatch(app,/key:"(?:questionPaper|markScheme|examinerReport)",label:/);
   for(const label of ["Question Papers","Mark Schemes","Examiner Reports","Source Files"])assert.ok(papa.includes(label));
   assert.match(papa,/href=\{file.url\} target="_blank" rel="noopener noreferrer"/);
   assert.doesNotMatch(papa,/iframe|fetch\(/);
