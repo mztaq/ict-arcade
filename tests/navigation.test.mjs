@@ -129,13 +129,27 @@ test("lesson back button sits beside the chapter heading and contents items use 
   assert.doesNotMatch(app,/className="back-link"/);
 });
 
-test("lesson and chapter navigation use icons instead of visible numbers",()=>{
+test("every Theory lesson has a distinct topic-specific outline icon",()=>{
   assert.match(app,/const chapterIcons = \{/);
   assert.match(app,/className="chapter-index"><ChapterIcon/);
-  assert.match(app,/className="lesson-icon"/);
-  assert.match(app,/<CheckCircle2 size=\{19\}/);
-  assert.match(app,/<FileText size=\{19\}/);
+  assert.match(app,/const LessonIcon = lessonIcons\[chapter\.id\]\?\.\[i\]/);
+  assert.match(app,/className=\{"lesson-icon "/);
+  assert.match(app,/className="lesson-check"/);
+  const block=app.match(/const lessonIcons = \{([\s\S]*?)\n\};/);
+  assert.ok(block,"Topic icon configuration must exist");
+  const mapping=new Map([...block[1].matchAll(/^\s*(\d+):\s*\[([^\]]+)\]/gm)].map(match=>
+    [Number(match[1]),match[2].split(",").map(name=>name.trim()).filter(Boolean)]
+  ));
+  const theory=chapters.filter(ch=>ch.unit==="Theory");
+  assert.equal(mapping.size,theory.length);
+  for(const chapter of theory){
+    const icons=mapping.get(chapter.id);
+    assert.ok(icons,"Missing icons for chapter "+chapter.id);
+    assert.equal(icons.length,chapter.lessons.length,chapter.title);
+    assert.equal(new Set(icons).size,icons.length,"Repeated icon in "+chapter.title);
+  }
   assert.doesNotMatch(app,/className="chapter-index">\{formatNumber\(chapter\.id\)\}/);
   assert.doesNotMatch(app,/formatNumber\(i \+ 1\)\}<\/span><span>\{entry\.title\}/);
   assert.match(css,/\.lesson-icon\{/);
+  assert.match(css,/\.lesson-link\.active \.lesson-icon\{/);
 });
