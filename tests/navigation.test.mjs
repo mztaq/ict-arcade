@@ -219,6 +219,8 @@ test("clean path navigation and themed missing pages",()=>{
   assert.match(app,/history\.replaceState/);
   assert.match(app,/addEventListener\("popstate"/);
   assert.match(app,/function NotFound\(\)/);
+  assert.match(app,/route\.page !== "not-found" && <header/);
+  assert.match(app,/data-layout=\{layout\}/);
   assert.match(app,/route\.page === "not-found"/);
   assert.doesNotMatch(app,/href="#\//);
   assert.doesNotMatch(papa,/const root="#/);
