@@ -30,28 +30,66 @@ function useStored(key, initial) {
   }, [key, value]);
   return [value, setValue];
 }
+// Migrate old hash bookmarks without creating an extra history entry.
+if (location.pathname === "/" && location.hash.startsWith("#/")) {
+  const legacy = location.hash.slice(1);
+  if (!legacy.startsWith("//")) history.replaceState(null, "", legacy === "/home" ? "/" : legacy);
+}
 const getRoute = () => {
-  const parts = (location.hash || "#/home").replace(/^#\/?/, "").split("/");
+  const parts = location.pathname.replace(/^\\/+|\\/+$/g, "").split("/");
+  const [page, first, second, third, fourth] = parts;
+  let valid = false;
+  if (!page || ["home","notes","practical","practice","flashcards"].includes(page)) valid = parts.length === 1;
+  else if (page === "games") valid = parts.length === 1 || (parts.length === 2 && /^(?:[1-9]|10|11)$/.test(first));
+  else if (page === "chapter") {
+    const chapter = chapters.find(ch => String(ch.id) === first);
+    valid = !!chapter && (parts.length === 2 || (parts.length === 3 && /^\\d+$/.test(second) && Number(second) < chapter.lessons.length));
+  } else if (page === "past-papers") {
+    if (parts.length === 1) valid = true;
+    else if (first === "yearly") {
+      const year = Number(second);
+      const validYear = /^\\d{4}$/.test(second || "") && year >= 2017 && year <= 2026;
+      valid = parts.length === 2 || (validYear && (parts.length === 3 || (["m","s","w"].includes(third) && !(year === 2026 && third === "w") && (parts.length === 4 || (parts.length === 5 && ["qp","ms","er","sf"].includes(fourth))))));
+    } else if (first === "solved") {
+      valid = parts.length === 2 || (["1","2","3"].includes(second) && (parts.length === 3 || (solvedPastPapers[Number(second)]?.some(p=>p.id===third) && (parts.length === 4 || (parts.length === 5 && fourth === "workedSolution")))));
+    }
+  }
   return {
-    page: parts[0] || "home",
-    id: Number(parts[1]) || 1,
-    lesson: Number(parts[2]) || 0,
-    game: parts[0] === "games" ? (Number(parts[1]) || 0) : 0,
-    papersView: parts[0] === "past-papers" ? (parts[1] || "home") : "home",
-    papersNumber: parts[0] === "past-papers" && parts[1] === "solved" ? Number(parts[2]) || 0 : 0,
-    papersYear: parts[0] === "past-papers" && parts[1] === "yearly" ? Number(parts[2]) || 0 : 0,
-    papersId: parts[0] === "past-papers" && ["yearly","solved"].includes(parts[1]) ? (parts[3] || "") : "",
-    papersDocument: parts[0] === "past-papers" ? (parts[4] || "") : ""
+    page: valid ? (page || "home") : "not-found",
+    id: Number(first) || 1,
+    lesson: Number(second) || 0,
+    game: page === "games" ? Number(first) || 0 : 0,
+    papersView: page === "past-papers" ? first || "home" : "home",
+    papersNumber: first === "solved" ? Number(second) || 0 : 0,
+    papersYear: first === "yearly" ? Number(second) || 0 : 0,
+    papersId: page === "past-papers" ? third || "" : "",
+    papersDocument: page === "past-papers" ? fourth || "" : ""
   };
 };
-const navigate = (page, id, lesson) => {
-  const destination = "#/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson);
-  if (location.hash === destination) {
-    window.scrollTo({top: 0, behavior: "smooth"});
-  } else {
-    location.hash = destination;
-  }
+const goTo = destination => {
+  if (location.pathname !== destination || location.search || location.hash) {
+    history.pushState(null, "", destination);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  } else window.scrollTo({top:0});
 };
+const navigate = (page, id, lesson) => goTo(page === "home" ? "/" : "/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson));
+const notFoundJokes = [
+  "This page got 0 marks for answering the question.",
+  "The file was not found. Have you tried turning it off and on again?",
+  "Even Ctrl+F couldn't find this page.",
+  "Looks like this page forgot to save its work.",
+  "404: The only ICT question without a mark scheme."
+];
+function NotFound() {
+  const [joke] = useState(() => notFoundJokes[Math.floor(Math.random()*notFoundJokes.length)]);
+  return <section className="not-found">
+    <div className="not-found-art" aria-hidden="true"><FileText size={76} strokeWidth={1.4}/><span>?</span></div>
+    <div className="not-found-code">404</div>
+    <h1>Page not found</h1>
+    <p>{joke}</p>
+    <a className="primary-action" href="/"><ArrowLeft size={18}/> Back to home</a>
+  </section>;
+}
 const formatNumber = value => String(value).padStart(2, "0");
 const keyFor = (chapterId, lessonIndex) => chapterId + "-" + lessonIndex;
 const chapterName = id => chapters.find(ch => ch.id === id)?.title || "ICT";
@@ -299,9 +337,19 @@ function App() {
   const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   useEffect(() => {
-    const onHash = () => { setRoute(getRoute()); window.scrollTo({top: 0, behavior: "smooth"}); };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    const onRoute = () => { setRoute(getRoute()); window.scrollTo({top:0,behavior:"instant"}); };
+    const onLink = event => {
+      if(event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)return;
+      const anchor = event.target.closest?.("a[href]");
+      if(!anchor || anchor.hasAttribute("download") || (anchor.target && anchor.target !== "_self"))return;
+      const url = new URL(anchor.href, location.href);
+      if(url.origin !== location.origin || !anchor.getAttribute("href").startsWith("/") || url.search || url.hash || /\\.[a-z0-9]+$/i.test(url.pathname))return;
+      event.preventDefault();
+      goTo(url.pathname);
+    };
+    window.addEventListener("popstate", onRoute);
+    document.addEventListener("click", onLink);
+    return () => {window.removeEventListener("popstate", onRoute);document.removeEventListener("click", onLink);};
   }, []);
   useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => {
@@ -383,6 +431,7 @@ function App() {
     <div className="site-body">
       <main id="main-content" tabIndex={-1} className="site-main">
 
+        {route.page === "not-found" && <NotFound key={location.pathname}/>}
         {route.page === "home" && <div className="home-screen">
           <CircuitBackdrop/>
           <section className="home-intro">
@@ -391,20 +440,20 @@ function App() {
               <h1>ICT Arcade</h1>
             </div>
             <h2>Learn ICT step by step</h2>
-            <a className="past-papers-link" href="#/past-papers">
+            <a className="past-papers-link" href="/past-papers">
               <FileText size={18}/> Try past papers <ArrowRight size={17}/>
             </a>
           </section>
 
           <section className="course-choices" aria-label="Revision sections">
-            <a className="course-choice theory-card" href="#/notes">
+            <a className="course-choice theory-card" href="/notes">
               <TheoryPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><BookOpen size={20}/><strong>Theory</strong></span>
                 <span className="course-stats"><span><strong>{theoryChapters.length}</strong><small>chapters</small></span><span><strong>{theoryLessons.length}</strong><small>lessons</small></span></span>
               </span>
             </a>
-            <a className="course-choice practical-card" href="#/practical">
+            <a className="course-choice practical-card" href="/practical">
               <PracticalPreview/>
               <span className="course-choice-body">
                 <span className="course-title-line"><Layers size={20}/><strong>Practical</strong><span className="coming-soon">Coming soon</span></span>
@@ -412,7 +461,7 @@ function App() {
             </a>
           </section>
 
-          <a className="games-hub-card" href="#/games" aria-label="Browse all 11 ICT Arcade games">
+          <a className="games-hub-card" href="/games" aria-label="Browse all 11 ICT Arcade games">
             <span className="games-hub-info"><strong>Games</strong><span>11 games</span></span>
             <span className="games-hub-preview" aria-hidden="true"><ArcadeVisual id={1}/><ArcadeVisual id={3}/><ArcadeVisual id={8}/></span>
           </a>
@@ -421,9 +470,9 @@ function App() {
         {route.page === "past-papers" && <>
           {route.papersView === "home" && <>
             <div className="papers-home">
-              <Title title="Past Papers" action={<a className="chapter-back-button" href="#/home"><ArrowLeft size={18}/> Back</a>}/>
+              <Title title="Past Papers" action={<a className="chapter-back-button" href="/"><ArrowLeft size={18}/> Back</a>}/>
               <div className="paper-category-grid papers-home-grid">
-                <a className="paper-category papers-home-card" href="#/past-papers/yearly">
+                <a className="paper-category papers-home-card" href="/past-papers/yearly">
                   <span className="papers-home-art" aria-hidden="true">
                     <svg viewBox="0 0 240 142" fill="none">
                       <g className="papers-art-back" transform="rotate(-12 96 70)"><rect x="51" y="14" width="90" height="113" rx="9"/><path d="M67 42h46M67 54h31M67 78h57M67 90h43"/></g>
@@ -434,7 +483,7 @@ function App() {
                   <span className="papers-home-copy"><strong>Yearly Past Papers</strong><span>Question papers, mark schemes, examiner reports and source files.</span><small>2017–2026</small></span>
                   <ArrowRight className="paper-category-arrow" size={22}/>
                 </a>
-                <a className="paper-category papers-home-card" href="#/past-papers/solved">
+                <a className="paper-category papers-home-card" href="/past-papers/solved">
                   <span className="papers-home-art papers-solved-art" aria-hidden="true">
                     <svg viewBox="0 0 240 142" fill="none">
                       <g className="papers-art-back" transform="rotate(-10 100 70)"><rect x="55" y="13" width="94" height="116" rx="9"/><path d="M72 40h48M72 54h34M72 77h51M72 90h40"/></g>
@@ -461,17 +510,17 @@ function App() {
               </button>}/>
             {route.papersNumber === 0 ? <>
               <div className="paper-category-grid solved-paper-options">
-                <a className="paper-category" href="#/past-papers/solved/1">
+                <a className="paper-category" href="/past-papers/solved/1">
                   <span className="paper-category-icon"><BookOpen size={26} strokeWidth={1.7}/></span>
                   <strong>Paper 1</strong><span>Theory</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
-                <a className="paper-category" href="#/past-papers/solved/2">
+                <a className="paper-category" href="/past-papers/solved/2">
                   <span className="paper-category-icon"><FileText size={26} strokeWidth={1.7}/></span>
                   <strong>Paper 2</strong><span>Document Production, Databases and Presentations</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
                 </a>
-                <a className="paper-category" href="#/past-papers/solved/3">
+                <a className="paper-category" href="/past-papers/solved/3">
                   <span className="paper-category-icon"><Layers size={26} strokeWidth={1.7}/></span>
                   <strong>Paper 3</strong><span>Spreadsheets and Website Authoring</span>
                   <ArrowUpRight className="paper-category-arrow" size={20}/>
@@ -487,14 +536,14 @@ function App() {
                 selectedSolvedPaper ?
                   <PaperViewer title={selectedSolvedPaper.title}
                     selectedKind={route.papersDocument}
-                    routePrefix={"#/past-papers/solved/"+route.papersNumber+"/"+selectedSolvedPaper.id}
+                    routePrefix={"/past-papers/solved/"+route.papersNumber+"/"+selectedSolvedPaper.id}
                     documents={[{key:"workedSolution",label:"Worked Solution",url:selectedSolvedPaper.url}]}
                     sourceFiles={selectedSolvedPaper.sourceFiles||[]}/> :
                   <div className="paper-empty"><p>This solution isn't available.</p></div> :
               solvedPastPapers[route.papersNumber].length ?
                 <div className="paper-year-grid">
                   {solvedPastPapers[route.papersNumber].map(item=><a className="paper-year" key={item.id}
-                      href={"#/past-papers/solved/"+route.papersNumber+"/"+item.id}>
+                      href={"/past-papers/solved/"+route.papersNumber+"/"+item.id}>
                     <FileText size={20} strokeWidth={1.7} aria-hidden="true"/>
                     <strong>{item.title}</strong><ArrowRight size={18} aria-hidden="true"/>
                   </a>)}
@@ -510,7 +559,7 @@ function App() {
         {route.page === "notes" && <>
           <Title title="Theory" action={<div className="theory-title-actions">
             <span className="theory-total"><strong>{theoryLessons.length}</strong><span>lessons</span></span>
-            <a className="chapter-back-button" href="#/home"><ArrowLeft size={18}/> Back</a>
+            <a className="chapter-back-button" href="/"><ArrowLeft size={18}/> Back</a>
           </div>}/>
           <div className="library-toolbar">
             <label className="search-field"><Search size={18} aria-hidden="true"/><span className="sr-only">Search theory</span><input placeholder="Search theory topics and terms" value={search} onChange={e => setSearch(e.target.value)}/>{search && <button onClick={() => setSearch("")} aria-label="Clear search"><X size={16}/></button>}</label>
@@ -623,7 +672,7 @@ function App() {
             <iframe key={route.game} title={arcadeGames.find(game=>game.id === route.game)?.name || "ICT Arcade game"}
               src={"/arcade-legacy.html?game="+route.game} className="arcade-frame" allow="fullscreen" loading="eager"/> :
             <div className="featured-games games-page-grid">
-              {arcadeGames.map(game=><a key={game.id} href={"#/games/"+game.id} className="featured-game" aria-label={"Play "+game.name}>
+              {arcadeGames.map(game=><a key={game.id} href={"/games/"+game.id} className="featured-game" aria-label={"Play "+game.name}>
                 <ArcadeVisual id={game.id}/>
                 <span className="featured-game-bottom">
                   <span className="featured-game-copy"><strong>{game.name}</strong><small>{game.detail}</small></span>
