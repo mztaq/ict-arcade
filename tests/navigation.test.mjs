@@ -54,7 +54,7 @@ test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.match(app,/function PracticalPreview\(\{theme\}\)/);
   assert.match(app,/<RoutePreview page="notes" theme=\{theme\}/);
   assert.match(app,/<RoutePreview page="practical" theme=\{theme\}/);
-  assert.match(app,/<App previewPage=\{page\} previewTheme=\{theme\}/);
+  assert.match(app,/className="live-route-frame"/);
   assert.match(app,/aria-hidden="true" inert/);
   assert.match(app,/function ArcadeVisual\(\{id\}\)/);
   assert.doesNotMatch(app,/className="top-nav"/);
