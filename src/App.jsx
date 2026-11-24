@@ -74,14 +74,32 @@ const goTo = destination => {
   } else window.scrollTo({top:0});
 };
 const navigate = (page, id, lesson) => goTo(page === "home" ? "/" : "/" + page + (id === undefined ? "" : "/" + id) + (lesson === undefined ? "" : "/" + lesson));
+const errorLayouts = ["left","center","right","up","down","tilt","tilt-right","stagger","reverse"];
+function pickErrorVariant(items,key) {
+  let previous = "";
+  try {previous = sessionStorage.getItem(key)||"";} catch {}
+  const choices = items.filter(item=>String(item)!==previous);
+  const choice = choices[Math.floor(Math.random()*choices.length)];
+  try {sessionStorage.setItem(key,String(choice));} catch {}
+  return choice;
+}
 function NotFound() {
-  const [joke] = useState(() => notFoundJokes[Math.floor(Math.random()*notFoundJokes.length)]);
-  return <section className="not-found">
-    <div className="not-found-art" aria-hidden="true"><FileText size={76} strokeWidth={1.4}/><span>?</span></div>
-    <div className="not-found-code">404</div>
-    <h1>Page not found</h1>
-    <p>{joke}</p>
-    <a className="primary-action" href="/"><ArrowLeft size={18}/> Back to home</a>
+  const [joke] = useState(()=>pickErrorVariant(notFoundJokes,"ict-arcade-404-joke"));
+  const [layout] = useState(()=>pickErrorVariant(errorLayouts,"ict-arcade-404-layout"));
+  const [font] = useState(()=>["system","mono","serif"][Math.floor(Math.random()*3)]);
+  const [rare] = useState(()=>Math.random()<.02?["tiny","stamp","inverted","large"][Math.floor(Math.random()*4)]:"");
+  const [bits] = useState(()=>Array.from({length:18},(_,i)=>({
+    text:["ICT","RAM","ROM","404","CTRL+S","PDF","CPU","LAN","WAN","HTML","CSS","#REF!","NULL","PAPER 2","ZIP","INPUT","OUTPUT","001101"][i],
+    x:3+Math.random()*94,y:3+Math.random()*94,size:12+Math.random()*18,rotate:-25+Math.random()*50
+  })));
+  return <section className="not-found" data-layout={layout} data-font={font} data-rare={rare}>
+    <div className="error-scatter" aria-hidden="true">{bits.map((bit,i)=><span key={i} style={{left:bit.x+"%",top:bit.y+"%",fontSize:bit.size+"px",transform:"rotate("+bit.rotate+"deg)"}}>{bit.text}</span>)}</div>
+    <div className="error-main"><div className="error-content">
+      <div className="not-found-code" aria-label="Error 404">404</div>
+      <h1>{joke}</h1>
+      <p>Page not found.</p>
+      <a className="primary-action" href="/"><ArrowLeft size={18}/> Back to home</a>
+    </div></div>
   </section>;
 }
 const formatNumber = value => String(value).padStart(2, "0");
@@ -411,7 +429,7 @@ function App() {
   const toggleBookmark = () => setBookmarks(old => old.includes(lessonKey) ? old.filter(k => k !== lessonKey) : [...old, lessonKey]);
   return <div className="site-shell">
     <button className="skip-link" onClick={() => document.getElementById("main-content")?.focus()}>Skip to content</button>
-    <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
+    {route.page !== "not-found" && <header className={"site-header " + (route.page === "home" ? "home-header" : "")}>
       {route.page !== "home" && <button className="header-brand" onClick={() => navigate("home")} aria-label="Back to ICT Arcade home">
         <img className="brand-image" src="/ict-arcade-mark.svg" alt="" />
         <span className="header-brand-name">ICT Arcade</span>
@@ -421,9 +439,9 @@ function App() {
         aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
         {darkMode ? <Sun size={19} strokeWidth={1.85}/> : <Moon size={19} strokeWidth={1.85}/>}
       </button>
-    </header>
+    </header>}
     <div className="site-body">
-      <main id="main-content" tabIndex={-1} className="site-main">
+      <main id="main-content" tabIndex={-1} className={"site-main"+(route.page==="not-found"?" error-page-main":"")}>
 
         {route.page === "not-found" && <NotFound key={location.pathname}/>}
         {route.page === "home" && <div className="home-screen">
