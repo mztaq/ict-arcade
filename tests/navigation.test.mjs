@@ -19,8 +19,9 @@ test("homepage presents separate theory and practical routes",()=>{
   assert.match(app,/href="#\/notes"/);
   assert.match(app,/href="#\/practical"/);
   assert.match(app,/Coming soon/);
-  assert.match(app,/Learn the theory/);
-  assert.match(app,/Build practical skills/);
+  assert.match(app,/<strong>Theory<\/strong>/);
+  assert.match(app,/<Title title="Theory"/);
+  assert.match(app,/<strong>Practical<\/strong>/);
   assert.match(app,/className="games-hub-card"/);
   assert.match(app,/Browse all 11 ICT Arcade games/);
   assert.match(app,/Try past papers/);
@@ -34,8 +35,8 @@ test("unreleased practical lessons do not appear in theory navigation",()=>{
   assert.match(app,/theoryChapters\.map/);
   assert.match(app,/theoryQuestions/);
   assert.match(app,/theoryFlashcards/);
-  assert.match(app,/<strong>Start here<\/strong>/);
-  assert.match(app,/Start Chapter 1/);
+  assert.doesNotMatch(app, /New to ICT\? Start with Chapter 1/);
+  assert.doesNotMatch(app, /className="start-learning"/);
 });
 test("interface removes redundant breadcrumb and appearance settings",()=>{
   assert.doesNotMatch(app,/header-divider/);
@@ -90,4 +91,17 @@ test("home previews are grounded in course material and games have unique artwor
   for(let i=1;i<=11;i++)assert.match(app,new RegExp("id==="+i+"&&"));
   assert.match(app,/games-hub-preview/);
   assert.match(app,/games-page-grid/);
+});
+
+test("notes layout includes a clean contents list and author-controlled examiner advice",()=>{
+  const adviceSource=readFileSync(new URL("../src/examinerAdvice.js",import.meta.url),"utf8");
+  assert.match(app,/className="reading-layout"/);
+  assert.match(app,/Contents/);
+  assert.match(app,/Key points/);
+  assert.match(app,/Exam tip/);
+  assert.match(app,/Examiner advice/);
+  assert.match(app,/examinerAdvice\[lessonKey\]/);
+  assert.match(app,/advice\.length/);
+  assert.match(adviceSource,/export const examinerAdvice = \{\};/);
+  assert.doesNotMatch(app,/New to ICT\? Start here/);
 });
