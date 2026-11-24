@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, BookmarkCheck,
-  Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff,
-  Gamepad2, Layers, Menu, Monitor, Moon, RotateCcw, Search, Sun, X
+  Check, CheckCircle2, ClipboardList, Eye, EyeOff,
+  Gamepad2, Layers, Menu, Moon, RotateCcw, Search, Sun, X
 } from "lucide-react";
 import {chapters, allLessons, flashcards} from "./content.js";
 import {questions, writtenQuestions} from "./questions.js";
@@ -240,7 +240,7 @@ function App() {
           }}/>)}</div> : <div className="empty-results"><Search size={26}/><h2>No chapters found</h2><p>Try another search or view all theory chapters.</p><button className="secondary-action" onClick={() => {setFilter("All"); setSearch("");}}>Clear filters</button></div>}
         </>}
 
-        {route.page === "practical" && <section className="practical-soon">
+        {(route.page === "practical" || (route.page === "chapter" && chapter.unit !== "Theory")) && <section className="practical-soon">
           <div className="choice-icon"><Layers size={26} strokeWidth={1.8}/></div>
           <h1>Practical</h1>
           <p>Practical revision is coming soon. Theory lessons, questions and games are ready to use.</p>
