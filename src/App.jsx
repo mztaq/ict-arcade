@@ -624,7 +624,7 @@ function App() {
               <h2>{lesson.title}</h2>
               <div className="article-rule"/>
               <h3>Key points</h3>
-              <ol className="concepts">{lesson.points.map((point, i) => <li key={i}><span className="concept-count">{formatNumber(i + 1)}</span><span>{point}</span></li>)}</ol>
+              <ul className="concepts">{lesson.points.map((point, i) => <li key={i}>{point}</li>)}</ul>
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
               {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><dl>{lesson.terms.map(([term, definition]) => <div key={term}><dt>{term}</dt><dd>{definition}</dd></div>)}</dl></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
