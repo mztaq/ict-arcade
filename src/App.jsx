@@ -15,6 +15,7 @@ import {solvedPastPapers} from "./pastPapers.js";
 import {PapaPapers} from "./PapaPapers.jsx";
 import PaperViewer from "./PaperViewer.jsx";
 import {notFoundJokes} from "./notFoundJokes.js";
+import {lessonComparisons} from "./lessonComparisons.js";
 
 const load = (key, fallback) => {
   try {
@@ -624,6 +625,7 @@ function App() {
               <h2>{lesson.title}</h2>
               <h3>Key points</h3>
               <ul className="concepts">{lesson.points.map((point, i) => <li key={i}>{point}</li>)}</ul>
+              {lessonComparisons[lesson.title] && <section className="definitions lesson-comparisons"><h3>Advantages and disadvantages</h3><table className="definitions-table comparison-table"><thead><tr><th scope="col">Topic</th><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr></thead><tbody>{lessonComparisons[lesson.title].map(([topic,advantages,disadvantages])=><tr key={topic}><th scope="row">{topic}</th><td>{advantages}</td><td>{disadvantages}</td></tr>)}</tbody></table></section>}
               <section className="lesson-highlight example"><h3>Example</h3><p>{lesson.example}</p></section>
               {lesson.terms.length > 0 && <section className="definitions"><h3>Definitions</h3><table className="definitions-table"><thead><tr><th scope="col">Term</th><th scope="col">Definition</th></tr></thead><tbody>{lesson.terms.map(([term, definition]) => <tr key={term}><th scope="row">{term}</th><td>{definition}</td></tr>)}</tbody></table></section>}
               <section className="lesson-highlight exam"><h3>Exam tip</h3><p>{lesson.tip}</p></section>
