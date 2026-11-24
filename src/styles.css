@@ -897,3 +897,13 @@ h1,h2,h3{letter-spacing:0;line-height:1.28}
 .reading-article .article-actions,.reading-article .definitions,.reading-article .definitions dl>div,.reading-article .examiner-advice,.reading-article .examiner-advice p{border-top:0;border-bottom:0}
 
 .reading-article .definitions dl,.reading-article .definitions dl>div,.reading-article .definitions dt,.reading-article .definitions dd,.reading-article .lesson-highlight.exam,.reading-article .examiner-advice,.reading-article .article-actions{border:0;box-shadow:none}
+
+/* Definitions use a real, theme-matched table without horizontal divider lines. */
+.definitions-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;border:0;border-radius:9px;overflow:hidden;text-align:left;font-size:16px;line-height:1.65}
+.definitions-table th,.definitions-table td{padding:12px 16px;border:0;vertical-align:top;overflow-wrap:anywhere}
+.definitions-table thead th{background:var(--paper-secondary);color:var(--ink);font-weight:750}
+.definitions-table thead th:first-child{width:30%}
+.definitions-table tbody th{font-weight:700;color:var(--ink)}
+.definitions-table tbody td{color:var(--ink-soft)}
+.definitions-table tbody tr:nth-child(even){background:var(--paper-secondary)}
+@media(max-width:680px){.definitions-table th,.definitions-table td{padding:10px;font-size:15px}.definitions-table thead th:first-child{width:35%}}
